@@ -10,12 +10,15 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOp", group="TeleOp")
 public class MainTeleOp extends OpMode {
     Movement move;
+
+    Manipulators manip;
     RevColorSensorV3 cs;
     DistanceSensor ds;
     String moveType = "robot";
@@ -26,6 +29,7 @@ public class MainTeleOp extends OpMode {
         move = new Movement(hardwareMap);
         cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         ds = hardwareMap.get(DistanceSensor.class, "ds");
+        manip = new Manipulators(hardwareMap);
         telemetry.addData("init", "completed");
         telemetry.update();
     }
@@ -137,6 +141,14 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.right_bumper){multiplier=0.5;}
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
+
+        if(move.isPressed("Gamepad2DPadUp", gamepad2.dpad_up)){
+            manip.climberLiftPower(1);
+        } else if(move.isPressed("Gamepad2DPadDown", gamepad2.dpad_down)){
+            manip.climberLiftPower(-1);
+        } else{
+            manip.climberLiftPower(0);
+        }
     }
 
 }
