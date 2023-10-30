@@ -142,6 +142,7 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
 
+        //uses dpad controls up and down to control the climber/hanger
         if(move.isPressed("Gamepad2DPadUp", gamepad2.dpad_up)){
             manip.climberLiftPower(1);
         } else if(move.isPressed("Gamepad2DPadDown", gamepad2.dpad_down)){
