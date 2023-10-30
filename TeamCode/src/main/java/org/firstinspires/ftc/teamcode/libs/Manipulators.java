@@ -23,8 +23,18 @@ public class Manipulators {
     public Manipulators(HardwareMap hardwareMap) {
         this.robot = hardwareMap;
 
+        //declaring climber/hanging motors
         leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
         rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
+
+        //setting climber/hanging motor direction
+        leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightClimberMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        //setting break mode for climber/hanging motors
+        leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
     }
@@ -37,6 +47,7 @@ public class Manipulators {
         }
     }
 
+    //sets power to control climber/hanging motors
     public void climberLiftPower(double motorPower){
         leftClimberMotor.setPower(motorPower);
         rightClimberMotor.setPower(motorPower);}
