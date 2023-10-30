@@ -13,6 +13,11 @@ public class Movement {
     private DcMotor FR;
     private DcMotor BL;
     private DcMotor BR;
+    private DcMotor outtakeMotor;
+    private DcMotor climberleft;
+    private DcMotor climberRight;
+    private DcMotor inttakeMotor;
+
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
 
     public Movement(HardwareMap hardwareMap) {
