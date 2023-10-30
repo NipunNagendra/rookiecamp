@@ -10,11 +10,13 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOp", group="TeleOp")
 public class MainTeleOp extends OpMode {
+    Manipulators manip;
     Movement move;
     RevColorSensorV3 cs;
     DistanceSensor ds;
@@ -23,6 +25,8 @@ public class MainTeleOp extends OpMode {
     double[] motorPower = {0, 0, 0, 0};
     double multiplier;
     public void init() {
+        manip = new Manipulators(hardwareMap);
+        manip.droneServo.setPosition(180);
         move = new Movement(hardwareMap);
         cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         ds = hardwareMap.get(DistanceSensor.class, "ds");
@@ -137,6 +141,8 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.right_bumper){multiplier=0.5;}
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
+
+        if (move.isPressed("droneServo", gamepad2.left_bumper)) manip.droneLaunch();
     }
 
 }
