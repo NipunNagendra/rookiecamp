@@ -150,6 +150,16 @@ public class MainTeleOp extends OpMode {
         } else{
             manip.climberLiftPower(0);
         }
+
+        //When receiving power from gamepad2 that is greater than a certain threshold
+        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+            //it will move the lift to the certain power that the right joystick set
+            manip.moveLiftJoystickPower(gamepad2.right_stick_y);
+        }
+        else {
+            //
+            manip.moveLiftJoystickPower(0);
+        }
     }
 
 }

@@ -14,6 +14,7 @@ public class Manipulators {
 
     public DcMotor leftClimberMotor;
     public DcMotor rightClimberMotor;
+    public DcMotor outtakeLift;
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public static double outtakeServoPos1 = 0.15;
     public static double outtakeServoPos2 = 0;
@@ -36,7 +37,14 @@ public class Manipulators {
         rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        outtakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+    }
+
+    //Creating method for Lift outtake
+    public void moveLiftJoystickPower(double liftPower) {
+        //setting power to lift
+        outtakeLift.setPower(liftPower);
     }
 
     public void gateToggle(boolean outtakeServoStatus) {
