@@ -142,6 +142,7 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
 
+        //driver 2 uses right bumper to toggle the outtake gate
         if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
             manip.gateToggle(outtakeServoStatus);
             if (outtakeServoStatus == false){
