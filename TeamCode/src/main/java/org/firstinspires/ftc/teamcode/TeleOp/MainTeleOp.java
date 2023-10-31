@@ -22,7 +22,7 @@ public class MainTeleOp extends OpMode {
     RevColorSensorV3 cs;
     DistanceSensor ds;
     String moveType = "robot";
-
+    boolean outtakeServoStatus = false;
     double[] motorPower = {0, 0, 0, 0};
     double multiplier;
     public void init() {
@@ -141,6 +141,15 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.right_bumper){multiplier=0.5;}
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
+
+        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+            manip.gateToggle(outtakeServoStatus);
+            if (outtakeServoStatus == false){
+                outtakeServoStatus = true;
+            } else if(outtakeServoStatus){
+                outtakeServoStatus = false;
+            }
+        }
 
         //uses dpad controls up and down to control the climber/hanger
         if(move.isPressed("Gamepad2DPadUp", gamepad2.dpad_up)){
