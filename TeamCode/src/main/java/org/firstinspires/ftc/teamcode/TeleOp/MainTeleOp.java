@@ -38,7 +38,7 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop()
     {
-        //imu for field oriented drive
+        // imu for field oriented drive
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -143,9 +143,10 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
 
+        // driver 2 uses the left bumper to launch the drone in endgame
         if (move.isPressed("droneServo", gamepad2.left_bumper)) manip.droneLaunch();
 
-        //driver 2 uses right bumper to toggle the outtake gate
+        // driver 2 uses right bumper to toggle the outtake gate
         if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
             manip.gateToggle(outtakeServoStatus);
             if (outtakeServoStatus == false){
@@ -155,7 +156,7 @@ public class MainTeleOp extends OpMode {
             }
         }
 
-        //uses dpad controls up and down to control the climber/hanger
+        // uses dpad controls up and down to control the climber/hanger
         if(move.isPressed("Gamepad2DPadUp", gamepad2.dpad_up)){
             manip.climberLiftPower(1);
         } else if(move.isPressed("Gamepad2DPadDown", gamepad2.dpad_down)){
@@ -164,9 +165,9 @@ public class MainTeleOp extends OpMode {
             manip.climberLiftPower(0);
         }
 
-        //When receiving power from gamepad2 that is greater than a certain threshold
+        // When receiving power from gamepad2 that is greater than a certain threshold
         if (Math.abs(gamepad2.right_stick_y) > 0.1) {
-            //it will move the lift to the certain power that the right joystick set
+            // it will move the lift to the certain power that the right joystick set
             manip.moveLiftJoystickPower(gamepad2.right_stick_y);
         }
         else {
