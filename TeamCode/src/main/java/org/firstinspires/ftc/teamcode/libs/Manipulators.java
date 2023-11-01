@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.libs;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -10,28 +11,40 @@ import java.util.HashMap;
 public class Manipulators {
     HardwareMap robot;
     public Servo outtakeServo;
-    public Servo droneServo;
+
+    public DcMotor leftClimberMotor;
+    public DcMotor rightClimberMotor;
+    public DcMotor outtakeLift;
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public static double outtakeServoPos1 = 0.15;
     public static double outtakeServoPos2 = 0;
 
-    public static double droneServoPos1 = 0;
-
-    public static double droneServoPos2 = 0.1;
 
 
     public Manipulators(HardwareMap hardwareMap) {
         this.robot = hardwareMap;
 
-        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        //declaring climber/hanging motors
+        leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
+        rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
 
-        droneServo = hardwareMap.get(Servo.class, "droneServo");
+        //setting climber/hanging motor direction
+        leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightClimberMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        //setting break mode for climber/hanging motors
+        leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        outtakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
-    // when the method is called, the servo will switch positions and subsequently launch the drone
-    public void droneLaunch() {
-        droneServo.setPosition(droneServoPos2);
+    //Creating method for Lift outtake
+    public void moveLiftJoystickPower(double liftPower) {
+        //setting power to lift
+        outtakeLift.setPower(liftPower);
     }
 
     public void gateToggle(boolean outtakeServoStatus) {
@@ -41,4 +54,9 @@ public class Manipulators {
             outtakeServo.setPosition(outtakeServoPos2); //0
         }
     }
+
+    //sets power to control climber/hanging motors
+    public void climberLiftPower(double motorPower){
+        leftClimberMotor.setPower(motorPower);
+        rightClimberMotor.setPower(motorPower);}
 }

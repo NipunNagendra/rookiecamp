@@ -16,20 +16,20 @@ import org.firstinspires.ftc.teamcode.libs.Movement;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOp", group="TeleOp")
 public class MainTeleOp extends OpMode {
-    Manipulators manip;
     Movement move;
+
+    Manipulators manip;
     RevColorSensorV3 cs;
     DistanceSensor ds;
     String moveType = "robot";
-
+    boolean outtakeServoStatus = false;
     double[] motorPower = {0, 0, 0, 0};
     double multiplier;
     public void init() {
-        manip = new Manipulators(hardwareMap);
-        manip.droneServo.setPosition(180);
         move = new Movement(hardwareMap);
         cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         ds = hardwareMap.get(DistanceSensor.class, "ds");
+        manip = new Manipulators(hardwareMap);
         telemetry.addData("init", "completed");
         telemetry.update();
     }
@@ -142,7 +142,34 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
 
-        if (move.isPressed("droneServo", gamepad2.left_bumper)) manip.droneLaunch();
+        //driver 2 uses right bumper to toggle the outtake gate
+        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+            manip.gateToggle(outtakeServoStatus);
+            if (outtakeServoStatus == false){
+                outtakeServoStatus = true;
+            } else if(outtakeServoStatus){
+                outtakeServoStatus = false;
+            }
+        }
+
+        //uses dpad controls up and down to control the climber/hanger
+        if(move.isPressed("Gamepad2DPadUp", gamepad2.dpad_up)){
+            manip.climberLiftPower(1);
+        } else if(move.isPressed("Gamepad2DPadDown", gamepad2.dpad_down)){
+            manip.climberLiftPower(-1);
+        } else{
+            manip.climberLiftPower(0);
+        }
+
+        //When receiving power from gamepad2 that is greater than a certain threshold
+        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+            //it will move the lift to the certain power that the right joystick set
+            manip.moveLiftJoystickPower(gamepad2.right_stick_y);
+        }
+        else {
+            //
+            manip.moveLiftJoystickPower(0);
+        }
     }
 
 }
