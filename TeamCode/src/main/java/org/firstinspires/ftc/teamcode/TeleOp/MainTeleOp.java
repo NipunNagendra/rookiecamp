@@ -16,9 +16,8 @@ import org.firstinspires.ftc.teamcode.libs.Movement;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOp", group="TeleOp")
 public class MainTeleOp extends OpMode {
-    Movement move;
-
     Manipulators manip;
+    Movement move;
     RevColorSensorV3 cs;
     DistanceSensor ds;
     String moveType = "robot";
@@ -26,6 +25,8 @@ public class MainTeleOp extends OpMode {
     double[] motorPower = {0, 0, 0, 0};
     double multiplier;
     public void init() {
+        manip = new Manipulators(hardwareMap);
+        manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
         cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         ds = hardwareMap.get(DistanceSensor.class, "ds");
@@ -141,6 +142,8 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.right_bumper){multiplier=0.5;}
         if (gamepad1.left_bumper){multiplier=0.25;}
         move.setPowers(motorPower, multiplier);
+
+        if (move.isPressed("droneServo", gamepad2.left_bumper)) manip.droneLaunch();
 
         //driver 2 uses right bumper to toggle the outtake gate
         if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {

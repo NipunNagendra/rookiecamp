@@ -12,6 +12,8 @@ public class Manipulators {
     HardwareMap robot;
     public Servo outtakeServo;
 
+    public Servo droneServo;
+
     public DcMotor leftClimberMotor;
     public DcMotor rightClimberMotor;
     public DcMotor outtakeLift;
@@ -59,4 +61,8 @@ public class Manipulators {
     public void climberLiftPower(double motorPower){
         leftClimberMotor.setPower(motorPower);
         rightClimberMotor.setPower(motorPower);}
+
+    public void droneLaunch() {
+        droneServo.setPosition(0);
+    }
 }
