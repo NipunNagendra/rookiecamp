@@ -49,7 +49,9 @@ public class Manipulators {
         outtakeLift.setPower(liftPower);
     }
 
+    //Gate output toggle method
     public void gateToggle(boolean outtakeServoStatus) {
+        //Checking the status of the outtake servo
         if (outtakeServoStatus == false){
             outtakeServo.setPosition(outtakeServoPos1); //0.15
         } else if (outtakeServoStatus){
