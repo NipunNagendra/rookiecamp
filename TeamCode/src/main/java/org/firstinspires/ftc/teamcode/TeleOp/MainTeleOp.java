@@ -157,9 +157,9 @@ public class MainTeleOp extends OpMode {
         }
 
         // uses dpad controls up and down to control the climber/hanger
-        if(move.isPressed("Gamepad2DPadUp", gamepad2.dpad_up)){
+        if(move.isPressed("gamepad2DPadUp", gamepad2.dpad_up)){
             manip.climberLiftPower(1);
-        } else if(move.isPressed("Gamepad2DPadDown", gamepad2.dpad_down)){
+        } else if(move.isPressed("gamepad2DPadDown", gamepad2.dpad_down)){
             manip.climberLiftPower(-1);
         } else{
             manip.climberLiftPower(0);
@@ -168,11 +168,21 @@ public class MainTeleOp extends OpMode {
         // When receiving power from gamepad2 that is greater than a certain threshold
         if (Math.abs(gamepad2.right_stick_y) > 0.1) {
             // it will move the lift to the certain power that the right joystick set
-            manip.moveLiftJoystickPower(gamepad2.right_stick_y);
+            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
         }
         else {
             //
-            manip.moveLiftJoystickPower(0);
+            manip.setOuttakeLiftPower(0);
+        }
+
+        //uses right and left triggers to control lift
+        if (gamepad2.right_trigger > 0.1){
+            manip.setIntakePower(gamepad2.right_trigger);
+        } else if (gamepad2.left_trigger > 0.1){
+            //left trigger sets intake power in reverse
+            manip.setIntakePower(-1.0 * gamepad2.left_trigger);
+        } else {
+            manip.setIntakePower(0);
         }
     }
 

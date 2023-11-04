@@ -16,6 +16,9 @@ public class Manipulators {
 
     public DcMotor leftClimberMotor;
     public DcMotor rightClimberMotor;
+
+    public DcMotor intakeMotor;
+
     public DcMotor outtakeLift;
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public static double outtakeServoPos1 = 0.15;
@@ -39,12 +42,16 @@ public class Manipulators {
         rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+
         outtakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //declaring intake motor
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
     }
 
     // Creating method for Lift outtake
-    public void moveLiftJoystickPower(double liftPower) {
+    public void setOuttakeLiftPower(double liftPower) {
         // setting power to lift
         outtakeLift.setPower(liftPower);
     }
@@ -68,4 +75,6 @@ public class Manipulators {
     public void droneLaunch() {
         droneServo.setPosition(0);
     }
+
+    public void setIntakePower(double power){intakeMotor.setPower(power);}
 }
