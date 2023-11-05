@@ -16,25 +16,27 @@ public class NearBackdropUnderDoor extends LinearOpMode{
 
     enum State{
         IDLE,
-        INITIAL_MOVE,
-        MIDDLE_SPIKEMARK,
-        RIGHT_SPIKEMARK,
-        LEFT_SPIKEMARK,
+        SPIKEMARK,
+        SCORE_PURPLE,
         BACKDROP,
         STACK,
         PARK
     }
 
-    double startPoseX= 0;
-    double startPoseY= 0;
-    double startPoseAngle= 0;
+    double startPoseX = 0;
+    double startPoseY = 0;
+    double startPoseAngle = 0;
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, Math.toRadians(startPoseAngle));
     Pose2d posEstimate;
 
     //Add variables here
-    double initialPoseX = 0;
-    double initialPoseY = 0;
-    double initialPoseAngle = 0;
+    double spikemarkRightX = 0;
+    double spikemarkRightY = 0;
+    double spikemarkRightPoseAngle = 0;
+
+    double spikemarkLeftX = 0;
+    double spikemarkLeftY = 0;
+    double spikemarkLeftPoseAngle = 0;
 
     State currentState = State.IDLE;
 
@@ -44,9 +46,14 @@ public class NearBackdropUnderDoor extends LinearOpMode{
 
         telemetry.addLine("Init Done");
 //Add trajectories here
-        TrajectorySequence initialMove = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(initialPoseX,initialPoseY,initialPoseAngle))
+        TrajectorySequence spikemark = drive.trajectorySequenceBuilder(startPose)
+                //Right
+                .lineToLinearHeading(new Pose2d(spikemarkRightX,spikemarkRightY,spikemarkRightPoseAngle))
+
                 .build();
+
+
+
 
         telemetry.addLine("trajectories built!!!");
 
@@ -57,10 +64,10 @@ public class NearBackdropUnderDoor extends LinearOpMode{
 
             switch(currentState){
                 case IDLE:
-                    currentState = State.INITIAL_MOVE;
+                    currentState = State.SPIKEMARK;
 
-                case INITIAL_MOVE:
-                    drive.followTrajectorySequence(initialMove);
+                case SPIKEMARK:
+                    drive.followTrajectorySequence(spikemark);
                     currentState = State.IDLE;
                     break;
             }
