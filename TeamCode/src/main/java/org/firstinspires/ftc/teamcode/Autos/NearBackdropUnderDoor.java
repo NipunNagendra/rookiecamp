@@ -23,6 +23,8 @@ public class NearBackdropUnderDoor extends LinearOpMode {
         STOP
     }
 
+    // TODO: ENTER COORDINATES FOR ALL POSITIONS
+
     //coordinates for starting position (0, 0, 0)
     double startPoseX= 0;
     double startPoseY= 0;
