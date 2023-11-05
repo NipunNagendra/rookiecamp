@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
+import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
@@ -19,10 +20,9 @@ public class NearStackUnderDoor extends LinearOpMode {
         INTAKE_WHITE,
         SCORE_YELLOW,
         STACK,
-        PARK
+        PARK,
+        STOP
     }
-
-    int teamPropPosition = 1;
 
     double startPoseX= 0;
     double startPoseY= 0;
@@ -63,12 +63,17 @@ public class NearStackUnderDoor extends LinearOpMode {
     int backDrop3Y = 0;
     int backDrop3Angle = 0;
 
+    int parkX = 0;
+    int parkY = 0;
+    int parkAngle = 0;
+    int outtakeHeight = 0;
 
     State currentState = State.IDLE;
     @Override
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
+        BluePipeline vision =  new BluePipeline(telemetry);
 
         telemetry.addLine("Init Done");
 
@@ -107,6 +112,10 @@ public class NearStackUnderDoor extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(backDrop3X, backDrop3Y, backDrop3Angle))
                 .build();
 
+        TrajectorySequence park  = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(parkX, parkY, parkAngle))
+                .build();
+
         telemetry.addLine("trajectories built!!!");
 
         waitForStart();
@@ -120,9 +129,9 @@ public class NearStackUnderDoor extends LinearOpMode {
 
 
                 case SCORE_PURPLE:
-                    if(teamPropPosition == 1) {
+                    if(vision.getLocation() == BluePipeline.Location.LEFT) {
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if(teamPropPosition == 2){
+                    } else if(vision.getLocation() == BluePipeline.Location.FRONT){
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else{
                         drive.followTrajectorySequence(scorePurpleRight);
@@ -140,18 +149,30 @@ public class NearStackUnderDoor extends LinearOpMode {
                     sleep(2000);
                     manip.setIntakePower(0);
                     currentState = State.SCORE_YELLOW;
+                    break;
 
                 case SCORE_YELLOW:
-                    if(){
+                    if (vision.getLocation() == BluePipeline.Location.LEFT){
                         drive.followTrajectorySequence(whiteStackToBackDropLeft);
-                    } else if(teamPropPosition == 2){
+                    } else if (vision.getLocation() == BluePipeline.Location.FRONT) {
                         drive.followTrajectorySequence(whiteStackToBackDropMiddle);
                     } else{
-                        drive.followTrajectorySequence(whiteStackToBackDropRight);
+                        drive.followTrajectorySequence((whiteStackToBackDropRight));
                     }
+                    manip.moveOuttakeLift(outtakeHeight);
+                    manip.gateToggle(false);
+                    manip.gateToggle(true);
+                    manip.bottomOutLift();
+                    currentState = State.PARK;
+                    break;
 
+                case PARK:
+                    drive.followTrajectorySequence(park);
+                    currentState = State.STOP;
+                    break;
 
-
+                case STOP:
+                    break;
             }
         }
 

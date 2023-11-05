@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import java.util.HashMap;
 
@@ -19,12 +20,14 @@ public class Manipulators {
 
     public DcMotor intakeMotor;
 
-    public DcMotor outtakeLift;
+    public DcMotor outtakeLiftMotor;
+    double outtakeLiftTicks = 537.7;
+    double newOuttakeLiftTarget;
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public static double outtakeServoPos1 = 0.15;
     public static double outtakeServoPos2 = 0;
 
-
+    public TouchSensor liftTouchSensor;
 
     public Manipulators(HardwareMap hardwareMap) {
         this.robot = hardwareMap;
@@ -43,17 +46,20 @@ public class Manipulators {
 
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
-        outtakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLift");
+        outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+
+        liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
 
     }
 
     // Creating method for Lift outtake
     public void setOuttakeLiftPower(double liftPower) {
         // setting power to lift
-        outtakeLift.setPower(liftPower);
+        outtakeLiftMotor.setPower(liftPower);
     }
 
     //Gate output toggle method
@@ -77,4 +83,17 @@ public class Manipulators {
     }
 
     public void setIntakePower(double power){intakeMotor.setPower(power);}
+
+    public void moveOuttakeLift(int encoderTicks){
+        outtakeLiftMotor.setTargetPosition(encoderTicks);
+        outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        outtakeLiftMotor.setPower(0);
+    }
+
+    public void bottomOutLift(){
+        while(!liftTouchSensor.isPressed()){
+            outtakeLiftMotor.setPower(-.9);
+        }
+        outtakeLiftMotor.setPower(0);
+    }
 }
