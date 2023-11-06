@@ -11,21 +11,19 @@ import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "NearBackdropUnderDoor", group = "Autonomous")
-public class NearBackdropUnderDoor extends LinearOpMode {
+@Autonomous(name = "NearStackUnderDoor", group = "Autonomous")
+public class NearStackUnderDoor extends LinearOpMode {
 
     enum State{
         IDLE,
         SCORE_PURPLE,
-        SCORE_YELLOW,
         INTAKE_WHITE,
+        SCORE_YELLOW,
+        STACK,
         PARK,
         STOP
     }
 
-    // TODO: ENTER COORDINATES FOR ALL POSITIONS
-
-    //coordinates for starting position (0, 0, 0)
     double startPoseX= 0;
     double startPoseY= 0;
     double startPoseAngle= 0;
@@ -49,41 +47,25 @@ public class NearBackdropUnderDoor extends LinearOpMode {
     int spike3Y = 0;
     int spike3Angle = 0;
 
-    //coordinates for left backdrop position
-    int backDrop1X = 0;
-    int backDrop1Y = 0;
-    int backDrop1Angle = 0;
-
-    //coordinates for middle backdrop position
-    int backDrop2X = 0;
-    int backDrop2Y = 0;
-    int backDrop2Angle = 0;
-
-    //coordinates for right backdrop position
-    int backDrop3X = 0;
-    int backDrop3Y = 0;
-    int backDrop3Angle = 0;
-
-    //coordinates for door position
-    int doorX = 0;
-    int doorY = 0;
-    int doorAngle = 0;
-
-    //coordinates for white stack position
     int whiteStackX = 0;
     int whiteStackY = 0;
     int whiteStackAngle = 0;
 
-    //coordinates for position right before going closer to the wall for full park
-    int subParkX = 0;
-    int subParkY = 0;
-    int subParkAngle = 0;
+    int backDrop1X = 0;
+    int backDrop1Y = 0;
+    int backDrop1Angle = 0;
 
-    //coordinates for park position
+    int backDrop2X = 0;
+    int backDrop2Y = 0;
+    int backDrop2Angle = 0;
+
+    int backDrop3X = 0;
+    int backDrop3Y = 0;
+    int backDrop3Angle = 0;
+
     int parkX = 0;
     int parkY = 0;
     int parkAngle = 0;
-
     int outtakeHeight = 0;
 
     State currentState = State.IDLE;
@@ -111,47 +93,26 @@ public class NearBackdropUnderDoor extends LinearOpMode {
                 .build();
 
         //still need to enter values for these
-        TrajectorySequence purplePixelToBackDropLeft  = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(backDrop1X, backDrop1Y, backDrop1Angle))
-                .build();
-
-        //still need to enter values for these
-        TrajectorySequence purplePixelToBackDropMiddle  = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(backDrop2X , backDrop2Y, backDrop2Angle))
-                .build();
-
-        //still need to enter values for these
-        TrajectorySequence purplePixelToBackDropRight  = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(backDrop3X, backDrop3Y, backDrop3Angle))
-                .build();
-
-        //still need to enter values for these
-        TrajectorySequence backDropToStack =  drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(doorX, doorY, doorAngle))
+        TrajectorySequence spikeToStack =  drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(whiteStackX, whiteStackY, whiteStackAngle))
                 .build();
 
         //still need to enter values for these
-        TrajectorySequence stackToBackDropLeft =  drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(doorX, doorY, doorAngle))
+        TrajectorySequence whiteStackToBackDropLeft  = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(backDrop1X, backDrop1Y, backDrop1Angle))
                 .build();
 
         //still need to enter values for these
-        TrajectorySequence stackToBackDropMiddle =  drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(doorX, doorY, doorAngle))
-                .lineToLinearHeading(new Pose2d(backDrop2X, backDrop2Y, backDrop2Angle))
+        TrajectorySequence whiteStackToBackDropMiddle  = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(backDrop2X , backDrop2Y, backDrop2Angle))
                 .build();
 
         //still need to enter values for these
-        TrajectorySequence stackToBackDropRight =  drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(doorX, doorY, doorAngle))
+        TrajectorySequence whiteStackToBackDropRight  = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(backDrop3X, backDrop3Y, backDrop3Angle))
                 .build();
 
-        //still need to enter values for these
-        TrajectorySequence backDropToPark = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(subParkX, subParkY, subParkAngle))
+        TrajectorySequence park  = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(parkX, parkY, parkAngle))
                 .build();
 
@@ -166,46 +127,47 @@ public class NearBackdropUnderDoor extends LinearOpMode {
                 case IDLE:
                     currentState = State.SCORE_PURPLE;
 
+
                 case SCORE_PURPLE:
                     if(vision.getLocation() == BluePipeline.Location.LEFT) {
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if(vision.getLocation() == BluePipeline.Location.FRONT) {
+                    } else if(vision.getLocation() == BluePipeline.Location.FRONT){
                         drive.followTrajectorySequence(scorePurpleMiddle);
-                    } else {
+                    } else{
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     manip.setIntakePower(-0.2);
                     sleep(400);
                     manip.setIntakePower(0);
+                    currentState = State.INTAKE_WHITE;
+                    break;
+
+
+                case INTAKE_WHITE:
+                    drive.followTrajectorySequence(spikeToStack);
+                    manip.setIntakePower(.5);
+                    sleep(2000);
+                    manip.setIntakePower(0);
                     currentState = State.SCORE_YELLOW;
                     break;
 
                 case SCORE_YELLOW:
-                    if (vision.getLocation() == BluePipeline.Location.LEFT) {
-                        drive.followTrajectorySequence(purplePixelToBackDropLeft);
+                    if (vision.getLocation() == BluePipeline.Location.LEFT){
+                        drive.followTrajectorySequence(whiteStackToBackDropLeft);
                     } else if (vision.getLocation() == BluePipeline.Location.FRONT) {
-                        drive.followTrajectorySequence(purplePixelToBackDropMiddle);
-                    } else {
-                        drive.followTrajectorySequence(purplePixelToBackDropRight);
+                        drive.followTrajectorySequence(whiteStackToBackDropMiddle);
+                    } else{
+                        drive.followTrajectorySequence((whiteStackToBackDropRight));
                     }
                     manip.moveOuttakeLift(outtakeHeight);
                     manip.gateToggle(false);
-                    sleep(100);
                     manip.gateToggle(true);
                     manip.bottomOutLift();
                     currentState = State.PARK;
                     break;
 
-                case INTAKE_WHITE:
-                    drive.followTrajectorySequence(backDropToStack);
-                    manip.setIntakePower(.5);
-                    sleep(2000);
-                    manip.setIntakePower(0);
-                    currentState = State.PARK;
-                    break;
-
                 case PARK:
-                    drive.followTrajectorySequence(backDropToPark);
+                    drive.followTrajectorySequence(park);
                     currentState = State.STOP;
                     break;
 
