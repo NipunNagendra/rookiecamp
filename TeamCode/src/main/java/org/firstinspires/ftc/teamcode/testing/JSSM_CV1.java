@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -8,7 +10,9 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+@Config
 
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="JSSM_CV1", group="TeleOp")
 public class JSSM_CV1 extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
@@ -20,15 +24,32 @@ public class JSSM_CV1 extends OpenCvPipeline {
     }
     private Location location;
 
+    //Left rectangle coordinates
+    public static double left_x1 = 60;
+    public static double left_y1 = 35;
+    public static double left_x2 = 120;
+    public static double left_y2 = 75;
+    //Right rectangle coordinates
+    public static double right_x1 = 140;
+    public static double right_y1 = 35;
+    public static double right_x2 = 200;
+    public static double right_y2 = 75;
+    //Front rectangle coordinates
+    public static double front_x1 = 220;
+    public static double front_y1 = 35;
+    public static double front_x2 = 280;
+    public static double front_y2 = 75;
+
     static final Rect LEFT_ROI = new Rect(
-            new Point(60, 35),
-            new Point(120, 75));
+            new Point(left_x1, left_y1),
+            new Point(left_x2, left_y2));
      static final Rect RIGHT_ROI = new Rect(
-            new Point(140, 35),
-            new Point(200, 75));
+            new Point(right_x1, right_y1),
+            new Point(right_x2, right_y2));
     static final Rect FRONT_ROI = new Rect(
-            new Point(220, 35),
-            new Point(280, 75));
+            new Point(front_x1, front_y1),
+            new Point(front_x2, front_y2));
+
      static double PERCENT_COLOR_THRESHOLD = 0.4;
     public JSSM_CV1(Telemetry t) { telemetry = t; }
 
