@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.libs.Movement;
 public class MainTeleOp extends OpMode {
     Manipulators manip;
     Movement move;
-    RevColorSensorV3 cs;
-    DistanceSensor ds;
+    //RevColorSensorV3 cs;
+    //DistanceSensor ds;
     String moveType = "robot";
     boolean outtakeServoStatus = false;
     double[] motorPower = {0, 0, 0, 0};
@@ -28,8 +28,8 @@ public class MainTeleOp extends OpMode {
         manip = new Manipulators(hardwareMap);
         manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
-        cs = hardwareMap.get(RevColorSensorV3.class, "cs");
-        ds = hardwareMap.get(DistanceSensor.class, "ds");
+        //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
+        //ds = hardwareMap.get(DistanceSensor.class, "ds");
         manip = new Manipulators(hardwareMap);
         telemetry.addData("init", "completed");
         telemetry.update();
@@ -48,41 +48,41 @@ public class MainTeleOp extends OpMode {
         double leftY;
         double leftX;
         double rightX;
+//
+//        int red = cs.red();
+//        int green = cs.green();
+//        int blue = cs.blue();
+//
+//        float[] hsv = new float[3];
+//        Color.RGBToHSV(red,green,blue,hsv);
+//        float hue = hsv[0];
+//        String color;
+//
+//        if(hue>=190 && hue<=300){
+//            color="purple";
+//        }
+//        else if(hue>=105 && hue<=150 ){
+//            color="green";
+//        }
+//        else if(hue>=16 && hue<=100){
+//            color="yellow";
+//        }
+//        else{
+//            color="weird color";
+//        }
+//
+//        telemetry.addData("Red: ",cs.red());
+//        telemetry.addData("Green: ",cs.green());
+//        telemetry.addData("Blue: ",cs.blue());
+//        telemetry.addData("Hue", hue);
+//        telemetry.addLine(color);
+//        telemetry.addData("Distance(Cm)", ds.getDistance(DistanceUnit.CM));
+//        telemetry.addLine(moveType);
+//        telemetry.update();
 
-        int red = cs.red();
-        int green = cs.green();
-        int blue = cs.blue();
-
-        float[] hsv = new float[3];
-        Color.RGBToHSV(red,green,blue,hsv);
-        float hue = hsv[0];
-        String color;
-
-        if(hue>=190 && hue<=300){
-            color="purple";
-        }
-        else if(hue>=105 && hue<=150 ){
-            color="green";
-        }
-        else if(hue>=16 && hue<=100){
-            color="yellow";
-        }
-        else{
-            color="weird color";
-        }
-
-        telemetry.addData("Red: ",cs.red());
-        telemetry.addData("Green: ",cs.green());
-        telemetry.addData("Blue: ",cs.blue());
-        telemetry.addData("Hue", hue);
-        telemetry.addLine(color);
-        telemetry.addData("Distance(Cm)", ds.getDistance(DistanceUnit.CM));
-        telemetry.addLine(moveType);
-        telemetry.update();
-
-        if(ds.getDistance(DistanceUnit.CM)>=35 && ds.getDistance(DistanceUnit.CM)<=45){
-            gamepad1.rumble(1,1,100);
-        }
+//        if(ds.getDistance(DistanceUnit.CM)>=35 && ds.getDistance(DistanceUnit.CM)<=45){
+//            gamepad1.rumble(1,1,100);
+//        }
 
         if (gamepad1.options) {
             imu.resetYaw();
@@ -104,14 +104,14 @@ public class MainTeleOp extends OpMode {
         }
 
 
-        if (move.isColor("yellow", (color.equals("yellow")))){
-            gamepad2.setLedColor(255,191,0,100000);}
-        else if (move.isColor("purple", (color.equals("purple")))){
-            gamepad2.setLedColor(179,0,255,100000);
-        }
-        else if (move.isColor("green", (color.equals("green")))){
-            gamepad2.setLedColor(0,256,0,100000);
-        }
+//        if (move.isColor("yellow", (color.equals("yellow")))){
+//            gamepad2.setLedColor(255,191,0,100000);}
+//        else if (move.isColor("purple", (color.equals("purple")))){
+//            gamepad2.setLedColor(179,0,255,100000);
+//        }
+//        else if (move.isColor("green", (color.equals("green")))){
+//            gamepad2.setLedColor(0,256,0,100000);
+//        }
 
 
 
@@ -139,28 +139,28 @@ public class MainTeleOp extends OpMode {
                 motorPower = move.fieldDrive(0,0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
             }
         }
-        if (gamepad1.right_bumper){multiplier=0.5;}
-        if (gamepad1.left_bumper){multiplier=0.25;}
+        if (gamepad1.right_bumper){multiplier= 0.5;}
+        if (gamepad1.left_bumper){multiplier= 0.25;}
         move.setPowers(motorPower, multiplier);
 
         // driver 2 uses the left bumper to launch the drone in endgame
-        if (move.isPressed("droneServo", gamepad2.left_bumper)) manip.droneLaunch();
+        if (move.isPressed("droneServo", gamepad2.left_bumper)) manip.droneServo.setPosition(0.4);;
 
         // driver 2 uses right bumper to toggle the outtake gate
-        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-            manip.gateToggle(outtakeServoStatus);
-            if (outtakeServoStatus == false){
-                outtakeServoStatus = true;
-            } else if(outtakeServoStatus){
-                outtakeServoStatus = false;
-            }
-        }
+//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+//            manip.gateToggle(outtakeServoStatus);
+//            if (outtakeServoStatus == false){
+//                outtakeServoStatus = true;
+//            } else if(outtakeServoStatus){
+//                outtakeServoStatus = false;
+//            }
+//        }
 
         // uses dpad controls up and down to control the climber/hanger
-        if(move.isPressed("gamepad2DPadUp", gamepad2.dpad_up)){
-            manip.climberLiftPower(1);
-        } else if(move.isPressed("gamepad2DPadDown", gamepad2.dpad_down)){
-            manip.climberLiftPower(-1);
+        if(gamepad2.dpad_up){
+            manip.climberLiftPower(.5);
+        } else if(gamepad2.dpad_down){
+            manip.climberLiftPower(-.5);
         } else{
             manip.climberLiftPower(0);
         }

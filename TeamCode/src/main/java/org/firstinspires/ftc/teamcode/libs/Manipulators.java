@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.libs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -37,7 +38,7 @@ public class Manipulators {
         rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
 
         // setting climber/hanging motor direction
-        leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftClimberMotor.setDirection(DcMotor.Direction.REVERSE);
         rightClimberMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // setting break mode for climber/hanging motors
@@ -47,12 +48,15 @@ public class Manipulators {
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLift");
+        outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
         outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
+        //liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
+
+        droneServo = hardwareMap.get(Servo.class, "droneServo");
 
     }
 
@@ -63,14 +67,14 @@ public class Manipulators {
     }
 
     //Gate output toggle method
-    public void gateToggle(boolean outtakeServoStatus) {
-        //Checking the status of the outtake servo
-        if (outtakeServoStatus == false){
-            outtakeServo.setPosition(outtakeServoPos1); //0.15
-        } else if (outtakeServoStatus){
-            outtakeServo.setPosition(outtakeServoPos2); //0
-        }
-    }
+//    public void gateToggle(boolean outtakeServoStatus) {
+//        //Checking the status of the outtake servo
+//        if (outtakeServoStatus == false){
+//            outtakeServo.setPosition(outtakeServoPos1); //0.15
+//        } else if (outtakeServoStatus){
+//            outtakeServo.setPosition(outtakeServoPos2); //0
+//        }
+//    }
 
     // sets power to control climber/hanging motors
     public void climberLiftPower(double motorPower){
@@ -79,7 +83,7 @@ public class Manipulators {
 
     // changes the position of the servo to launch the drone
     public void droneLaunch() {
-        droneServo.setPosition(0);
+        droneServo.setPosition(.60);
     }
 
     public void setIntakePower(double power){intakeMotor.setPower(power);}
@@ -90,10 +94,10 @@ public class Manipulators {
         outtakeLiftMotor.setPower(0);
     }
 
-    public void bottomOutLift(){
-        while(!liftTouchSensor.isPressed()){
-            outtakeLiftMotor.setPower(-.9);
-        }
-        outtakeLiftMotor.setPower(0);
-    }
+//    public void bottomOutLift(){
+//        while(!liftTouchSensor.isPressed()){
+//            outtakeLiftMotor.setPower(-.9);
+//        }
+//        outtakeLiftMotor.setPower(0);
+//    }
 }
