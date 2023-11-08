@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
 import java.util.HashMap;
-
+@Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="RAMPE", group="TeleOp")
 public class RAMPE extends OpMode {
 
@@ -13,10 +14,10 @@ public class RAMPE extends OpMode {
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     double[] motorPower = {0, 0, 0, 0};
 
-    double FRM = .5;
-    double FLM = .5;
-    double BRM = .5;
-    double BLM = .5;
+    public static double FRM = .5;
+    public static double FLM = .5;
+    public static double BRM = .5;
+    public static double BLM = .5;
 
 
     double leftY;

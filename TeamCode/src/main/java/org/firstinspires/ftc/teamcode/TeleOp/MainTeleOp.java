@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import android.graphics.Color;
+import android.util.Pair;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -24,6 +25,8 @@ public class MainTeleOp extends OpMode {
     boolean outtakeServoStatus = false;
     double[] motorPower = {0, 0, 0, 0};
     double multiplier;
+    Pair<float[], String> hsv_color;
+
     public void init() {
         manip = new Manipulators(hardwareMap);
         manip.droneServo.setPosition(0.5);
@@ -31,6 +34,7 @@ public class MainTeleOp extends OpMode {
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         //ds = hardwareMap.get(DistanceSensor.class, "ds");
         manip = new Manipulators(hardwareMap);
+        gamepad1.setLedColor(0, 0, 256, 100000);
         telemetry.addData("init", "completed");
         telemetry.update();
     }
@@ -48,99 +52,55 @@ public class MainTeleOp extends OpMode {
         double leftY;
         double leftX;
         double rightX;
-//
-//        int red = cs.red();
-//        int green = cs.green();
-//        int blue = cs.blue();
-//
-//        float[] hsv = new float[3];
-//        Color.RGBToHSV(red,green,blue,hsv);
-//        float hue = hsv[0];
-//        String color;
-//
-//        if(hue>=190 && hue<=300){
-//            color="purple";
-//        }
-//        else if(hue>=105 && hue<=150 ){
-//            color="green";
-//        }
-//        else if(hue>=16 && hue<=100){
-//            color="yellow";
-//        }
-//        else{
-//            color="weird color";
-//        }
-//
-//        telemetry.addData("Red: ",cs.red());
-//        telemetry.addData("Green: ",cs.green());
-//        telemetry.addData("Blue: ",cs.blue());
-//        telemetry.addData("Hue", hue);
-//        telemetry.addLine(color);
-//        telemetry.addData("Distance(Cm)", ds.getDistance(DistanceUnit.CM));
-//        telemetry.addLine(moveType);
-//        telemetry.update();
 
-//        if(ds.getDistance(DistanceUnit.CM)>=35 && ds.getDistance(DistanceUnit.CM)<=45){
-//            gamepad1.rumble(1,1,100);
-//        }
+/* Color sensor code
+        if (manip.getNormalizedColor().second == "yellow" &&
+                manip.isColor(manip.getNormalizedColor().second)){
+            gamepad2.setLedColor(255, 191, 0, 100000);
+        } else if (manip.getNormalizedColor().second == "purple" &&
+                manip.isColor(manip.getNormalizedColor().second) ){
+            gamepad2.setLedColor(179, 0, 255, 100000);
+        } else if (manip.getNormalizedColor().second == "green" &&
+                manip.isColor(manip.getNormalizedColor().second)){
+            gamepad2.setLedColor(0, 256, 0, 100000);
+        }
+*/
 
         if (gamepad1.options) {
             imu.resetYaw();
         }
-
         if (move.isPressed("share", gamepad1.share)) {
-            if (moveType == "robot") {
-                moveType = "field";
-            }
-            else if(moveType == "field"){
-                moveType = "robot";
-            }
-        }
-        if (moveType == "robot") {
-            gamepad1.setLedColor(0,0,256,1000);
-        }
-        else if (moveType == "field"){
-            gamepad1.setLedColor(256,0,0,1000);
+            if (moveType == "robot") {moveType = "field"; gamepad1.setLedColor(0, 0, 256, 100000);}
+            else if (moveType == "field") {moveType = "robot"; gamepad1.setLedColor(256, 0, 0, 100000);}
         }
 
 
-//        if (move.isColor("yellow", (color.equals("yellow")))){
-//            gamepad2.setLedColor(255,191,0,100000);}
-//        else if (move.isColor("purple", (color.equals("purple")))){
-//            gamepad2.setLedColor(179,0,255,100000);
-//        }
-//        else if (move.isColor("green", (color.equals("green")))){
-//            gamepad2.setLedColor(0,256,0,100000);
-//        }
 
 
-
-
-        if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
-                Math.abs(gamepad1.left_stick_x)  > 0.1 ||
+        if (Math.abs(gamepad1.left_stick_y) > 0.1 ||
+                Math.abs(gamepad1.left_stick_x) > 0.1 ||
                 Math.abs(gamepad1.right_stick_x) > 0.1) {
 
             leftY = gamepad1.left_stick_y;
-            leftX = -1*(gamepad1.left_stick_x);
-            rightX = -1*(gamepad1.right_stick_x);
+            leftX = -1 * (gamepad1.left_stick_x);
+            rightX = -1 * (gamepad1.right_stick_x);
 
-            if(moveType=="robot") {
+            if (moveType == "robot") {
                 motorPower = move.holonomicDrive(leftX, leftY, rightX);
-            }
-            else if(moveType=="field"){
-                motorPower = move.fieldDrive(leftX,leftY, rightX, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-            }
-        }
-        else {
-            if(moveType=="robot") {
-                motorPower = move.holonomicDrive(0, 0, 0);
-            }
-            else if(moveType=="field"){
-                motorPower = move.fieldDrive(0,0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+            } else if (moveType == "field") {
+                motorPower = move.fieldDrive(leftX, leftY, rightX, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
             }
         }
-        if (gamepad1.right_bumper){multiplier= 0.5;}
-        if (gamepad1.left_bumper){multiplier= 0.25;}
+        else{
+            if (moveType == "robot") {motorPower = move.holonomicDrive(0, 0, 0);}
+
+            else if (moveType == "field") {motorPower = move.fieldDrive(0, 0, 0,
+                    imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));}
+        }
+
+        if (gamepad1.right_bumper) {multiplier = 0.5;}
+        if (gamepad1.left_bumper) {multiplier = 0.25;}
+
         move.setPowers(motorPower, multiplier);
 
         // driver 2 uses the left bumper to launch the drone in endgame

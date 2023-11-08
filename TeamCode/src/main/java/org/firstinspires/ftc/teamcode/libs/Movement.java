@@ -18,6 +18,11 @@ public class Movement {
     private DcMotor climberRight;
     private DcMotor inttakeMotor;
 
+    public final double FL_PROPORTION;
+    public final double FR_PROPORTION;
+    public final double BL_PROPORTION;
+    public final double BR_PROPORTION;
+
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
 
     public Movement(HardwareMap hardwareMap) {
@@ -38,6 +43,11 @@ public class Movement {
         FR.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.FORWARD);
         BR.setDirection(DcMotor.Direction.REVERSE);
+
+        FL_PROPORTION = 1;
+        FR_PROPORTION = 1;
+        BL_PROPORTION = 1;
+        BR_PROPORTION = 1;
     }
 
     public double[] holonomicDrive(double leftX, double leftY, double rightX) {
@@ -62,10 +72,10 @@ public class Movement {
 
     public void setPowers(double[] motorPower, double multiplier) {
 
-        FR.setPower(motorPower[0]*multiplier);
-        FL.setPower(motorPower[1]*multiplier);
-        BR.setPower(motorPower[2]*multiplier);
-        BL.setPower(motorPower[3]*multiplier);
+        FR.setPower(motorPower[0]*multiplier* FR_PROPORTION);
+        FL.setPower(motorPower[1]*multiplier* FL_PROPORTION);
+        BR.setPower(motorPower[2]*multiplier* BR_PROPORTION);
+        BL.setPower(motorPower[3]*multiplier* BL_PROPORTION);
     }
 
     public void setPowers(double fr, double fl, double br, double bl) {
@@ -75,6 +85,27 @@ public class Movement {
         BR.setPower(br);
         BL.setPower(bl);
     }
+
+    public void strafeRight(double power){
+        FR.setPower(-power);
+        FL.setPower(power);
+        BR.setPower(power);
+        BL.setPower(-power);
+    }
+    public void strafeLeft(double power){
+        FR.setPower(power);
+        FL.setPower(-power);
+        BR.setPower(-power);
+        BL.setPower(power);
+    }
+
+    public void kill(){
+        FR.setPower(0);
+        FL.setPower(0);
+        BR.setPower(0);
+        BL.setPower(0);
+    }
+
 
     public boolean isPressed(String name, boolean button){
         boolean output = false;
@@ -93,22 +124,5 @@ public class Movement {
 
         return output;
 }
-    public boolean isColor(String color, boolean state){
-        boolean output = false;
-
-        //If the hashmap doesn't already contain the key
-        if (!buttons.containsKey(color)) {
-            buttons.put(color, false);
-        }
-
-        boolean buttonWas = buttons.get(color);
-        if (state != buttonWas && state == true){
-            output = true;
-        }
-
-        buttons.put(color, state);
-
-        return output;
-    }
 }
 
