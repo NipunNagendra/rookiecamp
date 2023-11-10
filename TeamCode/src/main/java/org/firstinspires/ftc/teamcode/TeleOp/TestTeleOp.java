@@ -99,16 +99,6 @@ public class TestTeleOp extends OpMode {
         }
 
 
-        if (move.isColor("yellow", (color.equals("yellow")))){
-            gamepad2.setLedColor(255,191,0,100000);}
-        else if (move.isColor("purple", (color.equals("purple")))){
-            gamepad2.setLedColor(179,0,255,100000);
-        }
-        else if (move.isColor("green", (color.equals("green")))){
-            gamepad2.setLedColor(0,256,0,100000);
-        }
-
-
 
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||

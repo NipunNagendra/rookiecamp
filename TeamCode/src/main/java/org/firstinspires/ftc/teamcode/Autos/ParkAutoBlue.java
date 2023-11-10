@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
 @Config
-@Autonomous(name = "ParkAutoRight", group = "Autonomous")
+@Autonomous(name = "ParkAutoBlue", group = "Autonomous")
 
 public class ParkAutoBlue extends LinearOpMode{
     Movement move;

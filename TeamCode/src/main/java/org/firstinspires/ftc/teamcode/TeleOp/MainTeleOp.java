@@ -42,12 +42,6 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop()
     {
-        // imu for field oriented drive
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
-        ));
 
         double leftY;
         double leftX;
@@ -66,40 +60,30 @@ public class MainTeleOp extends OpMode {
         }
 */
 
-        if (gamepad1.options) {
-            imu.resetYaw();
-        }
-        if (move.isPressed("share", gamepad1.share)) {
-            if (moveType == "robot") {moveType = "field"; gamepad1.setLedColor(0, 0, 256, 100000);}
-            else if (moveType == "field") {moveType = "robot"; gamepad1.setLedColor(256, 0, 0, 100000);}
-        }
 
 
 
-
-        if (Math.abs(gamepad1.left_stick_y) > 0.1 ||
-                Math.abs(gamepad1.left_stick_x) > 0.1 ||
+        if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
+                Math.abs(gamepad1.left_stick_x)  > 0.1 ||
                 Math.abs(gamepad1.right_stick_x) > 0.1) {
 
-            leftY = gamepad1.left_stick_y;
-            leftX = -1 * (gamepad1.left_stick_x);
-            rightX = -1 * (gamepad1.right_stick_x);
+            leftY = gamepad1.left_stick_y/1.5;
+            leftX = -1*(gamepad1.left_stick_x);
+            rightX = (-gamepad1.right_stick_x)/1.5;
 
-            if (moveType == "robot") {
-                motorPower = move.holonomicDrive(leftX, leftY, rightX);
-            } else if (moveType == "field") {
-                motorPower = move.fieldDrive(leftX, leftY, rightX, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-            }
+            motorPower = move.holonomicDrive(leftX, leftY, rightX);
         }
-        else{
-            if (moveType == "robot") {motorPower = move.holonomicDrive(0, 0, 0);}
+        else {
+            motorPower = move.holonomicDrive(0, 0, 0);
+        }
 
-            else if (moveType == "field") {motorPower = move.fieldDrive(0, 0, 0,
-                    imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));}
-        }
+        move.setPowers(motorPower, multiplier);
+
+
 
         if (gamepad1.right_bumper) {multiplier = 0.5;}
-        if (gamepad1.left_bumper) {multiplier = 0.25;}
+        else if (gamepad1.left_bumper) {multiplier = 0.25;}
+        else{multiplier=1;}
 
         move.setPowers(motorPower, multiplier);
 

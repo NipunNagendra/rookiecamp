@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
 @Config
-@Autonomous(name = "ParkAutoRight", group = "Autonomous")
+@Autonomous(name = "ParkAutoRed", group = "Autonomous")
 
 public class ParkAutoRed extends LinearOpMode{
     Movement move;

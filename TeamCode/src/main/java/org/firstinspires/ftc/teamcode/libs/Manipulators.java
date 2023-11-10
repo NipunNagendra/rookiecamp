@@ -55,7 +55,7 @@ public class Manipulators {
 
         // setting climber/hanging motor direction
         leftClimberMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightClimberMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightClimberMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // setting break mode for climber/hanging/outtake motors
         leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -75,8 +75,8 @@ public class Manipulators {
         droneServo = hardwareMap.get(Servo.class, "droneServo");
 
         //Sensor Declaration
-        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
-        ds = hardwareMap.get(DistanceSensor.class, "ds");
+       // lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
+       // ds = hardwareMap.get(DistanceSensor.class, "ds");
     }
 
 
