@@ -51,7 +51,7 @@ public class Manipulators {
         // declaring climber/hanging motors
         leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
         rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
-        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         // setting climber/hanging motor direction
         leftClimberMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -61,7 +61,7 @@ public class Manipulators {
         leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLift");
         outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -72,7 +72,7 @@ public class Manipulators {
 
         //liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
 
-        droneServo = hardwareMap.get(Servo.class, "droneServo");
+        //droneServo = hardwareMap.get(Servo.class, "droneServo");
 
         //Sensor Declaration
        // lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");

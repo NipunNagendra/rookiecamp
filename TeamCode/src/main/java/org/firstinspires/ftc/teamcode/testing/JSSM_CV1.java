@@ -12,7 +12,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 @Config
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="JSSM_CV1", group="TeleOp")
 public class JSSM_CV1 extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();

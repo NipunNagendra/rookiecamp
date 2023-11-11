@@ -26,6 +26,7 @@ public class ParkAutoRed extends LinearOpMode{
             move.strafeRight(1);
             sleep(1000);
             move.kill();
+            break;
         }
 
     }}

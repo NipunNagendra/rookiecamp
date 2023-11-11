@@ -23,6 +23,7 @@ public class ParkAutoBlue extends LinearOpMode{
             move.strafeLeft(1);
             sleep(1000);
             move.kill();
+            break;
         }
 
     }}

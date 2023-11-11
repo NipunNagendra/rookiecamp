@@ -29,7 +29,6 @@ public class MainTeleOp extends OpMode {
 
     public void init() {
         manip = new Manipulators(hardwareMap);
-        manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         //ds = hardwareMap.get(DistanceSensor.class, "ds");
