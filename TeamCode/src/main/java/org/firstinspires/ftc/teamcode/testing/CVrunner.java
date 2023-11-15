@@ -20,14 +20,12 @@ import java.util.jar.Attributes;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="cvRunner-Nipun", group="TeleOp")
 public class CVrunner extends LinearOpMode {
 
-    private BluePipeline.Location location;
-
     OpenCvWebcam camera;
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        JSSM_CV1 detector = new JSSM_CV1(telemetry);
+        BluePipeline detector = new BluePipeline(telemetry);
         camera.setPipeline(detector);
         camera.setMillisecondsPermissionTimeout(5000);
 
@@ -53,14 +51,6 @@ public class CVrunner extends LinearOpMode {
 
         waitForStart();
 
-        switch(detector.getLocation()) {
-            case LEFT:
-                break;
-            case RIGHT:
-                break;
-            case NOT_FOUND:
-                break;
-        }
 
         camera.stopStreaming();
     }
