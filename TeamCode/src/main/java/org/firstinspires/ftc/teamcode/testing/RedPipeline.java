@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 @Config
 
-public class JSSM_CV1 extends OpenCvPipeline {
+public class RedPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
     public enum Location {
@@ -39,24 +39,33 @@ public class JSSM_CV1 extends OpenCvPipeline {
     public static double front_x2 = 280;
     public static double front_y2 = 75;
 
+    //HSV for Red
+    public static double lowerhue = 0;
+    public static double lowersat = 80;
+    public static double lowerval = 20;
+
+    public static double higherhue = 13;
+    public static double highersat = 255;
+    public static double higherval = 255;
+
     static final Rect LEFT_ROI = new Rect(
             new Point(left_x1, left_y1),
             new Point(left_x2, left_y2));
-     static final Rect RIGHT_ROI = new Rect(
+    static final Rect RIGHT_ROI = new Rect(
             new Point(right_x1, right_y1),
             new Point(right_x2, right_y2));
     static final Rect FRONT_ROI = new Rect(
             new Point(front_x1, front_y1),
             new Point(front_x2, front_y2));
 
-     static double PERCENT_COLOR_THRESHOLD = 0.4;
-    public JSSM_CV1(Telemetry t) { telemetry = t; }
+    static double PERCENT_COLOR_THRESHOLD = 0.4;
+    public RedPipeline(Telemetry t) { telemetry = t; }
 
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-        Scalar lowerHSV = new Scalar(23, 50, 70);
-        Scalar highHSV = new Scalar(32, 255, 255);
+        Scalar lowerHSV = new Scalar(lowerhue, lowersat, lowerval);
+        Scalar highHSV = new Scalar(higherhue, highersat, higherval);
 
         Core.inRange(mat, lowerHSV, highHSV, mat);
 
@@ -72,12 +81,12 @@ public class JSSM_CV1 extends OpenCvPipeline {
         right.release();
         front.release();
 
-        telemetry.addData("Left Raw Value", (int) Core.sumElems(left).val[0]);
+        /*telemetry.addData("Left Raw Value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Right Raw Value", (int) Core.sumElems(right).val[0]);
         telemetry.addData("Front Raw Value", (int) Core.sumElems(front).val[0]);
         telemetry.addData("Left Percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Right Percentage", Math.round(rightValue * 100) + "%");
-        telemetry.addData("Front Percentage", Math.round(frontValue * 100) + "%");
+        telemetry.addData("Front Percentage", Math.round(frontValue * 100) + "%");*/
 
         boolean pixelLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
@@ -85,22 +94,22 @@ public class JSSM_CV1 extends OpenCvPipeline {
 
         if (pixelLeft && pixelRight) {
             location = Location.NOT_FOUND;
-            telemetry.addData("Pixel Location", "not found");
+            //telemetry.addData("Pixel Location", "not found");
         }
 
         if (pixelLeft) {
             location = Location.RIGHT;
-            telemetry.addData("Pixel Location", "right");
+            //telemetry.addData("Pixel Location", "right");
         }
         if (pixelFront) {
             location = Location.FRONT;
-            telemetry.addData("Pixel Location", "front");
+            //telemetry.addData("Pixel Location", "front");
         }
-         else {
+        else {
             location = Location.LEFT;
-            telemetry.addData("Pixel Location", "left");
+            //telemetry.addData("Pixel Location", "left");
         }
-        telemetry.update();
+        //telemetry.update();
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 
