@@ -144,15 +144,15 @@ public class Manipulators {
         outtakeLiftMotor.setPower(liftPower);
     }
 
-    //Gate output toggle method
-//    public void gateToggle(boolean outtakeServoStatus) {
-//        //Checking the status of the outtake servo
-//        if (outtakeServoStatus == false){
-//            outtakeServo.setPosition(outtakeServoPos1); //0.15
-//        } else if (outtakeServoStatus){
-//            outtakeServo.setPosition(outtakeServoPos2); //0
-//        }
-//    }
+//    Gate output toggle method
+    public void gateToggle(boolean outtakeServoStatus) {
+        //Checking the status of the outtake servo
+        if (outtakeServoStatus == false){
+            outtakeServo.setPosition(outtakeServoPos1); //0.15
+        } else if (outtakeServoStatus){
+            outtakeServo.setPosition(outtakeServoPos2); //0
+        }
+    }
 
     // sets power to control climber/hanging motors
     public void climberLiftPower(double motorPower){
@@ -173,10 +173,10 @@ public class Manipulators {
         outtakeLiftMotor.setPower(0);
     }
 
-//    public void bottomOutLift(){
-//        while(!liftTouchSensor.isPressed()){
-//            outtakeLiftMotor.setPower(-.9);
-//        }
-//        outtakeLiftMotor.setPower(0);
-//    }
+    public void bottomOutLift(){
+        while(!liftTouchSensor.isPressed()){
+            outtakeLiftMotor.setPower(-.9);
+        }
+        outtakeLiftMotor.setPower(0);
+    }
 }
