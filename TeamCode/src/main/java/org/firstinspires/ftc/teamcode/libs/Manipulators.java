@@ -165,12 +165,18 @@ public class Manipulators {
     }
 
 
-    public void setIntakePower(double power){intakeMotor.setPower(power);}
+    public void setIntakePower(double power){
+        if (!beamBreakLower() && !beamBreakUpper()){
+            intakeMotor.setPower(power);}
+        else{
+            intakeMotor.setPower(-1);
+        }
+    }
 
-    public void moveOuttakeLift(int encoderTicks){
+    public void setOuttakePos(int encoderTicks){
         outtakeLiftMotor.setTargetPosition(encoderTicks);
         outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        outtakeLiftMotor.setPower(0);
+        outtakeLiftMotor.setPower(0.5);
     }
 
     public void bottomOutLift(){

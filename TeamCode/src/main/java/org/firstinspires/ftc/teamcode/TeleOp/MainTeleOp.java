@@ -46,7 +46,6 @@ public class MainTeleOp extends OpMode {
         double leftX;
         double rightX;
 
-/* Color sensor code
         if (manip.getNormalizedColor().second == "yellow" &&
                 manip.isColor(manip.getNormalizedColor().second)){
             gamepad2.setLedColor(255, 191, 0, 100000);
@@ -57,7 +56,7 @@ public class MainTeleOp extends OpMode {
                 manip.isColor(manip.getNormalizedColor().second)){
             gamepad2.setLedColor(0, 256, 0, 100000);
         }
-*/
+
 
 
 
@@ -118,7 +117,7 @@ public class MainTeleOp extends OpMode {
             manip.setOuttakeLiftPower(0);
         }
 
-        //uses right and left triggers to control lift
+        //uses right and left triggers to control INTAKE
         if (gamepad2.right_trigger > 0.1){
             manip.setIntakePower(gamepad2.right_trigger);
         } else if (gamepad2.left_trigger > 0.1){
