@@ -20,6 +20,7 @@ import java.util.HashMap;
 public class Manipulators {
     HardwareMap robot;
     public Servo outtakeServo;
+    public Servo outtakeClaw;
     public Servo droneServo;
     public DcMotor leftClimberMotor;
     public DcMotor rightClimberMotor;
@@ -33,6 +34,7 @@ public class Manipulators {
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public String officialColor;
 
+    //TODO: need to tune these values
     public static double outtakeServoPos1 = 0.15;
     public static double outtakeServoPos2 = 0;
 
@@ -51,7 +53,6 @@ public class Manipulators {
         // declaring climber/hanging motors
         leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
         rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
-        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         // setting climber/hanging motor direction
         leftClimberMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -61,7 +62,7 @@ public class Manipulators {
         leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLift");
         outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -70,30 +71,31 @@ public class Manipulators {
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        //liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
+        liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
 
-        //droneServo = hardwareMap.get(Servo.class, "droneServo");
+        droneServo = hardwareMap.get(Servo.class, "droneServo");
 
         //Sensor Declaration
-       // lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
-       // ds = hardwareMap.get(DistanceSensor.class, "ds");
+        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
+        ds = hardwareMap.get(DistanceSensor.class, "ds");
     }
 
 
-    public boolean isColor(String color){
+    public boolean isColor(String color) {
         boolean output = false;
 
         String colorWas = officialColor;
 
-        if (color != colorWas){
+        if (color != colorWas) {
             output = true;
-            officialColor=color;
+            officialColor = color;
         }
 
         return output;
     }
+
     //returned normalized colors for the upper color sensor, and the color it detects
-    public Pair<float[], String> getNormalizedColor(){
+    public Pair<float[], String> getNormalizedColor() {
         int red = upperCS.red();
         int green = upperCS.green();
         int blue = upperCS.blue();
@@ -113,26 +115,25 @@ public class Manipulators {
             color = "weird color";
         }
 
-        return new Pair<>(hsv,color);
+        return new Pair<>(hsv, color);
 
     }
 
-    public boolean beamBreakUpper(){
-        if (Math.abs(upperCS.getDistance(DistanceUnit.MM)-restDistance) /
-                restDistance>=sensorMarginalThreshold){
+    public boolean beamBreakUpper() {
+        if (Math.abs(upperCS.getDistance(DistanceUnit.MM) - restDistance) /
+                restDistance >= sensorMarginalThreshold) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
     }
-    public boolean beamBreakLower(){
-        if (Math.abs(lowerCS.getDistance(DistanceUnit.MM)-restDistance) /
-                restDistance>=sensorMarginalThreshold){
+
+    public boolean beamBreakLower() {
+        if (Math.abs(lowerCS.getDistance(DistanceUnit.MM) - restDistance) /
+                restDistance >= sensorMarginalThreshold) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -140,8 +141,11 @@ public class Manipulators {
 
     // Creating method for Lift outtake
     public void setOuttakeLiftPower(double liftPower) {
-        // setting power to lift
-        outtakeLiftMotor.setPower(liftPower);
+        if (liftTouchSensor.isPressed() && liftPower < 0) {
+            outtakeLiftMotor.setPower(0);
+        } else {
+            outtakeLiftMotor.setPower(liftPower);
+        }
     }
 
 //    Gate output toggle method
