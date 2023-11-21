@@ -46,6 +46,7 @@ public class MainTeleOp extends OpMode {
         double leftX;
         double rightX;
 
+
         if (manip.getNormalizedColor().second == "yellow" &&
                 manip.isColor(manip.getNormalizedColor().second)){
             gamepad2.setLedColor(255, 191, 0, 100000);
