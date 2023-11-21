@@ -20,7 +20,8 @@ import java.util.HashMap;
 public class Manipulators {
     HardwareMap robot;
     public Servo outtakeServo;
-    public Servo outtakeClaw;
+    public Servo intakeRightServo;
+    public Servo intakeLeftServo;
     public Servo droneServo;
     public DcMotor leftClimberMotor;
     public DcMotor rightClimberMotor;
@@ -34,9 +35,15 @@ public class Manipulators {
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public String officialColor;
 
-    //TODO: need to tune these values
     public static double outtakeServoPos1 = 0.15;
     public static double outtakeServoPos2 = 0;
+
+    //intake servo shi
+    public static double intakeServoPos1 = 0;
+    public static double intakeServoPos2 = 0;
+    public static double intakeServoPos3 = 0;
+    public static double intakeServoPos4 = 0;
+    public static double intakeServoPos5 = 0;
 
     //sensor shi
     public RevColorSensorV3 upperCS;
@@ -53,6 +60,7 @@ public class Manipulators {
         // declaring climber/hanging motors
         leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
         rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
+        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         // setting climber/hanging motor direction
         leftClimberMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -62,7 +70,7 @@ public class Manipulators {
         leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLift");
         outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -71,31 +79,30 @@ public class Manipulators {
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
+        //liftTouchSensor = hardwareMap.get(TouchSensor.class, "liftTouchSensor");
 
-        droneServo = hardwareMap.get(Servo.class, "droneServo");
+        //droneServo = hardwareMap.get(Servo.class, "droneServo");
 
         //Sensor Declaration
-        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
-        ds = hardwareMap.get(DistanceSensor.class, "ds");
+       // lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
+       // ds = hardwareMap.get(DistanceSensor.class, "ds");
     }
 
 
-    public boolean isColor(String color) {
+    public boolean isColor(String color){
         boolean output = false;
 
         String colorWas = officialColor;
 
-        if (color != colorWas) {
+        if (color != colorWas){
             output = true;
-            officialColor = color;
+            officialColor=color;
         }
 
         return output;
     }
-
     //returned normalized colors for the upper color sensor, and the color it detects
-    public Pair<float[], String> getNormalizedColor() {
+    public Pair<float[], String> getNormalizedColor(){
         int red = upperCS.red();
         int green = upperCS.green();
         int blue = upperCS.blue();
@@ -115,25 +122,26 @@ public class Manipulators {
             color = "weird color";
         }
 
-        return new Pair<>(hsv, color);
+        return new Pair<>(hsv,color);
 
     }
 
-    public boolean beamBreakUpper() {
-        if (Math.abs(upperCS.getDistance(DistanceUnit.MM) - restDistance) /
-                restDistance >= sensorMarginalThreshold) {
+    public boolean beamBreakUpper(){
+        if (Math.abs(upperCS.getDistance(DistanceUnit.MM)-restDistance) /
+                restDistance>=sensorMarginalThreshold){
             return true;
-        } else {
+        }
+        else {
             return false;
         }
 
     }
-
-    public boolean beamBreakLower() {
-        if (Math.abs(lowerCS.getDistance(DistanceUnit.MM) - restDistance) /
-                restDistance >= sensorMarginalThreshold) {
+    public boolean beamBreakLower(){
+        if (Math.abs(lowerCS.getDistance(DistanceUnit.MM)-restDistance) /
+                restDistance>=sensorMarginalThreshold){
             return true;
-        } else {
+        }
+        else {
             return false;
         }
 
@@ -141,11 +149,8 @@ public class Manipulators {
 
     // Creating method for Lift outtake
     public void setOuttakeLiftPower(double liftPower) {
-        if (liftTouchSensor.isPressed() && liftPower < 0) {
-            outtakeLiftMotor.setPower(0);
-        } else {
-            outtakeLiftMotor.setPower(liftPower);
-        }
+        // setting power to lift
+        outtakeLiftMotor.setPower(liftPower);
     }
 
 //    Gate output toggle method
@@ -158,6 +163,41 @@ public class Manipulators {
         }
     }
 
+
+    // Intake servo toggle method
+    public void intakeToggle(boolean intakeServoStatus) {
+        // intakeServoStatus = true -> down
+        // false -> up
+        if (intakeServoStatus == false) {
+            intakeRightServo.setPosition(intakeServoPos5);
+            intakeLeftServo.setPosition(intakeServoPos5);
+        } else if (intakeServoStatus) {
+            intakeRightServo.setPosition(intakeServoPos1);
+            intakeLeftServo.setPosition(intakeServoPos1);
+        }
+    }
+
+    // sets the intake servo to different positions based on the number of pixels/height of the stack
+    public void intakeServoHeights(int numOfPixels) {
+        if (numOfPixels == 1) {
+            intakeRightServo.setPosition(intakeServoPos1);
+            intakeLeftServo.setPosition(intakeServoPos1);
+        } else if (numOfPixels == 2) {
+            intakeRightServo.setPosition(intakeServoPos2);
+            intakeLeftServo.setPosition(intakeServoPos2);
+        } else if (numOfPixels == 3) {
+            intakeRightServo.setPosition(intakeServoPos3);
+            intakeLeftServo.setPosition(intakeServoPos3);
+        } else if (numOfPixels == 4) {
+            intakeRightServo.setPosition(intakeServoPos4);
+            intakeLeftServo.setPosition(intakeServoPos4);
+        } else if (numOfPixels == 5) {
+            intakeRightServo.setPosition(intakeServoPos5);
+            intakeLeftServo.setPosition(intakeServoPos5);
+        } else {
+            // invalid
+        }
+    }
     // sets power to control climber/hanging motors
     public void climberLiftPower(double motorPower){
         leftClimberMotor.setPower(motorPower);
@@ -169,18 +209,12 @@ public class Manipulators {
     }
 
 
-    public void setIntakePower(double power){
-        if (!beamBreakLower() && !beamBreakUpper()){
-            intakeMotor.setPower(power);}
-        else{
-            intakeMotor.setPower(-1);
-        }
-    }
+    public void setIntakePower(double power){intakeMotor.setPower(power);}
 
-    public void setOuttakePos(int encoderTicks){
+    public void moveOuttakeLift(int encoderTicks){
         outtakeLiftMotor.setTargetPosition(encoderTicks);
         outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        outtakeLiftMotor.setPower(0.5);
+        outtakeLiftMotor.setPower(0);
     }
 
     public void bottomOutLift(){
