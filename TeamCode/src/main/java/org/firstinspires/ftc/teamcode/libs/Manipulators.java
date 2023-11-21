@@ -76,6 +76,10 @@ public class Manipulators {
         outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
         outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // setting servos for right and left to hardware map
+        intakeRightServo = hardwareMap.get(Servo.class, "intakeRightServo");
+        intakeLeftServo = hardwareMap.get(Servo.class, "intakeLeftServo");
+
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
