@@ -29,6 +29,7 @@ public class MainTeleOp extends OpMode {
 
     public void init() {
         manip = new Manipulators(hardwareMap);
+        manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         //ds = hardwareMap.get(DistanceSensor.class, "ds");
@@ -41,12 +42,18 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop()
     {
+        // imu for field oriented drive
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+        ));
 
         double leftY;
         double leftX;
         double rightX;
 
-
+/* Color sensor code
         if (manip.getNormalizedColor().second == "yellow" &&
                 manip.isColor(manip.getNormalizedColor().second)){
             gamepad2.setLedColor(255, 191, 0, 100000);
@@ -57,32 +64,42 @@ public class MainTeleOp extends OpMode {
                 manip.isColor(manip.getNormalizedColor().second)){
             gamepad2.setLedColor(0, 256, 0, 100000);
         }
+*/
+
+        if (gamepad1.options) {
+            imu.resetYaw();
+        }
+        if (move.isPressed("share", gamepad1.share)) {
+            if (moveType == "robot") {moveType = "field"; gamepad1.setLedColor(0, 0, 256, 100000);}
+            else if (moveType == "field") {moveType = "robot"; gamepad1.setLedColor(256, 0, 0, 100000);}
+        }
 
 
 
 
-
-        if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
-                Math.abs(gamepad1.left_stick_x)  > 0.1 ||
+        if (Math.abs(gamepad1.left_stick_y) > 0.1 ||
+                Math.abs(gamepad1.left_stick_x) > 0.1 ||
                 Math.abs(gamepad1.right_stick_x) > 0.1) {
 
-            leftY = gamepad1.left_stick_y/1.5;
-            leftX = -1*(gamepad1.left_stick_x);
-            rightX = (-gamepad1.right_stick_x)/1.5;
+            leftY = gamepad1.left_stick_y;
+            leftX = -1 * (gamepad1.left_stick_x);
+            rightX = -1 * (gamepad1.right_stick_x);
 
-            motorPower = move.holonomicDrive(leftX, leftY, rightX);
+            if (moveType == "robot") {
+                motorPower = move.holonomicDrive(leftX, leftY, rightX);
+            } else if (moveType == "field") {
+                motorPower = move.fieldDrive(leftX, leftY, rightX, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+            }
         }
-        else {
-            motorPower = move.holonomicDrive(0, 0, 0);
+        else{
+            if (moveType == "robot") {motorPower = move.holonomicDrive(0, 0, 0);}
+
+            else if (moveType == "field") {motorPower = move.fieldDrive(0, 0, 0,
+                    imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));}
         }
-
-        move.setPowers(motorPower, multiplier);
-
-
 
         if (gamepad1.right_bumper) {multiplier = 0.5;}
-        else if (gamepad1.left_bumper) {multiplier = 0.25;}
-        else{multiplier=1;}
+        if (gamepad1.left_bumper) {multiplier = 0.25;}
 
         move.setPowers(motorPower, multiplier);
 
@@ -101,6 +118,14 @@ public class MainTeleOp extends OpMode {
 
 
 
+//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+//            manip.gateToggle(outtakeServoStatus);
+//            if (outtakeServoStatus == false){
+//                outtakeServoStatus = true;
+//            } else if(outtakeServoStatus){
+//                outtakeServoStatus = false;
+//            }
+//        }
         // uses dpad controls up and down to control the climber/hanger
         if(gamepad2.dpad_up){
             manip.climberLiftPower(.5);
@@ -120,7 +145,7 @@ public class MainTeleOp extends OpMode {
             manip.setOuttakeLiftPower(0);
         }
 
-        //uses right and left triggers to control INTAKE
+        //uses right and left triggers to control lift
         if (gamepad2.right_trigger > 0.1){
             manip.setIntakePower(gamepad2.right_trigger);
         } else if (gamepad2.left_trigger > 0.1){
