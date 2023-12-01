@@ -16,6 +16,7 @@ public class CVrunner extends LinearOpMode {
     OpenCvWebcam camera;
     @Override
     public void runOpMode() throws InterruptedException {
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         BluePipeline detector = new BluePipeline(telemetry);
@@ -47,4 +48,5 @@ public class CVrunner extends LinearOpMode {
 
         camera.stopStreaming();
     }
+
 }
