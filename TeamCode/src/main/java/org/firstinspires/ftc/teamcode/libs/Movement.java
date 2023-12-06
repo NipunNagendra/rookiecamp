@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.libs;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.HashMap;
@@ -39,10 +40,10 @@ public class Movement {
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //motors are reversed than what they shld be
-        FL.setDirection(DcMotor.Direction.FORWARD);
+        FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.FORWARD);
-        BR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.FORWARD);
 
         FL_PROPORTION = 1;
         FR_PROPORTION = 1;
