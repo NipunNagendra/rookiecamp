@@ -74,7 +74,7 @@ public class RedPipeline extends OpenCvPipeline {
 
 
         Core.inRange(mat, lowerHSV, highHSV, mat);
-        mat.inv();
+
 
         Mat left = mat.submat(LEFT_ROI);
         Mat right = mat.submat(RIGHT_ROI);
