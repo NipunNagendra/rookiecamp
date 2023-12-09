@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.libs;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.HashMap;

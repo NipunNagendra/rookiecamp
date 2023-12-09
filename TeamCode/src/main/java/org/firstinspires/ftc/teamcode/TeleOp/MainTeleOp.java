@@ -24,11 +24,12 @@ public class MainTeleOp extends OpMode {
     String moveType = "robot";
     boolean outtakeServoStatus = false;
     double[] motorPower = {0, 0, 0, 0};
-    double multiplier;
+    double multiplier = 1;
     Pair<float[], String> hsv_color;
 
     public void init() {
         manip = new Manipulators(hardwareMap);
+        //manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         //ds = hardwareMap.get(DistanceSensor.class, "ds");
@@ -41,44 +42,34 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop()
     {
+        // imu for field oriented drive
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP
+        ));
 
         double leftY;
         double leftX;
         double rightX;
 
 
-        if (manip.getNormalizedColor().second == "yellow" &&
-                manip.isColor(manip.getNormalizedColor().second)){
-            gamepad2.setLedColor(255, 191, 0, 100000);
-        } else if (manip.getNormalizedColor().second == "purple" &&
-                manip.isColor(manip.getNormalizedColor().second) ){
-            gamepad2.setLedColor(179, 0, 255, 100000);
-        } else if (manip.getNormalizedColor().second == "green" &&
-                manip.isColor(manip.getNormalizedColor().second)){
-            gamepad2.setLedColor(0, 256, 0, 100000);
+        if (gamepad1.options) {
+            imu.resetYaw();
         }
-
-
-
-
-
-        if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
-                Math.abs(gamepad1.left_stick_x)  > 0.1 ||
+        if (Math.abs(gamepad1.left_stick_y) > 0.1 ||
+                Math.abs(gamepad1.left_stick_x) > 0.1 ||
                 Math.abs(gamepad1.right_stick_x) > 0.1) {
 
-            leftY = gamepad1.left_stick_y/1.5;
-            leftX = -1*(gamepad1.left_stick_x);
-            rightX = (-gamepad1.right_stick_x)/1.5;
+            leftY = gamepad1.left_stick_y;
+            leftX = -1 * (gamepad1.left_stick_x);
+            rightX = -1 * (gamepad1.right_stick_x);
 
             motorPower = move.holonomicDrive(leftX, leftY, rightX);
         }
-        else {
+        else{
             motorPower = move.holonomicDrive(0, 0, 0);
         }
-
-        move.setPowers(motorPower, multiplier);
-
-
 
         if (gamepad1.right_bumper) {multiplier = 0.5;}
         else if (gamepad1.left_bumper) {multiplier = 0.25;}
@@ -86,21 +77,24 @@ public class MainTeleOp extends OpMode {
 
         move.setPowers(motorPower, multiplier);
 
-        // driver 2 uses the left bumper to launch the drone in endgame
-        if (move.isPressed("droneServo", gamepad2.left_bumper)) manip.droneServo.setPosition(0.4);;
 
         // driver 2 uses right bumper to toggle the outtake gate
         if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-            manip.gateToggle(outtakeServoStatus);
-            if (outtakeServoStatus == false){
-                outtakeServoStatus = true;
-            } else if(outtakeServoStatus){
-                outtakeServoStatus = false;
-            }
+            manip.gateToggle();
+        }
+        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
+            manip.gateToggle1();
         }
 
 
-
+//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+//            manip.gateToggle(outtakeServoStatus);
+//            if (outtakeServoStatus == false){
+//                outtakeServoStatus = true;
+//            } else if(outtakeServoStatus){
+//                outtakeServoStatus = false;
+//            }
+//        }
         // uses dpad controls up and down to control the climber/hanger
         if(gamepad2.dpad_up){
             manip.climberLiftPower(.5);
@@ -120,7 +114,7 @@ public class MainTeleOp extends OpMode {
             manip.setOuttakeLiftPower(0);
         }
 
-        //uses right and left triggers to control INTAKE
+        //uses right and left triggers to control lift
         if (gamepad2.right_trigger > 0.1){
             manip.setIntakePower(gamepad2.right_trigger);
         } else if (gamepad2.left_trigger > 0.1){
@@ -128,6 +122,15 @@ public class MainTeleOp extends OpMode {
             manip.setIntakePower(-1.0 * gamepad2.left_trigger);
         } else {
             manip.setIntakePower(0);
+        }
+
+        if (Math.abs(gamepad2.left_stick_y) > 0.1){
+            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
+            manip.intakeRightServo.setPower(gamepad2.left_stick_y);
+        }
+        else{
+            manip.intakeLeftServo.setPower(0);
+            manip.intakeRightServo.setPower(0);
         }
     }
 
