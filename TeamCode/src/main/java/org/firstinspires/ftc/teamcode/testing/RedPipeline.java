@@ -29,15 +29,15 @@ public class RedPipeline extends OpenCvPipeline {
     public static double left_x2 = 120;
     public static double left_y2 = 75;
     //Right rectangle coordinates
-    public static double right_x1 = 140;
-    public static double right_y1 = 35;
-    public static double right_x2 = 200;
-    public static double right_y2 = 75;
+    public static double right_x1 = 280;
+    public static double right_y1 = 70;
+    public static double right_x2 = 320;
+    public static double right_y2 = 130;
     //Front rectangle coordinates
-    public static double front_x1 = 220;
-    public static double front_y1 = 35;
-    public static double front_x2 = 280;
-    public static double front_y2 = 75;
+    public static double front_x1 = 110;
+    public static double front_y1 = 55;
+    public static double front_x2 = 170;
+    public static double front_y2 = 115;
 
     //HSV for Red
     public static double lowerhue = 0;
@@ -55,7 +55,7 @@ public class RedPipeline extends OpenCvPipeline {
             new Point(front_x1, front_y1),
             new Point(front_x2, front_y2));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.4;
+    static double PERCENT_COLOR_THRESHOLD = 0.2;
     public RedPipeline(Telemetry t) { telemetry = t; }
 
     @Override

@@ -27,11 +27,11 @@ public class BluePipeline extends OpenCvPipeline {
             new Point(60, 35),
             new Point(120, 75));
     static final Rect RIGHT_ROI = new Rect(
-            new Point(140, 35),
-            new Point(200, 75));
+            new Point(260, 70),
+            new Point(320, 130));
     static final Rect FRONT_ROI = new Rect(
-            new Point(220, 35),
-            new Point(280, 75));
+            new Point(110, 55),
+            new Point(170, 115));
     public static double PERCENT_COLOR_THRESHOLD = 0.4;
     public BluePipeline(Telemetry t) { telemetry = t; }
 
