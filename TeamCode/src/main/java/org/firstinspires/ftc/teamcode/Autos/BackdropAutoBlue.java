@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "NearBackdropUnderDoor", group = "Autonomous")
+@Autonomous(name = "BackdropAutoBlue", group = "Autonomous")
 public class BackdropAutoBlue extends LinearOpMode {
 
     enum State{
@@ -123,7 +123,8 @@ public class BackdropAutoBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence park = drive.trajectorySequenceBuilder(posEstimate)
-                .lineToC
+                .lineToLinearHeading(startPose)
+                .strafeLeft(18)
                 .build();
 
         telemetry.addLine("trajectories built!!!");
@@ -155,6 +156,7 @@ public class BackdropAutoBlue extends LinearOpMode {
                 case PARK:
                     posEstimate = drive.getPoseEstimate();
                     drive.followTrajectorySequence(park);
+                    manip.gateToggle();
                     currentState = State.STOP;
                     break;
 

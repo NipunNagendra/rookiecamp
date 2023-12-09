@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "PurpleScore", group = "Autonomous")
+@Autonomous(name = "StackAutoRed", group = "Autonomous")
 public class StackAutoRed extends LinearOpMode {
 
     enum State{
