@@ -52,34 +52,24 @@ public class BluePipeline extends OpenCvPipeline {
 
         Core.inRange(mat, lowerBlueHSV, highBlueHSV, mat);
 
-        Mat left = mat.submat(LEFT_ROI);
         Mat right = mat.submat(RIGHT_ROI);
         Mat front = mat.submat(FRONT_ROI);
 
-        double leftValue = Core.sumElems(left).val[0] / LEFT_ROI.area() / 255;
         double rightValue = Core.sumElems(right).val[0] / RIGHT_ROI.area() / 255;
         double frontValue = Core.sumElems(front).val[0] / FRONT_ROI.area() / 255;
 
-        left.release();
         right.release();
         front.release();
 
-        telemetry.addData("Left Raw Value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Right Raw Value", (int) Core.sumElems(right).val[0]);
         telemetry.addData("Front Raw Value", (int) Core.sumElems(front).val[0]);
-        telemetry.addData("Left Percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Right Percentage", Math.round(rightValue * 100) + "%");
         telemetry.addData("Front Percentage", Math.round(frontValue * 100) + "%");
 
-        boolean pixelLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelFront = frontValue > PERCENT_COLOR_THRESHOLD;
 
-        if (pixelLeft && pixelRight || pixelLeft && pixelFront || pixelRight && pixelFront) {
-            location = Location.NOT_FOUND;
-            telemetry.addData("Pixel Location", "not found");
-        }
-        else if (pixelRight) {
+        if (pixelRight) {
             location = Location.RIGHT;
             telemetry.addData("Pixel Location", "right");
         }
@@ -87,10 +77,11 @@ public class BluePipeline extends OpenCvPipeline {
             location = Location.FRONT;
             telemetry.addData("Pixel Location", "front");
         }
-        else {
+        else{
             location = Location.LEFT;
             telemetry.addData("Pixel Location", "left");
         }
+
         telemetry.update();
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
@@ -99,7 +90,6 @@ public class BluePipeline extends OpenCvPipeline {
         Scalar detected = new Scalar(0, 255, 0);
 
 
-        Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? detected:undetected);
         Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? detected:undetected);
         Imgproc.rectangle(mat, FRONT_ROI, location == Location.FRONT? detected:undetected);
 

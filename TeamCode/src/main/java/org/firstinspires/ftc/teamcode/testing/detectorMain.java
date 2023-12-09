@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.testing;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -9,18 +10,24 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-@Autonomous(name="JSSM Detector", group="Auto")
-public class JSSM_AutoMode extends LinearOpMode {
+@Config
+@Autonomous(name="detectorMain", group="Auto")
+public class detectorMain extends LinearOpMode {
     OpenCvWebcam camera;
+    public static double color = 1;
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         RedPipeline detectRed = new RedPipeline(telemetry);
-        camera.setPipeline(detectRed);
+        BluePipeline detectBlue = new BluePipeline(telemetry);
+        if (color==1){
+            camera.setPipeline(detectRed);
+        }
+        else if (color==2) {
+            camera.setPipeline(detectBlue);
+        }
         camera.setMillisecondsPermissionTimeout(5000);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

@@ -55,10 +55,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 2.222222;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -105,10 +105,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "BR");
         rightFront = hardwareMap.get(DcMotorEx.class, "FR");
 
-        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
