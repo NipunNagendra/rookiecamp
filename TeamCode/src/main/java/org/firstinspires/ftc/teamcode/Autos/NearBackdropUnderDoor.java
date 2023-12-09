@@ -203,9 +203,9 @@ public class NearBackdropUnderDoor extends LinearOpMode {
                         drive.followTrajectorySequence(purplePixelToBackDropRight);
                     }
                     manip.moveOuttakeLift(outtakeHeight);
-                    manip.gateToggle(false);
+                    //manip.gateToggle(false);
                     sleep(100);
-                    manip.gateToggle(true);
+                    //manip.gateToggle(true);
                     manip.bottomOutLift();
                     currentState = State.PARK;
                     break;

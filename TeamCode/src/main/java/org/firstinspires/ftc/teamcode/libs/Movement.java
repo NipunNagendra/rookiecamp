@@ -40,10 +40,10 @@ public class Movement {
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //motors are reversed than what they shld be
-        FL.setDirection(DcMotor.Direction.REVERSE);
+        FL.setDirection(DcMotor.Direction.FORWARD);
         FR.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.FORWARD);
-        BR.setDirection(DcMotor.Direction.FORWARD);
+        BR.setDirection(DcMotor.Direction.REVERSE);
 
         FL_PROPORTION = 1;
         FR_PROPORTION = 1;

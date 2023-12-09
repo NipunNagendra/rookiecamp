@@ -9,13 +9,11 @@ import org.firstinspires.ftc.teamcode.libs.Movement;
 public class TeleOpStripped extends OpMode {
 
     Movement move;
-    Manipulators manip;
 
     double[] motorPower = {0, 0, 0, 0};
 
     public void init() {
         move = new Movement(hardwareMap);
-        manip = new Manipulators(hardwareMap);
 
         telemetry.addData("init", "completed");
         telemetry.update();

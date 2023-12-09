@@ -39,7 +39,7 @@ public class NipunCV extends OpenCvPipeline{
             Scalar lowHSV = new Scalar(23, 50, 70);
             Scalar highHSV = new Scalar(32, 255, 255);
 
-            Core.inRange(mat, lowHSV, highHSV, mat);
+            mat.inv();
 
             Mat left = mat.submat(LEFT_ROI);
             Mat front = mat.submat(FRONT_ROI);
