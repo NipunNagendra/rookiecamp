@@ -32,7 +32,7 @@ public class BluePipeline extends OpenCvPipeline {
     static final Rect FRONT_ROI = new Rect(
             new Point(110, 55),
             new Point(170, 115));
-    public static double PERCENT_COLOR_THRESHOLD = 0.4;
+    public static double PERCENT_COLOR_THRESHOLD = 0.05;
     public BluePipeline(Telemetry t) { telemetry = t; }
 
     public static double lh;
@@ -69,13 +69,24 @@ public class BluePipeline extends OpenCvPipeline {
         boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelFront = frontValue > PERCENT_COLOR_THRESHOLD;
 
-        if (pixelRight) {
-            location = Location.RIGHT;
-            telemetry.addData("Pixel Location", "right");
+        if (pixelRight && pixelFront) {
+            if(rightValue>=frontValue){
+                telemetry.addData("Pixel Location", "right");
+                location = Location.RIGHT;
+            }
+            else{
+                telemetry.addData("Pixel Location", "front");
+                location = Location.FRONT;
+            }
+
         }
         else if (pixelFront) {
             location = Location.FRONT;
             telemetry.addData("Pixel Location", "front");
+        }
+        else if(pixelRight){
+            telemetry.addData("Pixel Location", "right");
+            location = Location.RIGHT;
         }
         else{
             location = Location.LEFT;

@@ -1,14 +1,22 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
+import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.opencv.core.Mat;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
 @Autonomous(name = "BackdropAutoRed", group = "Autonomous")
@@ -96,66 +104,127 @@ public class BackdropAutoRed extends LinearOpMode {
 
     // stores the result of Vision locally
 
-    public static BluePipeline.Location positionOfVisionPixel;
+    public static RedPipeline.Location positionOfVisionPixel;
+
+    public static double casePos;
 
     State currentState = State.IDLE;
+
+    OpenCvWebcam camera;
     @Override
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
-        BluePipeline vision =  new BluePipeline(telemetry);
+        RedPipeline vision =  new RedPipeline(telemetry);
 
         telemetry.addLine("Init Done");
         drive.setPoseEstimate(startPose);
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
                 .build();
 
-        TrajectorySequence park = drive.trajectorySequenceBuilder(posEstimate)
+        TrajectorySequence park1 = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
                 .lineToLinearHeading(startPose)
                 .strafeRight(18)
                 .build();
 
+        TrajectorySequence park2 = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
+                .lineToLinearHeading(startPose)
+                .strafeRight(18)
+                .build();
+
+        TrajectorySequence park3 = drive.trajectorySequenceBuilder(scorePurpleRight.end())
+                .lineToLinearHeading(startPose)
+                .strafeRight(36)
+                .build();
         telemetry.addLine("trajectories built!!!");
+        telemetry.addData("cpos", vision.getLocation());
+        telemetry.update();
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        RedPipeline detectRed = new RedPipeline(telemetry);
+        camera.setPipeline(detectRed);
+
+        camera.setMillisecondsPermissionTimeout(5000);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+
+                camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+
+
+            }
+        });
+
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         waitForStart();
+
+
+        camera.stopStreaming();
+
+        waitForStart();
+
+
+        camera.stopStreaming();
 
         while(!isStopRequested() && opModeIsActive()){
             posEstimate = drive.getPoseEstimate();
 
             switch(currentState){
                 case IDLE:
-                    currentState = State.SCORE_PURPLE;
+                    currentState = BackdropAutoRed.State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    positionOfVisionPixel = vision.getLocation();
-                    if (positionOfVisionPixel == BluePipeline.Location.LEFT) {
+                    if (RedPipeline.positionMain == "left") {
+                        telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (positionOfVisionPixel == BluePipeline.Location.FRONT) {
+                    } else if (RedPipeline.positionMain == "middle") {
+                        telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
+                        telemetry.addLine("goingright");
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
-                    manip.setIntakePower(-0.2);
-                    sleep(400);
+                    telemetry.update();
+                    manip.setIntakePower(-0.6);
+                    sleep(3500);
                     manip.setIntakePower(0);
                     currentState = State.PARK;
                     break;
 
                 case PARK:
-                    posEstimate = drive.getPoseEstimate();
-                    drive.followTrajectorySequence(park);
+                    if (casePos==1) {
+                        drive.followTrajectorySequence(park1);
+                    } else if (casePos==2) {
+                        drive.followTrajectorySequence(park2);
+                    } else {
+                        drive.followTrajectorySequence(park3);
+                    }
                     manip.gateToggle();
                     currentState = State.STOP;
                     break;

@@ -1,14 +1,21 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
+import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
 @Autonomous(name = "StackAutoRed", group = "Autonomous")
@@ -56,13 +63,21 @@ public class StackAutoRed extends LinearOpMode {
 
     public static double casenum=1;
 
+    public static RedPipeline.Location positionOfVisionPixel;
+
 
     State currentState = State.IDLE;
+
+
+    OpenCvWebcam camera;
+    public static double color = 1;
+
     @Override
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
-        BluePipeline vision =  new BluePipeline(telemetry);
+        RedPipeline vision =  new RedPipeline(telemetry);
+
 
         telemetry.addLine("Init Done");
 
@@ -70,23 +85,58 @@ public class StackAutoRed extends LinearOpMode {
 
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
                 .build();
 
         telemetry.addLine("trajectories built!!!");
 
+        telemetry.addData("cpos", vision.getLocation());
+        telemetry.update();
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        RedPipeline detectRed = new RedPipeline(telemetry);
+        camera.setPipeline(detectRed);
+
+        camera.setMillisecondsPermissionTimeout(5000);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+
+                camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+
+
+            }
+        });
+
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
+
         waitForStart();
 
+
+        camera.stopStreaming();
 
         while(!isStopRequested() && opModeIsActive()){
             posEstimate = drive.getPoseEstimate();
@@ -96,15 +146,19 @@ public class StackAutoRed extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    if (casenum == 1) {
+                    if (RedPipeline.positionMain == "left") {
+                        telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (casenum == 2) {
+                    } else if (RedPipeline.positionMain == "middle") {
+                        telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
+                        telemetry.addLine("goingright");
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
+                    telemetry.update();
                     manip.setIntakePower(-0.6);
-                    sleep(2500);
+                    sleep(3500);
                     manip.setIntakePower(0);
                     currentState = State.STOP;
                     break;

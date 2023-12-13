@@ -15,6 +15,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class RedPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
+
+    public static String positionMain = "middle";
+
     public enum Location {
         LEFT,
         RIGHT,
@@ -55,7 +58,7 @@ public class RedPipeline extends OpenCvPipeline {
             new Point(front_x1, front_y1),
             new Point(front_x2, front_y2));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.2;
+    static double PERCENT_COLOR_THRESHOLD = 0.3;
     public RedPipeline(Telemetry t) { telemetry = t; }
 
     @Override
@@ -85,19 +88,37 @@ public class RedPipeline extends OpenCvPipeline {
         boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelFront = frontValue > PERCENT_COLOR_THRESHOLD;
 
-        if (pixelRight) {
-            location = Location.RIGHT;
-            //telemetry.addData("Pixel Location", "not found");
-        }
 
+        if (pixelRight && pixelFront) {
+            if(rightValue>=frontValue){
+                positionMain = "right";
+                telemetry.addData("Pixel Location", "right");
+                location = RedPipeline.Location.RIGHT;
+            }
+            else{
+                positionMain = "middle";
+                telemetry.addData("Pixel Location", "front");
+                location = RedPipeline.Location.FRONT;
+            }
+
+        }
         else if (pixelFront) {
-            location = Location.FRONT;
-            //telemetry.addData("Pixel Location", "right");
+            positionMain = "middle";
+            location = RedPipeline.Location.FRONT;
+            telemetry.addData("Pixel Location", "front");
         }
-        else {
-            location = Location.LEFT;
-            //telemetry.addData("Pixel Location", "left");
+        else if(pixelRight){
+            positionMain = "right";
+            telemetry.addData("Pixel Location", "right");
+            location = RedPipeline.Location.RIGHT;
         }
+        else{
+            positionMain = "left";
+            location = RedPipeline.Location.LEFT;
+            telemetry.addData("Pixel Location", "left");
+        }
+        telemetry.update();
+
         //telemetry.update();
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);

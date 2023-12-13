@@ -54,8 +54,7 @@ public class StackAutoBlue extends LinearOpMode {
     public static double spike3Y = -13.9349;
     public static double spike3Angle = Math.toRadians(270);
 
-    public static double casenum=1;
-
+    public static BluePipeline.Location positionOfVisionPixel;
 
     State currentState = State.IDLE;
     @Override
@@ -70,21 +69,25 @@ public class StackAutoBlue extends LinearOpMode {
 
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
+                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
                 .build();
 
         telemetry.addLine("trajectories built!!!");
-
+        telemetry.addData("cpos", vision.getLocation());
+        telemetry.update();
         waitForStart();
 
 
@@ -93,18 +96,19 @@ public class StackAutoBlue extends LinearOpMode {
 
             switch(currentState){
                 case IDLE:
+                    positionOfVisionPixel = vision.getLocation();
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    if (casenum == 1) {
+                    if (positionOfVisionPixel == BluePipeline.Location.LEFT) {
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (casenum == 2) {
+                    } else if (positionOfVisionPixel == BluePipeline.Location.FRONT) {
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
-                    manip.setIntakePower(-0.6);
-                    sleep(2500);
+                    manip.setIntakePower(-1);
+                    sleep(1600);
                     manip.setIntakePower(0);
                     currentState = State.STOP;
                     break;
