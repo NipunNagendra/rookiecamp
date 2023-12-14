@@ -59,7 +59,7 @@ public class Movement {
         motorpowers[3] = leftY - leftX + rightX;
         return motorpowers;
     }
-
+//motor[]: fl,fr,bl,br
     public double[] fieldDrive(double leftX, double leftY, double rightX, double imu) {
         double botHeading = imu;
         double rotX = leftX * Math.cos(-botHeading) - leftY * Math.sin(-botHeading);
@@ -68,15 +68,18 @@ public class Movement {
         rotX = rotX * 1.1;
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rightX), 1);
 
-        return new double[]{(rotY - rotX - rightX) / denominator, (rotY + rotX + rightX) / denominator, (rotY + rotX - rightX) / denominator, (rotY - rotX + rightX) / denominator};
+        return new double[]{(rotY + rotX + rightX) / denominator,
+                (rotY - rotX - rightX) / denominator,
+                (rotY - rotX + rightX) / denominator,
+                (rotY + rotX - rightX) / denominator};
     }
 
     public void setPowers(double[] motorPower, double multiplier) {
 
-        FR.setPower(motorPower[0]*multiplier* FR_PROPORTION);
-        FL.setPower(motorPower[1]*multiplier* FL_PROPORTION);
-        BR.setPower(motorPower[2]*multiplier* BR_PROPORTION);
-        BL.setPower(motorPower[3]*multiplier* BL_PROPORTION);
+        FL.setPower(motorPower[0]*multiplier* FL_PROPORTION);
+        FR.setPower(motorPower[1]*multiplier* FR_PROPORTION);
+        BL.setPower(motorPower[2]*multiplier* BL_PROPORTION);
+        BR.setPower(motorPower[3]*multiplier* BR_PROPORTION);
     }
 
     public void setPowers(double fr, double fl, double br, double bl) {
