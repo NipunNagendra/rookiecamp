@@ -73,7 +73,7 @@ public class Manipulators {
         leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLift");
         outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);

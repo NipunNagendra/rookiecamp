@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.libs;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.HashMap;
 
@@ -26,8 +30,15 @@ public class Movement {
 
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
 
+    public static Vector2d input;
+
+    public static double dir;
+
+    SampleMecanumDrive drive;
+
     public Movement(HardwareMap hardwareMap) {
         this.robot = hardwareMap;
+        drive = new SampleMecanumDrive(hardwareMap);
 
         FL = robot.get(DcMotor.class, "FL");
         FR = robot.get(DcMotor.class, "FR");
@@ -49,6 +60,8 @@ public class Movement {
         FR_PROPORTION = 1;
         BL_PROPORTION = 1;
         BR_PROPORTION = 1;
+
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public double[] holonomicDrive(double leftX, double leftY, double rightX) {
@@ -60,18 +73,35 @@ public class Movement {
         return motorpowers;
     }
 //motor[]: fl,fr,bl,br
-    public double[] fieldDrive(double leftX, double leftY, double rightX, double imu) {
-        double botHeading = imu;
-        double rotX = leftX * Math.cos(-botHeading) - leftY * Math.sin(-botHeading);
-        double rotY = leftX * Math.sin(-botHeading) + leftY * Math.cos(-botHeading);
+//    public double[] fieldDrive(double leftX, double leftY, double rightX, double imu) {
+//        double botHeading = imu;
+//        double rotX = leftX * Math.cos(-botHeading) - leftY * Math.sin(-botHeading);
+//        double rotY = leftX * Math.sin(-botHeading) + leftY * Math.cos(-botHeading);
+//
+//        rotX = rotX * 1.1;
+//        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rightX), 1);
+//
+//        return new double[]{(rotY + rotX + rightX) / denominator,
+//                (rotY - rotX - rightX) / denominator,
+//                (rotY - rotX + rightX) / denominator,
+//                (rotY + rotX - rightX) / denominator};
+//    }
+    public void fieldDrive(double leftX, double leftY, double rightX, double imu) {
+        input = new Vector2d(
+                leftY,
+                leftX
+        ).rotated(imu);
 
-        rotX = rotX * 1.1;
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rightX), 1);
 
-        return new double[]{(rotY + rotX + rightX) / denominator,
-                (rotY - rotX - rightX) / denominator,
-                (rotY - rotX + rightX) / denominator,
-                (rotY + rotX - rightX) / denominator};
+        drive.setWeightedDrivePower(
+                new Pose2d(
+                        input.getX(),
+                        input.getY(),
+                        rightX
+                        //make this imu to lock in
+                )
+        );
+
     }
 
     public void setPowers(double[] motorPower, double multiplier) {

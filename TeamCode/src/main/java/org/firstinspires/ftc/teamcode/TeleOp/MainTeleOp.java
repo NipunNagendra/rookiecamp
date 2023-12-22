@@ -78,13 +78,14 @@ public class MainTeleOp extends OpMode {
         move.setPowers(motorPower, multiplier);
 
 
-        // driver 2 uses right bumper to toggle the outtake gate
-        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-            manip.gateToggle();
-        }
-        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
-            manip.gateToggle1();
-        }
+
+//        // driver 2 uses right bumper to toggle the outtake gate
+//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+//            manip.gateToggle();
+//        }
+//        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
+//            manip.gateToggle1();
+//        }
 
 
 //        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
@@ -104,15 +105,15 @@ public class MainTeleOp extends OpMode {
             manip.climberLiftPower(0);
         }
 
-        // When receiving power from gamepad2 that is greater than a certain threshold
-        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
-            // it will move the lift to the certain power that the right joystick set
-            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
-        }
-        else {
-            //
-            manip.setOuttakeLiftPower(0);
-        }
+//        // When receiving power from gamepad2 that is greater than a certain threshold
+//        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+//            // it will move the lift to the certain power that the right joystick set
+//            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
+//        }
+//        else {
+//            //
+//            manip.setOuttakeLiftPower(0);
+//        }
 
         //uses right and left triggers to control lift
         if (gamepad2.right_trigger > 0.1){

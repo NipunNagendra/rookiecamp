@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import static com.sun.tools.doclint.Entity.pi;
+
 import android.util.Pair;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -14,7 +16,6 @@ import org.firstinspires.ftc.teamcode.libs.Movement;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpField", group="TeleOp")
 public class MainTeleOpField extends OpMode {
-    Manipulators manip;
     Movement move;
     //RevColorSensorV3 cs;
     //DistanceSensor ds;
@@ -26,22 +27,23 @@ public class MainTeleOpField extends OpMode {
 
     IMU imu;
 
+    public static double heading;
 
     public void init() {
-        manip = new Manipulators(hardwareMap);
+        //manip = new Manipulators(hardwareMap);
         //manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         //ds = hardwareMap.get(DistanceSensor.class, "ds");
-        manip = new Manipulators(hardwareMap);
         gamepad1.setLedColor(0, 0, 256, 100000);
         telemetry.addData("init", "completed");
         telemetry.update();
         // imu for field oriented drive
         imu = hardwareMap.get(IMU.class, "imu");
+        //TODO: Change for acc roibot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
         ));
         imu.initialize(parameters);
         imu.resetYaw();
@@ -60,48 +62,59 @@ public class MainTeleOpField extends OpMode {
         if (move.isPressed("options1",gamepad1.options)) {
             imu.resetYaw();
         }
-        if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
-                Math.abs(gamepad1.left_stick_x)  > 0.1 ||
-                Math.abs(gamepad1.right_stick_x) > 0.1) {
 
-            leftY = gamepad1.left_stick_y;
-            leftX = -(gamepad1.left_stick_x);
-            rightX = -(gamepad1.right_stick_x);
 
-            motorPower = move.fieldDrive(leftX,leftY, rightX, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else if (gamepad1.dpad_up) {
-            motorPower = move.fieldDrive(0, -1, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else if (gamepad1.dpad_down) {
-            motorPower = move.fieldDrive(0, 1, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else if (gamepad1.dpad_right) {
-            motorPower = move.fieldDrive(-1, 0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else if (gamepad1.dpad_left) {
-            motorPower = move.fieldDrive(1, 0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else {
-             motorPower = move.fieldDrive(0,0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
 
         if (gamepad1.right_bumper) {multiplier = 0.5;}
         else if (gamepad1.left_bumper) {multiplier = 0.25;}
         else{multiplier=1;}
 
+        if (gamepad1.x) {
+            heading = Math.toRadians(90) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        }
+        else{
+            heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        }
 
-        move.setPowers(motorPower, multiplier);
-        telemetry.addData("imu:",  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
+                Math.abs(gamepad1.left_stick_x)  > 0.1 ||
+                Math.abs(gamepad1.right_stick_x) > 0.1) {
+
+            leftY = gamepad1.left_stick_y*multiplier;
+            leftX = (gamepad1.left_stick_x*multiplier);
+            rightX = -(gamepad1.right_stick_x*multiplier);
+
+
+            move.fieldDrive(leftX, leftY, rightX, heading);
+
+
+        }
+        else if (gamepad1.dpad_up) {
+            move.fieldDrive(0, -1, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        }
+        else if (gamepad1.dpad_down) {
+            move.fieldDrive(0, 1, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        }
+        else if (gamepad1.dpad_right) {
+            move.fieldDrive(-1, 0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        }
+        else if (gamepad1.dpad_left) {
+            move.fieldDrive(1, 0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        }
+        else {
+            move.fieldDrive(0,0, 0, heading);
+        }
+
+        telemetry.addData("imu:",  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         telemetry.update();
-
-        // driver 2 uses right bumper to toggle the outtake gate
-        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-            manip.gateToggle();
-        }
-        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
-            manip.gateToggle1();
-        }
+//
+//        // driver 2 uses right bumper to toggle the outtake gate
+//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+//            manip.gateToggle();
+//        }
+//        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
+//            manip.gateToggle1();
+//        }
 
 
 //        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
@@ -113,42 +126,42 @@ public class MainTeleOpField extends OpMode {
 //            }
 //        }
         // uses dpad controls up and down to control the climber/hanger
-        if(gamepad2.dpad_up){
-            manip.climberLiftPower(.5);
-        } else if(gamepad2.dpad_down){
-            manip.climberLiftPower(-.5);
-        } else{
-            manip.climberLiftPower(0);
-        }
+//        if(gamepad2.dpad_up){
+//            manip.climberLiftPower(.5);
+//        } else if(gamepad2.dpad_down){
+//            manip.climberLiftPower(-.5);
+//        } else{
+//            manip.climberLiftPower(0);
+//        }
+//
+//        // When receiving power from gamepad2 that is greater than a certain threshold
+//        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+//            // it will move the lift to the certain power that the right joystick set
+//            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
+//        }
+//        else {
+//            //
+//            manip.setOuttakeLiftPower(0);
+//        }
+//
+//        //uses right and left triggers to control lift
+//        if (gamepad2.right_trigger > 0.1){
+//            manip.setIntakePower(gamepad2.right_trigger);
+//        } else if (gamepad2.left_trigger > 0.1){
+//            //left trigger sets intake power in reverse
+//            manip.setIntakePower(-1.0 * gamepad2.left_trigger);
+//        } else {
+//            manip.setIntakePower(0);
+//        }
+//
+//        if (Math.abs(gamepad2.left_stick_y) > 0.1){
+//            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
+//            manip.intakeRightServo.setPower(gamepad2.left_stick_y);
+//        }
+//        else{
+//            manip.intakeLeftServo.setPower(0);
+//            manip.intakeRightServo.setPower(0);
+//        }
+//    }
 
-        // When receiving power from gamepad2 that is greater than a certain threshold
-        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
-            // it will move the lift to the certain power that the right joystick set
-            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
-        }
-        else {
-            //
-            manip.setOuttakeLiftPower(0);
-        }
-
-        //uses right and left triggers to control lift
-        if (gamepad2.right_trigger > 0.1){
-            manip.setIntakePower(gamepad2.right_trigger);
-        } else if (gamepad2.left_trigger > 0.1){
-            //left trigger sets intake power in reverse
-            manip.setIntakePower(-1.0 * gamepad2.left_trigger);
-        } else {
-            manip.setIntakePower(0);
-        }
-
-        if (Math.abs(gamepad2.left_stick_y) > 0.1){
-            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
-            manip.intakeRightServo.setPower(gamepad2.left_stick_y);
-        }
-        else{
-            manip.intakeLeftServo.setPower(0);
-            manip.intakeRightServo.setPower(0);
-        }
-    }
-
-}
+}}
