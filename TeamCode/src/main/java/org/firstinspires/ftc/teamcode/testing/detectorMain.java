@@ -15,18 +15,22 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name="detectorMain", group="Auto")
 public class detectorMain extends LinearOpMode {
     OpenCvWebcam camera;
-    public static double color = 1;
+    public static double color = 3;
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         RedPipeline detectRed = new RedPipeline(telemetry);
         BluePipeline detectBlue = new BluePipeline(telemetry);
+        RobotDetectionPipeline detectRobot = new RobotDetectionPipeline(telemetry);
         if (color==1){
             camera.setPipeline(detectRed);
         }
         else if (color==2) {
             camera.setPipeline(detectBlue);
+        }
+        else if (color == 3) {
+            camera.setPipeline(detectRobot);
         }
         camera.setMillisecondsPermissionTimeout(5000);
 

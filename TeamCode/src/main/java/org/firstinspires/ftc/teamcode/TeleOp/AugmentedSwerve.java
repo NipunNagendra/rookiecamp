@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
 
@@ -31,9 +34,15 @@ public class AugmentedSwerve extends OpMode {
         // imu for field oriented drive
         imu = hardwareMap.get(IMU.class, "imu");
         //TODO: Change for acc roibot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(new Orientation(
+                AxesReference.INTRINSIC,
+                AxesOrder.ZXY,
+                AngleUnit.DEGREES,
+                -90,
+                90,
+                -33,
+                0
+        )
         ));
         imu.initialize(parameters);
         imu.resetYaw();

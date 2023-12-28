@@ -10,7 +10,10 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
@@ -44,9 +47,16 @@ public class MainTeleOp extends OpMode {
     {
         // imu for field oriented drive
         IMU imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot( new Orientation(
+                AxesReference.INTRINSIC,
+                AxesOrder.ZXY,
+                AngleUnit.DEGREES,
+                -90,
+                90,
+                -33,
+                0
+        )
+
         ));
 
         double leftY;
@@ -105,15 +115,15 @@ public class MainTeleOp extends OpMode {
             manip.climberLiftPower(0);
         }
 
-//        // When receiving power from gamepad2 that is greater than a certain threshold
-//        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
-//            // it will move the lift to the certain power that the right joystick set
-//            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
-//        }
-//        else {
-//            //
-//            manip.setOuttakeLiftPower(0);
-//        }
+        // When receiving power from gamepad2 that is greater than a certain threshold
+        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+            // it will move the lift to the certain power that the right joystick set
+            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
+        }
+        else {
+            //
+            manip.setOuttakeLiftPower(0);
+        }
 
         //uses right and left triggers to control lift
         if (gamepad2.right_trigger > 0.1){

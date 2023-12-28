@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 
@@ -41,9 +44,15 @@ public class MainTeleOpField extends OpMode {
         // imu for field oriented drive
         imu = hardwareMap.get(IMU.class, "imu");
         //TODO: Change for acc roibot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(new Orientation(
+                AxesReference.INTRINSIC,
+                AxesOrder.ZXY,
+                AngleUnit.DEGREES,
+                -90,
+                90,
+                -33,
+                0
+        )
         ));
         imu.initialize(parameters);
         imu.resetYaw();
@@ -69,12 +78,7 @@ public class MainTeleOpField extends OpMode {
         else if (gamepad1.left_bumper) {multiplier = 0.25;}
         else{multiplier=1;}
 
-        if (gamepad1.x) {
-            heading = Math.toRadians(90) + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        }
-        else{
-            heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        }
+        heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||
@@ -84,12 +88,15 @@ public class MainTeleOpField extends OpMode {
             leftX = (gamepad1.left_stick_x*multiplier);
             rightX = -(gamepad1.right_stick_x*multiplier);
 
-
             move.fieldDrive(leftX, leftY, rightX, heading);
 
 
-        }
-        else if (gamepad1.dpad_up) {
+        } else if (gamepad1.x) {
+            leftY = gamepad1.left_stick_y*multiplier;
+            leftX = (gamepad1.left_stick_x*multiplier);
+            rightX = -(gamepad1.right_stick_x*multiplier);
+            move.lockIn(leftX,leftY,rightX,heading,-3.14159265/2);
+        } else if (gamepad1.dpad_up) {
             move.fieldDrive(0, -1, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         }
         else if (gamepad1.dpad_down) {
@@ -115,6 +122,10 @@ public class MainTeleOpField extends OpMode {
 //        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
 //            manip.gateToggle1();
 //        }
+
+        if (gamepad1.y) {
+            
+        }
 
 
 //        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
