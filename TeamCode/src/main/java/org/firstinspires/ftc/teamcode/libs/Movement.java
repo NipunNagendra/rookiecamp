@@ -35,7 +35,7 @@ public class Movement {
 
     public static double dir;
 
-    SampleMecanumDrive drive;
+    public SampleMecanumDrive drive;
 
     double rotValue;
 
@@ -89,18 +89,18 @@ public class Movement {
 //                (rotY - rotX + rightX) / denominator,
 //                (rotY + rotX - rightX) / denominator};
 //    }
-    public void fieldDrive(double leftX, double leftY, double rightX, double imu) {
+    public void fieldDrive(double leftX, double leftY, double rightX, double imu, double targetAngle) {
         input = new Vector2d(
                 leftY,
                 leftX
-        ).rotated(imu);
+        ).rotated(-imu);
 
 
         drive.setWeightedDrivePower(
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        rightX
+                        rightX+targetAngle
                         //make this imu to lock in
                 )
         );
@@ -135,14 +135,14 @@ public class Movement {
         input = new Vector2d(
                 leftY,
                 leftX
-        ).rotated(imu);
-
+        ).rotated(-imu);
+        double angleError = angleDifferenceCalc(imu, lockAngle);
 
         drive.setWeightedDrivePower(
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        angleDifferenceCalc(imu,lockAngle)
+                        imu
                         //make this imu to lock in
                 )
         );

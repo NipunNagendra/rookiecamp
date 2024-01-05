@@ -4,6 +4,7 @@ import static com.sun.tools.doclint.Entity.pi;
 
 import android.util.Pair;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -32,6 +33,9 @@ public class MainTeleOpField extends OpMode {
 
     public static double heading;
 
+    public static double targetAngle;
+
+    public static String lockStatus;
     public void init() {
         //manip = new Manipulators(hardwareMap);
         //manip.droneServo.setPosition(0.5);
@@ -56,6 +60,8 @@ public class MainTeleOpField extends OpMode {
         ));
         imu.initialize(parameters);
         imu.resetYaw();
+        lockStatus = "unlocked";
+
     }
 
     @Override
@@ -78,41 +84,40 @@ public class MainTeleOpField extends OpMode {
         else if (gamepad1.left_bumper) {multiplier = 0.25;}
         else{multiplier=1;}
 
-        heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        heading = move.drive.getExternalHeading();
+
+        if (gamepad1.right_stick_x > 0.1) {
+            targetAngle = 0;
+        }
+        else if(gamepad1.x){
+            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI/2);
+        }
+        else if(gamepad1.y){
+            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
+        }
+        else if(gamepad1.a){
+            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI);
+        }
+        else if(gamepad1.b){
+            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
+        }
+
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||
                 Math.abs(gamepad1.right_stick_x) > 0.1) {
 
-            leftY = gamepad1.left_stick_y*multiplier;
-            leftX = (gamepad1.left_stick_x*multiplier);
-            rightX = -(gamepad1.right_stick_x*multiplier);
+            leftY = gamepad1.left_stick_y * multiplier;
+            leftX = (gamepad1.left_stick_x * multiplier);
+            rightX = (gamepad1.right_stick_x * multiplier);
 
-            move.fieldDrive(leftX, leftY, rightX, heading);
-
-
-        } else if (gamepad1.x) {
-            leftY = gamepad1.left_stick_y*multiplier;
-            leftX = (gamepad1.left_stick_x*multiplier);
-            rightX = -(gamepad1.right_stick_x*multiplier);
-            move.lockIn(leftX,leftY,rightX,heading,-3.14159265/2);
-        } else if (gamepad1.dpad_up) {
-            move.fieldDrive(0, -1, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else if (gamepad1.dpad_down) {
-            move.fieldDrive(0, 1, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else if (gamepad1.dpad_right) {
-            move.fieldDrive(-1, 0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
-        else if (gamepad1.dpad_left) {
-            move.fieldDrive(1, 0, 0, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+            move.fieldDrive(leftX, leftY, rightX, heading, targetAngle);
         }
         else {
-            move.fieldDrive(0,0, 0, heading);
+            move.fieldDrive(0,0, 0, heading, targetAngle);
         }
 
-        telemetry.addData("imu:",  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        telemetry.addData("imu:",  heading);
         telemetry.update();
 //
 //        // driver 2 uses right bumper to toggle the outtake gate
