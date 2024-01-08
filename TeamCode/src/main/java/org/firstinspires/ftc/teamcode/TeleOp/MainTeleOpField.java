@@ -48,6 +48,8 @@ public class MainTeleOpField extends OpMode {
         // imu for field oriented drive
         imu = hardwareMap.get(IMU.class, "imu");
         //TODO: Change for acc roibot
+
+        // season bot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(new Orientation(
                 AxesReference.INTRINSIC,
                 AxesOrder.ZXY,
@@ -58,6 +60,13 @@ public class MainTeleOpField extends OpMode {
                 0
         )
         ));
+
+        // trollbot
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
+//        ));
+
         imu.initialize(parameters);
         imu.resetYaw();
         lockStatus = "unlocked";
@@ -86,22 +95,63 @@ public class MainTeleOpField extends OpMode {
 
         heading = move.drive.getExternalHeading();
 
-        if (gamepad1.right_stick_x > 0.1) {
+//        if (gamepad1.right_stick_x > 0.1) {
+//            targetAngle = 0;
+//        }
+//        else if(gamepad1.x){
+//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI/2);
+//        }
+//        else if(gamepad1.y){
+//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
+//        }
+//        else if(gamepad1.a){
+//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI);
+//        }
+//        else if(gamepad1.b){
+//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
+//        }
+
+        if (gamepad1.right_stick_x > 0.01) {
             targetAngle = 0;
+            lockStatus = "unlocked";
         }
-        else if(gamepad1.x){
-            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI/2);
+        else if(move.isPressed("x", gamepad1.x)) {
+            if (lockStatus == "left") lockStatus = "unlocked";
+            else lockStatus = "left";
         }
-        else if(gamepad1.y){
-            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
+        else if(move.isPressed("y", gamepad1.y)) {
+            if (lockStatus == "up") lockStatus = "unlocked";
+            else lockStatus = "up";
         }
-        else if(gamepad1.a){
-            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI);
+        else if(move.isPressed("a", gamepad1.a)){
+            if (lockStatus == "down") lockStatus = "unlocked";
+            else lockStatus = "down";
         }
-        else if(gamepad1.b){
-            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
+        else if(move.isPressed("b", gamepad1.b)){
+            if (lockStatus == "right") lockStatus = "unlocked";
+            else lockStatus = "right";
         }
 
+        if (lockStatus == "unlocked")
+            targetAngle = 0;
+        else if (lockStatus == "left")
+            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (-Math.PI/2);
+        else if (lockStatus == "up")
+            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
+        else if (lockStatus == "down") {
+            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            if (targetAngle > 0)
+                targetAngle -= Math.PI;
+            else
+                targetAngle += Math.PI;
+        }
+        else if (lockStatus == "right")
+            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
+
+
+        telemetry.addData("lockStatus: ", lockStatus);
+        telemetry.addData("targetAngle: ", targetAngle);
+        telemetry.update();
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||
@@ -127,10 +177,6 @@ public class MainTeleOpField extends OpMode {
 //        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
 //            manip.gateToggle1();
 //        }
-
-        if (gamepad1.y) {
-            
-        }
 
 
 //        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
