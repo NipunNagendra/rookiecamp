@@ -66,7 +66,7 @@ public class Manipulators {
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         // setting climber/hanging motor direction
-        leftClimberMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
         rightClimberMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // setting break mode for climber/hanging/outtake motors
