@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.libs.Movement;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpField", group="TeleOp")
 public class MainTeleOpField extends OpMode {
     Movement move;
+
+    Manipulators manip;
     //RevColorSensorV3 cs;
     //DistanceSensor ds;
     String moveType = "robot";
@@ -37,7 +39,7 @@ public class MainTeleOpField extends OpMode {
 
     public static String lockStatus;
     public void init() {
-        //manip = new Manipulators(hardwareMap);
+        manip = new Manipulators(hardwareMap);
         //manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
@@ -95,21 +97,6 @@ public class MainTeleOpField extends OpMode {
 
         heading = move.drive.getExternalHeading();
 
-//        if (gamepad1.right_stick_x > 0.1) {
-//            targetAngle = 0;
-//        }
-//        else if(gamepad1.x){
-//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI/2);
-//        }
-//        else if(gamepad1.y){
-//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
-//        }
-//        else if(gamepad1.a){
-//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(-Math.PI);
-//        }
-//        else if(gamepad1.b){
-//            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
-//        }
 
         if (gamepad1.right_stick_x > 0.01) {
             targetAngle = 0;
@@ -169,61 +156,53 @@ public class MainTeleOpField extends OpMode {
 
         telemetry.addData("imu:",  heading);
         telemetry.update();
-//
-//        // driver 2 uses right bumper to toggle the outtake gate
-//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-//            manip.gateToggle();
-//        }
-//        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
-//            manip.gateToggle1();
-//        }
 
 
-//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-//            manip.gateToggle(outtakeServoStatus);
-//            if (outtakeServoStatus == false){
-//                outtakeServoStatus = true;
-//            } else if(outtakeServoStatus){
-//                outtakeServoStatus = false;
-//            }
-//        }
+
+        // driver 2 uses right bumper to toggle the outtake gate
+        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+            manip.gateToggle();
+        }
+        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
+            manip.gateToggle1();
+        }
+
         // uses dpad controls up and down to control the climber/hanger
-//        if(gamepad2.dpad_up){
-//            manip.climberLiftPower(.5);
-//        } else if(gamepad2.dpad_down){
-//            manip.climberLiftPower(-.5);
-//        } else{
-//            manip.climberLiftPower(0);
-//        }
-//
-//        // When receiving power from gamepad2 that is greater than a certain threshold
-//        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
-//            // it will move the lift to the certain power that the right joystick set
-//            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
-//        }
-//        else {
-//            //
-//            manip.setOuttakeLiftPower(0);
-//        }
-//
-//        //uses right and left triggers to control lift
-//        if (gamepad2.right_trigger > 0.1){
-//            manip.setIntakePower(gamepad2.right_trigger);
-//        } else if (gamepad2.left_trigger > 0.1){
-//            //left trigger sets intake power in reverse
-//            manip.setIntakePower(-1.0 * gamepad2.left_trigger);
-//        } else {
-//            manip.setIntakePower(0);
-//        }
-//
-//        if (Math.abs(gamepad2.left_stick_y) > 0.1){
-//            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
-//            manip.intakeRightServo.setPower(gamepad2.left_stick_y);
-//        }
-//        else{
-//            manip.intakeLeftServo.setPower(0);
-//            manip.intakeRightServo.setPower(0);
-//        }
-//    }
+        if(gamepad2.dpad_up){
+            manip.climberLiftPower(.5);
+        } else if(gamepad2.dpad_down){
+            manip.climberLiftPower(-.5);
+        } else{
+            manip.climberLiftPower(0);
+        }
+
+        // When receiving power from gamepad2 that is greater than a certain threshold
+        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+            // it will move the lift to the certain power that the right joystick set
+            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
+        }
+        else {
+            //
+            manip.setOuttakeLiftPower(0);
+        }
+
+        //uses right and left triggers to control lift
+        if (gamepad2.right_trigger > 0.1){
+            manip.setIntakePower(gamepad2.right_trigger);
+        } else if (gamepad2.left_trigger > 0.1){
+            //left trigger sets intake power in reverse
+            manip.setIntakePower(-1.0 * gamepad2.left_trigger);
+        } else {
+            manip.setIntakePower(0);
+        }
+
+        if (Math.abs(gamepad2.left_stick_y) > 0.1){
+            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
+            manip.intakeRightServo.setPower(gamepad2.left_stick_y);
+        }
+        else{
+            manip.intakeLeftServo.setPower(0);
+            manip.intakeRightServo.setPower(0);
+        }
 
 }}

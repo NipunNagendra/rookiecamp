@@ -67,7 +67,8 @@ public class AugmentedSwerve extends OpMode {
         if (gamepad1.right_bumper) {multiplier = 0.5;}
         else if (gamepad1.left_bumper) {multiplier = 0.25;}
         else{multiplier=1;}
-        double turnFactor;
+        double heading = move.drive.getExternalHeading();
+
 
 
         imuVal = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -79,11 +80,18 @@ public class AugmentedSwerve extends OpMode {
             leftX = (gamepad1.left_stick_x*multiplier);
             rightX = -(gamepad1.right_stick_x*multiplier);
 
-            move.turnToMovement(leftX, leftY, rightX, imuVal, move.angleDifferenceCalc(imuVal, Math.atan2(leftY, leftX)));
+            double targetAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            if (targetAngle > 0)
+                targetAngle -= (Math.atan2(leftY,leftX)+(Math.PI/2));
+            else
+                targetAngle += (Math.atan2(leftY,leftX)+(Math.PI/2));
+
+            move.fieldDrive(0,0, 0, heading, targetAngle);
 
         }
         else {
-            move.turnToMovement(0,0, 0, imuVal, imuVal);
+            move.fieldDrive(0,0, 0, heading, 0);
         }
 
         telemetry.addData("imu:",  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
