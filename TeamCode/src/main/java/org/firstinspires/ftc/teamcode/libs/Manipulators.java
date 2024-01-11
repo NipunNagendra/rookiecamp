@@ -63,10 +63,10 @@ public class Manipulators {
         // declaring climber/hanging motors
         leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
         rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
-        //outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
         // setting climber/hanging motor direction
-        leftClimberMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
         rightClimberMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // setting break mode for climber/hanging/outtake motors
