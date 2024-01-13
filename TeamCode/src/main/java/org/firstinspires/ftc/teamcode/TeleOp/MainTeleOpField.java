@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static com.sun.tools.doclint.Entity.pi;
 
+import android.annotation.SuppressLint;
 import android.util.Pair;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -75,6 +76,7 @@ public class MainTeleOpField extends OpMode {
 
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void loop()
     {
@@ -123,6 +125,9 @@ public class MainTeleOpField extends OpMode {
             targetAngle = 0;
         else if (lockStatus == "left")
             targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (-Math.PI/2);
+            if (lockStatus=="down"){
+                targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (Math.PI/2);
+            }
         else if (lockStatus == "up")
             targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
         else if (lockStatus == "down") {
@@ -135,6 +140,9 @@ public class MainTeleOpField extends OpMode {
         else if (lockStatus == "right")
             targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
 
+        if(lockStatus!="unlocked" && targetAngle>=(-Math.PI/90) && targetAngle<=(Math.PI/90)){
+            targetAngle=0;
+        }
 
         telemetry.addData("lockStatus: ", lockStatus);
         telemetry.addData("targetAngle: ", targetAngle);
@@ -167,13 +175,30 @@ public class MainTeleOpField extends OpMode {
             manip.gateToggle1();
         }
 
+//        if(move.isPressed("rightBumper2", gamepad2.right_bumper)){
+//            manip.climberLiftPower(.5);
+//        } else if(move.isPressed("leftBumper2", gamepad2.left_bumper)){
+//            manip.climberLiftPower(-.5);
+//        } else{
+//            manip.climberLiftPower(0);
+//        }
+
+
         // uses dpad controls up and down to control the climber/hanger
-        if(gamepad2.dpad_up){
-            manip.climberLiftPower(.5);
-        } else if(gamepad2.dpad_down){
-            manip.climberLiftPower(-.5);
+//        if(gamepad2.right_stick_y > 0){
+//            manip.leftClimberPower(.5);
+//        } else if(gamepad2.right_stick_y < 0){
+//            manip.leftClimberPower(-.5);
+//        } else{
+//            manip.leftClimberPower(0);
+//        }
+
+        if(gamepad2.y){
+            manip.rightClimberPower(.5);
+        } else if(gamepad2.a){
+            manip.rightClimberPower(-.5);
         } else{
-            manip.climberLiftPower(0);
+            manip.rightClimberPower(0);
         }
 
         // When receiving power from gamepad2 that is greater than a certain threshold
