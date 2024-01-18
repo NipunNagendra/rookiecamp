@@ -116,7 +116,7 @@ public class MainTeleOp extends OpMode {
             manip.setOuttakeLiftPower(0);
         }
 
-        //uses right and left triggers to control lift
+        //uses right and left triggers to control intake
         if (gamepad2.right_trigger > 0.1){
             manip.setIntakePower(gamepad2.right_trigger);
         } else if (gamepad2.left_trigger > 0.1){

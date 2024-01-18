@@ -42,6 +42,8 @@ public class BluePipeline extends OpenCvPipeline {
     public static double hs;
     public static double hv;
 
+    public static String positionMain = "middle";
+
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
@@ -71,25 +73,30 @@ public class BluePipeline extends OpenCvPipeline {
 
         if (pixelRight && pixelFront) {
             if(rightValue>=frontValue){
+                positionMain = "right";
                 telemetry.addData("Pixel Location", "right");
-                location = Location.RIGHT;
+                location = BluePipeline.Location.RIGHT;
             }
             else{
+                positionMain = "middle";
                 telemetry.addData("Pixel Location", "front");
-                location = Location.FRONT;
+                location = BluePipeline.Location.FRONT;
             }
 
         }
         else if (pixelFront) {
-            location = Location.FRONT;
+            positionMain = "middle";
+            location = BluePipeline.Location.FRONT;
             telemetry.addData("Pixel Location", "front");
         }
         else if(pixelRight){
+            positionMain = "right";
             telemetry.addData("Pixel Location", "right");
-            location = Location.RIGHT;
+            location = BluePipeline.Location.RIGHT;
         }
         else{
-            location = Location.LEFT;
+            positionMain = "left";
+            location = BluePipeline.Location.LEFT;
             telemetry.addData("Pixel Location", "left");
         }
 

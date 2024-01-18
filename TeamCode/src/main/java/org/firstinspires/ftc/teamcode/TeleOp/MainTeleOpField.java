@@ -74,6 +74,7 @@ public class MainTeleOpField extends OpMode {
         imu.resetYaw();
         lockStatus = "unlocked";
 
+
     }
 
     @SuppressLint("SuspiciousIndentation")
@@ -140,13 +141,10 @@ public class MainTeleOpField extends OpMode {
         else if (lockStatus == "right")
             targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
 
-        if(lockStatus!="unlocked" && targetAngle>=(-Math.PI/90) && targetAngle<=(Math.PI/90)){
-            targetAngle=0;
-        }
 
         telemetry.addData("lockStatus: ", lockStatus);
         telemetry.addData("targetAngle: ", targetAngle);
-        telemetry.update();
+        telemetry.addData("touchResult: ", manip.liftTouchSensor.isPressed());
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||
@@ -163,7 +161,6 @@ public class MainTeleOpField extends OpMode {
         }
 
         telemetry.addData("imu:",  heading);
-        telemetry.update();
 
 
 
@@ -201,10 +198,23 @@ public class MainTeleOpField extends OpMode {
             manip.rightClimberPower(0);
         }
 
+        if(gamepad2.dpad_up){
+            manip.leftClimberPower(.5);
+        } else if(gamepad2.dpad_down){
+            manip.leftClimberPower(-.5);
+        } else{
+            manip.leftClimberPower(0);
+        }
+
         // When receiving power from gamepad2 that is greater than a certain threshold
         if (Math.abs(gamepad2.right_stick_y) > 0.1) {
             // it will move the lift to the certain power that the right joystick set
-            manip.setOuttakeLiftPower(gamepad2.right_stick_y);
+            if(manip.liftTouchSensor.isPressed() && gamepad2.right_stick_y> 0){
+                manip.setOuttakeLiftPower(0);
+            }
+            else{
+                manip.setOuttakeLiftPower(gamepad2.right_stick_y);
+            }
         }
         else {
             //
@@ -221,6 +231,10 @@ public class MainTeleOpField extends OpMode {
             manip.setIntakePower(0);
         }
 
+        if (gamepad2.options){
+            manip.droneServo.setPower(1);
+        }
+
         if (Math.abs(gamepad2.left_stick_y) > 0.1){
             manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
             manip.intakeRightServo.setPower(gamepad2.left_stick_y);
@@ -229,5 +243,5 @@ public class MainTeleOpField extends OpMode {
             manip.intakeLeftServo.setPower(0);
             manip.intakeRightServo.setPower(0);
         }
-
-}}
+        telemetry.update();
+    }}

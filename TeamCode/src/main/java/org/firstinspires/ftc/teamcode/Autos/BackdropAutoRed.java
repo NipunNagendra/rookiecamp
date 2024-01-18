@@ -202,12 +202,15 @@ public class BackdropAutoRed extends LinearOpMode {
                 case SCORE_PURPLE:
                     if (RedPipeline.positionMain == "left") {
                         telemetry.addLine("going left");
+                        casePos=1;
                         drive.followTrajectorySequence(scorePurpleLeft);
                     } else if (RedPipeline.positionMain == "middle") {
                         telemetry.addLine("going middle");
+                        casePos=2;
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
-                        telemetry.addLine("goingright");
+                        telemetry.addLine("going right");
+                        casePos=3;
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     telemetry.update();
