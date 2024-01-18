@@ -89,23 +89,14 @@ public class MainTeleOp extends OpMode {
 
 
 
-//        // driver 2 uses right bumper to toggle the outtake gate
-//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-//            manip.gateToggle();
-//        }
-//        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
-//            manip.gateToggle1();
-//        }
+        // driver 2 uses right bumper to toggle the outtake gate
+        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
+            manip.gateToggle();
+        }
+        if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
+            manip.gateToggle1();
+        }
 
-
-//        if (move.isPressed("rightBumper2", gamepad2.right_bumper)) {
-//            manip.gateToggle(outtakeServoStatus);
-//            if (outtakeServoStatus == false){
-//                outtakeServoStatus = true;
-//            } else if(outtakeServoStatus){
-//                outtakeServoStatus = false;
-//            }
-//        }
         // uses dpad controls up and down to control the climber/hanger
         if(gamepad2.dpad_up){
             manip.climberLiftPower(.5);
@@ -125,7 +116,7 @@ public class MainTeleOp extends OpMode {
             manip.setOuttakeLiftPower(0);
         }
 
-        //uses right and left triggers to control lift
+        //uses right and left triggers to control intake
         if (gamepad2.right_trigger > 0.1){
             manip.setIntakePower(gamepad2.right_trigger);
         } else if (gamepad2.left_trigger > 0.1){

@@ -56,7 +56,6 @@ public class MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> implements Dist
     /* Allow 100ms between pinging. Returns in centimeters*/
     @Override
     public double getDistance(DistanceUnit unit){
-        ping();
         return unit.fromCm(readRawRange());
     }
 

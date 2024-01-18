@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
+import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
@@ -100,11 +101,14 @@ public class StackAutoBlue extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    if (positionOfVisionPixel == BluePipeline.Location.LEFT) {
+                    if (BluePipeline.positionMain == "left") {
+                        telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (positionOfVisionPixel == BluePipeline.Location.FRONT) {
+                    } else if (BluePipeline.positionMain == "middle") {
+                        telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
+                        telemetry.addLine("goingright");
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     manip.setIntakePower(-1);
