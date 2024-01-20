@@ -10,8 +10,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="cvRunner-Nipun", group="TeleOp")
-public class CVrunner extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="cvRunnerBlue-Nipun", group="TeleOp")
+public class CVrunnerBlue extends LinearOpMode {
 
     OpenCvWebcam camera;
     @Override

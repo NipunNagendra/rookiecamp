@@ -24,15 +24,15 @@ public class BluePipeline extends OpenCvPipeline {
     private Location location;
 
     static final Rect LEFT_ROI = new Rect(
-            new Point(60, 35),
-            new Point(120, 75));
+            new Point(0, 60),
+            new Point(60, 120));
     static final Rect RIGHT_ROI = new Rect(
             new Point(260, 70),
             new Point(320, 130));
     static final Rect FRONT_ROI = new Rect(
-            new Point(110, 55),
-            new Point(170, 115));
-    public static double PERCENT_COLOR_THRESHOLD = 0.05;
+            new Point(180, 40),
+            new Point(240, 100));
+    public static double PERCENT_COLOR_THRESHOLD = 0.3;
     public BluePipeline(Telemetry t) { telemetry = t; }
 
     public static double lh;
@@ -54,28 +54,28 @@ public class BluePipeline extends OpenCvPipeline {
 
         Core.inRange(mat, lowerBlueHSV, highBlueHSV, mat);
 
-        Mat right = mat.submat(RIGHT_ROI);
+        Mat left = mat.submat(LEFT_ROI);
         Mat front = mat.submat(FRONT_ROI);
 
-        double rightValue = Core.sumElems(right).val[0] / RIGHT_ROI.area() / 255;
+        double leftValue = Core.sumElems(left).val[0] / LEFT_ROI.area() / 255;
         double frontValue = Core.sumElems(front).val[0] / FRONT_ROI.area() / 255;
 
-        right.release();
+        left.release();
         front.release();
 
-        telemetry.addData("Right Raw Value", (int) Core.sumElems(right).val[0]);
+        telemetry.addData("Left Raw Value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Front Raw Value", (int) Core.sumElems(front).val[0]);
-        telemetry.addData("Right Percentage", Math.round(rightValue * 100) + "%");
+        telemetry.addData("Left Percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Front Percentage", Math.round(frontValue * 100) + "%");
 
-        boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
+        boolean pixelLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelFront = frontValue > PERCENT_COLOR_THRESHOLD;
 
-        if (pixelRight && pixelFront) {
-            if(rightValue>=frontValue){
-                positionMain = "right";
-                telemetry.addData("Pixel Location", "right");
-                location = BluePipeline.Location.RIGHT;
+        if (pixelLeft && pixelFront) {
+            if(leftValue>=frontValue){
+                positionMain = "left";
+                telemetry.addData("Pixel Location", "left");
+                location = BluePipeline.Location.LEFT;
             }
             else{
                 positionMain = "middle";
@@ -89,15 +89,15 @@ public class BluePipeline extends OpenCvPipeline {
             location = BluePipeline.Location.FRONT;
             telemetry.addData("Pixel Location", "front");
         }
-        else if(pixelRight){
-            positionMain = "right";
-            telemetry.addData("Pixel Location", "right");
-            location = BluePipeline.Location.RIGHT;
+        else if(pixelLeft){
+            positionMain = "left";
+            telemetry.addData("Pixel Location", "left");
+            location = BluePipeline.Location.LEFT;
         }
         else{
-            positionMain = "left";
-            location = BluePipeline.Location.LEFT;
-            telemetry.addData("Pixel Location", "left");
+            positionMain = "right";
+            location = BluePipeline.Location.RIGHT;
+            telemetry.addData("Pixel Location", "right");
         }
 
         telemetry.update();
@@ -108,7 +108,7 @@ public class BluePipeline extends OpenCvPipeline {
         Scalar detected = new Scalar(0, 255, 0);
 
 
-        Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? detected:undetected);
+        Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? detected:undetected);
         Imgproc.rectangle(mat, FRONT_ROI, location == Location.FRONT? detected:undetected);
 
         return mat;

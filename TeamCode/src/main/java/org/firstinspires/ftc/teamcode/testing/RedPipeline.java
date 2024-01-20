@@ -27,20 +27,20 @@ public class RedPipeline extends OpenCvPipeline {
     private Location location;
 
     //Left rectangle coordinates
-    public static double left_x1 = 60;
-    public static double left_y1 = 35;
-    public static double left_x2 = 120;
-    public static double left_y2 = 75;
+//    public static double left_x1 = 60;
+//    public static double left_y1 = 35;
+//    public static double left_x2 = 120;
+//    public static double left_y2 = 75;
     //Right rectangle coordinates
-    public static double right_x1 = 280;
-    public static double right_y1 = 70;
-    public static double right_x2 = 320;
-    public static double right_y2 = 130;
+//    public static double right_x1 = 280;
+//    public static double right_y1 = 70;
+//    public static double right_x2 = 320;
+//    public static double right_y2 = 130;
     //Front rectangle coordinates
-    public static double front_x1 = 110;
-    public static double front_y1 = 55;
-    public static double front_x2 = 170;
-    public static double front_y2 = 115;
+//    public static double front_x1 = 110;
+//    public static double front_y1 = 55;
+//    public static double front_x2 = 170;
+//    public static double front_y2 = 115;
 
     //HSV for Red
     public static double lowerhue = 0;
@@ -51,12 +51,12 @@ public class RedPipeline extends OpenCvPipeline {
     public static double highersat = 255;
     public static double higherval = 255;
 
-    static final Rect RIGHT_ROI = new Rect(
-            new Point(right_x1, right_y1),
-            new Point(right_x2, right_y2));
+    static final Rect LEFT_ROI = new Rect(
+            new Point(0, 60),
+            new Point(60, 120));
     static final Rect FRONT_ROI = new Rect(
-            new Point(front_x1, front_y1),
-            new Point(front_x2, front_y2));
+            new Point(180, 40),
+            new Point(240, 100));
 
     static double PERCENT_COLOR_THRESHOLD = 0.3;
     public RedPipeline(Telemetry t) { telemetry = t; }
@@ -69,31 +69,29 @@ public class RedPipeline extends OpenCvPipeline {
 
         Core.inRange(mat, lowerHSV, highHSV, mat);
 
-        Mat right = mat.submat(RIGHT_ROI);
+        Mat left = mat.submat(LEFT_ROI);
         Mat front = mat.submat(FRONT_ROI);
 
-        double rightValue = Core.sumElems(right).val[0] / RIGHT_ROI.area() / 255;
+        double leftValue = Core.sumElems(left).val[0] / LEFT_ROI.area() / 255;
         double frontValue = Core.sumElems(front).val[0] / FRONT_ROI.area() / 255;
 
-        right.release();
+        left.release();
         front.release();
 
-        /*telemetry.addData("Left Raw Value", (int) Core.sumElems(left).val[0]);
-        telemetry.addData("Right Raw Value", (int) Core.sumElems(right).val[0]);
+        telemetry.addData("Left Raw Value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Front Raw Value", (int) Core.sumElems(front).val[0]);
         telemetry.addData("Left Percentage", Math.round(leftValue * 100) + "%");
-        telemetry.addData("Right Percentage", Math.round(rightValue * 100) + "%");
-        telemetry.addData("Front Percentage", Math.round(frontValue * 100) + "%");*/
+        telemetry.addData("Front Percentage", Math.round(frontValue * 100) + "%");
 
-        boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
+        boolean pixelLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelFront = frontValue > PERCENT_COLOR_THRESHOLD;
 
 
-        if (pixelRight && pixelFront) {
-            if(rightValue>=frontValue){
-                positionMain = "right";
-                telemetry.addData("Pixel Location", "right");
-                location = RedPipeline.Location.RIGHT;
+        if (pixelLeft && pixelFront) {
+            if(leftValue>=frontValue){
+                positionMain = "left";
+                telemetry.addData("Pixel Location", "left");
+                location = RedPipeline.Location.LEFT;
             }
             else{
                 positionMain = "middle";
@@ -107,15 +105,15 @@ public class RedPipeline extends OpenCvPipeline {
             location = RedPipeline.Location.FRONT;
             telemetry.addData("Pixel Location", "front");
         }
-        else if(pixelRight){
-            positionMain = "right";
-            telemetry.addData("Pixel Location", "right");
-            location = RedPipeline.Location.RIGHT;
+        else if(pixelLeft){
+            positionMain = "left";
+            telemetry.addData("Pixel Location", "left");
+            location = RedPipeline.Location.LEFT;
         }
         else{
-            positionMain = "left";
-            location = RedPipeline.Location.LEFT;
-            telemetry.addData("Pixel Location", "left");
+            positionMain = "right";
+            location = RedPipeline.Location.RIGHT;
+            telemetry.addData("Pixel Location", "right");
         }
         telemetry.update();
 
@@ -126,7 +124,7 @@ public class RedPipeline extends OpenCvPipeline {
         Scalar colorStone = new Scalar(255, 0, 0);
         Scalar colorSkystone = new Scalar(0, 255, 0);
 
-        Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? colorSkystone:colorStone);
         Imgproc.rectangle(mat, FRONT_ROI, location == Location.FRONT? colorSkystone:colorStone);
 
         return mat;

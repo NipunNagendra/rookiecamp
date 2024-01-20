@@ -64,24 +64,24 @@ public class Manipulators {
         this.robot = hardwareMap;
 
         // declaring climber/hanging motors
-//        leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
-//        rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
+        leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimberMotor");
+        rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimberMotor");
+        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+
+        //setting climber/hanging motor direction
+        leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightClimberMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        // setting break mode for climber/hanging/outtake motors
+        leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 //        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
-        // setting climber/hanging motor direction
-//        leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
-//        rightClimberMotor.setDirection(DcMotor.Direction.REVERSE);
-//
-//        // setting break mode for climber/hanging/outtake motors
-//        leftClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        rightClimberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//
-////        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
-
-//        outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLift");
-//        outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
-//        outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        outtakeLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLiftMotor");
+        outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
+        outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // setting servos for right and left to hardware map
         intakeRightServo = hardwareMap.get(CRServo.class, "intakeRightServo");
@@ -89,15 +89,15 @@ public class Manipulators {
 
 //        intakeRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
         //declaring intake motor
-//        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
 //        liftTouchSensor = hardwareMap.get(RevTouchSensor.class, "liftTouchSensor");
 //
-        droneServo = hardwareMap.get(CRServo.class, "droneServo");
+//        droneServo = hardwareMap.get(CRServo.class, "droneServo");
 
         //Sensor Declaration
-       // lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
-       //ds = hardwareMap.get(DistanceSensor.class, "ds");
+//        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
+//       ds = hardwareMap.get(DistanceSensor.class, "ds");
     }
 
 

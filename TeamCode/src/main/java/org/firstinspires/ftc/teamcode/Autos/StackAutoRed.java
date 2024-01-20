@@ -38,27 +38,27 @@ public class StackAutoRed extends LinearOpMode {
 
 
     //coordinates for starting position (0, 0, 0)
-    public static double startPoseX= -60.2817198;
-    public static double startPoseY= -11.20199806;
-    public static double startPoseAngle= 0;
+    public static double startPoseX= -66.00051017062906;
+    public static double startPoseY= 37.76345116265971;
+    public static double startPoseAngle= Math.toRadians(180);
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, Math.toRadians(startPoseAngle));
 
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -30.4107;
-    public static double spike1Y = -7.232;
-    public static double spike1Angle = Math.toRadians(90);
+    public static double spike1X = -26.854665827113163;
+    public static double spike1Y = 47.26695980330197;
+    public static double spike1Angle = Math.toRadians(180);
 
     //coordinates for middle spike position
-    public static double spike2X = -31.2394;
-    public static double spike2Y = -12.1456;
-    public static double spike2Angle = 0;
+    public static double spike2X = -20.37264776890091;
+    public static double spike2Y = 37.776693645360595;
+    public static double spike2Angle = Math.toRadians(180);
 
     //coordinates for right spike position
-    public static double spike3X = -31.2182;
-    public static double spike3Y = -13.9349;
+    public static double spike3X = -34.26642694740993;
+    public static double spike3Y = 29.54644728121096;
     public static double spike3Angle = Math.toRadians(270);
 
     public static double casenum=1;
@@ -85,20 +85,24 @@ public class StackAutoRed extends LinearOpMode {
 
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
+//                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+//                .lineToLinearHeading(new Pose2d(60, -10, 0))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
+//                .back(10)
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
+//                .lineToLinearHeading(new Pose2d(60, -10, 0))
+
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
+//                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+//                .lineToLinearHeading(new Pose2d(60, -10, 0))
                 .build();
 
         telemetry.addLine("trajectories built!!!");
@@ -153,7 +157,7 @@ public class StackAutoRed extends LinearOpMode {
                         telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
-                        telemetry.addLine("goingright");
+                        telemetry.addLine("going right");
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     telemetry.update();
