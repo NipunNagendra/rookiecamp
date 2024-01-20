@@ -82,6 +82,7 @@ public class StackAutoRed extends LinearOpMode {
         telemetry.addLine("Init Done");
 
         drive.setPoseEstimate(startPose);
+        //
 
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
