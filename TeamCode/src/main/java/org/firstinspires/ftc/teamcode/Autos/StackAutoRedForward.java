@@ -18,23 +18,23 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous(name = "StackAutoRed", group = "Autonomous")
-public class StackAutoRed extends LinearOpMode {
+@Autonomous(name = "StackAutoRedForward", group = "Autonomous")
+public class StackAutoRedForward extends LinearOpMode {
 
     enum State{
         IDLE,
         SCORE_PURPLE,
         SCORE_YELLOW,
 
-//        INTAKE_WHITE,
+        //        INTAKE_WHITE,
         PARK,
         STOP
     }
 
     /* TODO: ENTER COORDINATES FOR ALL POSITIONS
-    *   CHANGE ALL VARIABLES TO PUBLIC STATIC
-    *   REFACTOR ALL VARIABLES TO MORE DESCRIPTIVE NAMES
-    */
+     *   CHANGE ALL VARIABLES TO PUBLIC STATIC
+     *   REFACTOR ALL VARIABLES TO MORE DESCRIPTIVE NAMES
+     */
 
 
     //coordinates for starting position (0, 0, 0)
@@ -47,25 +47,36 @@ public class StackAutoRed extends LinearOpMode {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -26.854665827113163;
-    public static double spike1Y = 47.26695980330197;
-    public static double spike1Angle = Math.toRadians(180);
+//    public static double spike1X = -26.854665827113163;
+//    public static double spike1Y = 47.26695980330197;
+//    public static double spike1Angle = Math.toRadians(180);
 
     //coordinates for middle spike position
-    public static double spike2X = -20.594631330905656;
-    public static double spike2Y = 36.414924287545524;
-    public static double spike2Angle = Math.toRadians(180);
+//    public static double spike2X = -20.594631330905656;
+//    public static double spike2Y = 36.414924287545524;
+//    public static double spike2Angle = Math.toRadians(180);
 
     //coordinates for right spike position
-    public static double spike3X = -34.26642694740993;
-    public static double spike3Y = 29.54644728121096;
-    public static double spike3Angle = Math.toRadians(180);
+//    public static double spike3X = -34.26642694740993;
+//    public static double spike3Y = 29.54644728121096;
+//    public static double spike3Angle = Math.toRadians(180);
 
     public static double casenum=1;
 
     public static RedPipeline.Location positionOfVisionPixel;
 
 
+//    public static double midSpikeRightAmount = 6;
+    public static double midSpikeBackwards1Amount = 20.74444680314227;
+    public static double midSpikeTurnAmount = 3.141592653589793238;
+    public static double midSpikeBackwards2Amount = -28;
+    public static double leftSpikeBackwardsAmount = 42.74444680314227;
+    public static double leftSpikeTurnAmount = 3.14159/2;
+
+
+    public static double rightSpikeBackwards1Amount = 42.74444680314227;
+    public static double rightSpikeTurnAmount = -90;
+    public static double rightSpikeBackwards2Amount = 2;
 
 
     State currentState = State.IDLE;
@@ -88,7 +99,8 @@ public class StackAutoRed extends LinearOpMode {
 
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
-                .back(42.74444680314227)
+                .back(leftSpikeBackwardsAmount)
+                .turn(leftSpikeTurnAmount)
 
 //                .forward(10)
 //                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
@@ -97,14 +109,20 @@ public class StackAutoRed extends LinearOpMode {
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
-//                .back(45.74444680314227)
-                .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
+                .back(midSpikeBackwards1Amount)
+                .turn(midSpikeTurnAmount)
+                .back(midSpikeBackwards2Amount)
+                .back(10)
+//                .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
 //                .lineToLinearHeading(new Pose2d(60, -10, 0))
 
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
+                .back(rightSpikeBackwards1Amount)
+//                .turn(rightSpikeTurnAmount)
+//                .back(rightSpikeBackwards2Amount)
 //                .forward(10)
 //                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
 //                .lineToLinearHeading(new Pose2d(60, -10, 0))
@@ -169,6 +187,7 @@ public class StackAutoRed extends LinearOpMode {
                     manip.setIntakePower(-0.6);
                     sleep(3500);
                     manip.setIntakePower(0);
+                    drive.followTrajectorySequence(scorePurpleRight);
                     currentState = State.STOP;
                     break;
 
