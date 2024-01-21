@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
+import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpField", group="TeleOp")
@@ -24,6 +25,8 @@ public class MainTeleOpField extends OpMode {
     Movement move;
 
     Manipulators manip;
+
+    SensorLibrary sensor;
     //RevColorSensorV3 cs;
     //DistanceSensor ds;
     String moveType = "robot";
@@ -43,6 +46,7 @@ public class MainTeleOpField extends OpMode {
         manip = new Manipulators(hardwareMap);
         //manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
+        sensor = new SensorLibrary(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         //ds = hardwareMap.get(DistanceSensor.class, "ds");
         gamepad1.setLedColor(0, 0, 256, 100000);
@@ -243,5 +247,9 @@ public class MainTeleOpField extends OpMode {
             manip.intakeLeftServo.setPower(0);
             manip.intakeRightServo.setPower(0);
         }
+
+        if (sensor.invisibleWallDetect()){
+
+    }
         telemetry.update();
     }}
