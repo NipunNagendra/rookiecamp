@@ -87,11 +87,11 @@ public class Manipulators {
         intakeRightServo = hardwareMap.get(CRServo.class, "intakeRightServo");
         intakeLeftServo = hardwareMap.get(CRServo.class, "intakeLeftServo");
 
-//        intakeRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-//        liftTouchSensor = hardwareMap.get(RevTouchSensor.class, "liftTouchSensor");
+        liftTouchSensor = hardwareMap.get(RevTouchSensor.class, "RevTouchSensor");
 //
 //        droneServo = hardwareMap.get(CRServo.class, "droneServo");
 

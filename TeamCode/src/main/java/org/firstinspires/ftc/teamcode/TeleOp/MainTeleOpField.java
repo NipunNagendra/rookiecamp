@@ -46,7 +46,7 @@ public class MainTeleOpField extends OpMode {
         manip = new Manipulators(hardwareMap);
         //manip.droneServo.setPosition(0.5);
         move = new Movement(hardwareMap);
-        sensor = new SensorLibrary(hardwareMap);
+//        sensor = new SensorLibrary(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
         //ds = hardwareMap.get(DistanceSensor.class, "ds");
         gamepad1.setLedColor(0, 0, 256, 100000);
@@ -137,18 +137,23 @@ public class MainTeleOpField extends OpMode {
             targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
         else if (lockStatus == "down") {
             targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            if (targetAngle > 0)
-                targetAngle -= Math.PI;
-            else
+            if (targetAngle > 0) {
+                    targetAngle -= Math.PI;
+            }else {
                 targetAngle += Math.PI;
+            }
         }
         else if (lockStatus == "right")
-            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);
+            {targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);}
 
 
         telemetry.addData("lockStatus: ", lockStatus);
         telemetry.addData("targetAngle: ", targetAngle);
         telemetry.addData("touchResult: ", manip.liftTouchSensor.isPressed());
+
+//        if(Math.abs(targetAngle)>=0 && Math.abs(targetAngle)<=Math.toRadians(2)){
+//            targetAngle=0;
+//        }
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||
@@ -213,7 +218,7 @@ public class MainTeleOpField extends OpMode {
         // When receiving power from gamepad2 that is greater than a certain threshold
         if (Math.abs(gamepad2.right_stick_y) > 0.1) {
             // it will move the lift to the certain power that the right joystick set
-            if(manip.liftTouchSensor.isPressed() && gamepad2.right_stick_y> 0){
+            if(manip.liftTouchSensor.isPressed() && gamepad2.right_stick_y < 0){
                 manip.setOuttakeLiftPower(0);
             }
             else{
@@ -248,8 +253,8 @@ public class MainTeleOpField extends OpMode {
             manip.intakeRightServo.setPower(0);
         }
 
-        if (sensor.invisibleWallDetect()){
-
-    }
+//        if (sensor.invisibleWallDetect()){
+//
+//    }
         telemetry.update();
     }}
