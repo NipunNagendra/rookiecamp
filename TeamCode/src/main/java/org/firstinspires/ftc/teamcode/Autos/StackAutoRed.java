@@ -47,7 +47,7 @@ public class StackAutoRed extends LinearOpMode {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -38.64633638294297;
+    public static double spike1X = -41.64633638294297;
     public static double spike1Y = -32.1247700133697;
     public static double spike1Angle = Math.toRadians(180);
 
@@ -65,45 +65,7 @@ public class StackAutoRed extends LinearOpMode {
 
     public static RedPipeline.Location positionOfVisionPixel;
 
-    //coordinates for left backdrop position
-    public static double backDrop1X = 0;
-    public static double backDrop1Y = 0;
-    public static double backDrop1Angle = 0;
 
-    //coordinates for middle backdrop position
-    public static double backDrop2X = 0;
-    public static double backDrop2Y = 0;
-    public static double backDrop2Angle = 0;
-
-    // double variable for moving back right before going to the right backdrop
-    public static double avoidPixelBack = 0;
-
-    //coordinates for right backdrop position
-    public static double backDrop3X = 0;
-    public static double backDrop3Y = 0;
-    public static double backDrop3Angle = 0;
-
-    //coordinates for door position
-    int doorX = 0;
-    int doorY = 0;
-    int doorAngle = 0;
-
-    //coordinates for white stack position
-    int whiteStackX = 0;
-    int whiteStackY = 0;
-    int whiteStackAngle = 0;
-
-    //coordinates for position right before going closer to the wall for full park
-    public static double subParkX = 0;
-    public static double subParkY = 0;
-    public static double subParkAngle = 0;
-
-    //coordinates for park position
-    public static double parkX = 0;
-    public static double parkY = 0;
-    public static double parkAngle = 0;
-
-    public static double outtakeHeight = 0;
 
 
     State currentState = State.IDLE;
@@ -139,20 +101,9 @@ public class StackAutoRed extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
                 .build();
 
-        TrajectorySequence yellowRightUnderTruss = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .lineToLinearHeading(new Pose2d(preTruss1X, preTruss1Y, preTruss1Angle))
+        TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
+                .back(5)
                 .build();
-
-        TrajectorySequence yellowMiddleUnderTruss = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .lineToLinearHeading(new Pose2d )
-                .strafeRight(18)
-                .build();
-
-        TrajectorySequence yellowLeftUnderTruss = drive.trajectorySequenceBuilder(scorePurpleRight.end())
-                .lineToLinearHeading(startPose)
-                .strafeRight(36)
-                .build();
-
 
         telemetry.addLine("trajectories built!!!");
 
@@ -212,6 +163,7 @@ public class StackAutoRed extends LinearOpMode {
                     manip.setIntakePower(-0.6);
                     sleep(3500);
                     manip.setIntakePower(0);
+                    drive.followTrajectorySequence(finishLeft);
                     currentState = State.STOP;
                     break;
 
