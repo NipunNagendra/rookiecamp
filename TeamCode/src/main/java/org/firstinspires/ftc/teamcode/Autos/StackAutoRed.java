@@ -52,9 +52,9 @@ public class StackAutoRed extends LinearOpMode {
     public static double spike1Angle = Math.toRadians(180);
 
     //coordinates for middle spike position
-    public static double spike2X = -20.594631330905656;
-    public static double spike2Y = 36.414924287545524;
-    public static double spike2Angle = Math.toRadians(180);
+    public static double spike2X =  -37.812297556497846;
+    public static double spike2Y = -29.023006373520104;
+    public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
     public static double spike3X = -34.26642694740993;
@@ -65,7 +65,7 @@ public class StackAutoRed extends LinearOpMode {
 
     public static RedPipeline.Location positionOfVisionPixel;
 
-
+    public static String myPosition;
 
 
     State currentState = State.IDLE;
@@ -102,6 +102,10 @@ public class StackAutoRed extends LinearOpMode {
                 .build();
 
         TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
+                .back(5)
+                .build();
+
+        TrajectorySequence finishMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
                 .back(5)
                 .build();
 
@@ -150,12 +154,15 @@ public class StackAutoRed extends LinearOpMode {
 
                 case SCORE_PURPLE:
                     if (RedPipeline.positionMain == "left") {
+                        myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
                     } else if (RedPipeline.positionMain == "middle") {
+                        myPosition="middle";
                         telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
+                        myPosition="right";
                         telemetry.addLine("going right");
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
@@ -163,7 +170,13 @@ public class StackAutoRed extends LinearOpMode {
                     manip.setIntakePower(-0.6);
                     sleep(3500);
                     manip.setIntakePower(0);
-                    drive.followTrajectorySequence(finishLeft);
+                    if (myPosition == "left") {
+                        drive.followTrajectorySequence(finishLeft);
+                    } else if (myPosition == "middle") {
+                        drive.followTrajectorySequence(finishMiddle);
+                    } else {
+                        drive.followTrajectorySequence(scorePurpleRight);
+                    }
                     currentState = State.STOP;
                     break;
 
