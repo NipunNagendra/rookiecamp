@@ -26,15 +26,15 @@ public class StackAutoRed extends LinearOpMode {
         SCORE_PURPLE,
         SCORE_YELLOW,
 
-//        INTAKE_WHITE,
+        //        INTAKE_WHITE,
         PARK,
         STOP
     }
 
     /* TODO: ENTER COORDINATES FOR ALL POSITIONS
-    *   CHANGE ALL VARIABLES TO PUBLIC STATIC
-    *   REFACTOR ALL VARIABLES TO MORE DESCRIPTIVE NAMES
-    */
+     *   CHANGE ALL VARIABLES TO PUBLIC STATIC
+     *   REFACTOR ALL VARIABLES TO MORE DESCRIPTIVE NAMES
+     */
 
 
     //coordinates for starting position (0, 0, 0)
@@ -103,6 +103,10 @@ public class StackAutoRed extends LinearOpMode {
     public static double parkY = 0;
     public static double parkAngle = 0;
 
+    public static double preTruss1X;
+    public static double preTruss1Y;
+    public static double preTruss1Angle;
+
     public static double outtakeHeight = 0;
 
 
@@ -144,7 +148,7 @@ public class StackAutoRed extends LinearOpMode {
                 .build();
 
         TrajectorySequence yellowMiddleUnderTruss = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .lineToLinearHeading(new Pose2d )
+                .lineToLinearHeading(new Pose2d())
                 .strafeRight(18)
                 .build();
 
