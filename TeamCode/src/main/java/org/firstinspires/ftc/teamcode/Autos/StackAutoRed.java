@@ -57,9 +57,16 @@ public class StackAutoRed extends LinearOpMode {
     public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
-    public static double spike3X = -34.26642694740993;
-    public static double spike3Y = 29.54644728121096;
-    public static double spike3Angle = Math.toRadians(180);
+//    public static double spike3X = -34.26642694740993;
+//    public static double spike3Y = 29.54644728121096;
+//    public static double spike3Angle = Math.toRadians(180);
+    public static double moveBackwards3 = 31;
+    public static double moveForward3 = 10;
+    public static double turn3 = 90;
+
+    public static double preTrussX = -38.15845302224215;
+    public static double trussY = -60.13672263931143;
+    public static double trussAngle = Math.toRadians(180);
 
     public static double casenum=1;
 
@@ -87,26 +94,41 @@ public class StackAutoRed extends LinearOpMode {
         //
 
         //still need to enter values for these
+        // these are the basic to spike part
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
                 .build();
 
-        //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
                 .build();
 
-        //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+//                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+                .back(moveBackwards3)
+                .turn(Math.toRadians(turn3))
+                .forward(moveForward3)
                 .build();
 
+        // post-spike, moving towards prev truss
         TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
                 .back(5)
+                .turn(Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
                 .build();
-
         TrajectorySequence finishMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
                 .back(5)
+                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
+                .build();
+        TrajectorySequence finishRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
+                .back(10)
+                .turn(Math.toRadians(-90))
+                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
+                .build();
+
+        // common trajectory for all 3 paths that leads to the backdrop
+        TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
+//                .lineToLinearHeading()
                 .build();
 
         telemetry.addLine("trajectories built!!!");
@@ -175,7 +197,7 @@ public class StackAutoRed extends LinearOpMode {
                     } else if (myPosition == "middle") {
                         drive.followTrajectorySequence(finishMiddle);
                     } else {
-                        drive.followTrajectorySequence(scorePurpleRight);
+                        drive.followTrajectorySequence(finishRight);
                     }
                     currentState = State.STOP;
                     break;

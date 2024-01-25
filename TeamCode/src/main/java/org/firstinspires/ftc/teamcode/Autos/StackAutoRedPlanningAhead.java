@@ -18,8 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous(name = "StackAutoRed", group = "Autonomous")
-public class StackAutoRed extends LinearOpMode {
+@Autonomous(name = "StackAutoRedPlanningAhead", group = "Autonomous")
+public class StackAutoRedPlanningAhead extends LinearOpMode {
 
     enum State{
         IDLE,
@@ -47,67 +47,28 @@ public class StackAutoRed extends LinearOpMode {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -38.64633638294297;
+    public static double spike1X = -41.64633638294297;
     public static double spike1Y = -32.1247700133697;
     public static double spike1Angle = Math.toRadians(180);
 
     //coordinates for middle spike position
-    public static double spike2X = -20.594631330905656;
-    public static double spike2Y = 36.414924287545524;
-    public static double spike2Angle = Math.toRadians(180);
+    public static double spike2X =  -37.812297556497846;
+    public static double spike2Y = -29.023006373520104;
+    public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
-    public static double spike3X = -34.26642694740993;
-    public static double spike3Y = 29.54644728121096;
-    public static double spike3Angle = Math.toRadians(180);
+//    public static double spike3X = -34.26642694740993;
+//    public static double spike3Y = 29.54644728121096;
+//    public static double spike3Angle = Math.toRadians(180);
+    public static double moveBackwards3 = 31;
+    public static double moveForward3 = 10;
+    public static double turn3 = 90;
 
     public static double casenum=1;
 
     public static RedPipeline.Location positionOfVisionPixel;
 
-    //coordinates for left backdrop position
-    public static double backDrop1X = 0;
-    public static double backDrop1Y = 0;
-    public static double backDrop1Angle = 0;
-
-    //coordinates for middle backdrop position
-    public static double backDrop2X = 0;
-    public static double backDrop2Y = 0;
-    public static double backDrop2Angle = 0;
-
-    // double variable for moving back right before going to the right backdrop
-    public static double avoidPixelBack = 0;
-
-    //coordinates for right backdrop position
-    public static double backDrop3X = 0;
-    public static double backDrop3Y = 0;
-    public static double backDrop3Angle = 0;
-
-    //coordinates for door position
-    int doorX = 0;
-    int doorY = 0;
-    int doorAngle = 0;
-
-    //coordinates for white stack position
-    int whiteStackX = 0;
-    int whiteStackY = 0;
-    int whiteStackAngle = 0;
-
-    //coordinates for position right before going closer to the wall for full park
-    public static double subParkX = 0;
-    public static double subParkY = 0;
-    public static double subParkAngle = 0;
-
-    //coordinates for park position
-    public static double parkX = 0;
-    public static double parkY = 0;
-    public static double parkAngle = 0;
-
-    public static double preTruss1X;
-    public static double preTruss1Y;
-    public static double preTruss1Angle;
-
-    public static double outtakeHeight = 0;
+    public static String myPosition;
 
 
     State currentState = State.IDLE;
@@ -140,23 +101,22 @@ public class StackAutoRed extends LinearOpMode {
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+//                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+                .back(moveBackwards3)
+                .turn(Math.toRadians(turn3))
+                .forward(moveForward3)
                 .build();
 
-        TrajectorySequence yellowRightUnderTruss = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .lineToLinearHeading(new Pose2d(preTruss1X, preTruss1Y, preTruss1Angle))
+        TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
+                .back(5)
                 .build();
 
-        TrajectorySequence yellowMiddleUnderTruss = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .lineToLinearHeading(new Pose2d())
-                .strafeRight(18)
+        TrajectorySequence finishMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
+                .back(5)
                 .build();
-
-        TrajectorySequence yellowLeftUnderTruss = drive.trajectorySequenceBuilder(scorePurpleRight.end())
-                .lineToLinearHeading(startPose)
-                .strafeRight(36)
+        TrajectorySequence finishRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
+                .back(10)
                 .build();
-
 
         telemetry.addLine("trajectories built!!!");
 
@@ -203,12 +163,15 @@ public class StackAutoRed extends LinearOpMode {
 
                 case SCORE_PURPLE:
                     if (RedPipeline.positionMain == "left") {
+                        myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
                     } else if (RedPipeline.positionMain == "middle") {
+                        myPosition="middle";
                         telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
+                        myPosition="right";
                         telemetry.addLine("going right");
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
@@ -216,6 +179,13 @@ public class StackAutoRed extends LinearOpMode {
                     manip.setIntakePower(-0.6);
                     sleep(3500);
                     manip.setIntakePower(0);
+                    if (myPosition == "left") {
+                        drive.followTrajectorySequence(finishLeft);
+                    } else if (myPosition == "middle") {
+                        drive.followTrajectorySequence(finishMiddle);
+                    } else {
+                        drive.followTrajectorySequence(finishRight);
+                    }
                     currentState = State.STOP;
                     break;
 
