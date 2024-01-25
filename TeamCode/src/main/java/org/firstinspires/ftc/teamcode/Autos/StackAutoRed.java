@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
@@ -65,8 +66,12 @@ public class StackAutoRed extends LinearOpMode {
     public static double turn3 = 90;
 
     public static double preTrussX = -38.15845302224215;
+    public static double trussX = 40;
     public static double trussY = -60.13672263931143;
     public static double trussAngle = Math.toRadians(180);
+    public static double backdropMiddleX = 80;
+    public static double backdropMiddleY = -40;
+    public static double backdropMiddleAngle = trussAngle;
 
     public static double casenum=1;
 
@@ -104,7 +109,6 @@ public class StackAutoRed extends LinearOpMode {
                 .build();
 
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
-//                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
                 .back(moveBackwards3)
                 .turn(Math.toRadians(turn3))
                 .forward(moveForward3)
@@ -128,7 +132,20 @@ public class StackAutoRed extends LinearOpMode {
 
         // common trajectory for all 3 paths that leads to the backdrop
         TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
-//                .lineToLinearHeading()
+                .lineToLinearHeading(new Pose2d(trussX, trussY, trussAngle))
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .build();
+        TrajectorySequence strafeToBackdropPosLeft = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeLeft(
+                        10,
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+        TrajectorySequence strafeToBackdropPosRight = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeRight(
+                        10,
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         telemetry.addLine("trajectories built!!!");
@@ -199,8 +216,21 @@ public class StackAutoRed extends LinearOpMode {
                     } else {
                         drive.followTrajectorySequence(finishRight);
                     }
-                    currentState = State.STOP;
+                    currentState = State.SCORE_YELLOW;
+                    // ultrasonic + distance sensor stuff here, potentially
                     break;
+
+                case SCORE_YELLOW:
+                    drive.followTrajectorySequence(underTrussToBackdropAll);
+                    // potentially add sensor stuff here (distance sensor for backdrop)
+
+                    if (myPosition == "left") {
+                        drive.followTrajectorySequence(strafeToBackdropPosLeft);
+                    } else if (myPosition == "right") {
+                        drive.followTrajectorySequence(strafeToBackdropPosRight);
+                    } else {
+                        // potential placeholder
+                    }
 
                 case STOP:
                     break;
