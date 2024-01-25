@@ -53,7 +53,7 @@ public class StackAutoRed extends LinearOpMode {
 
     //coordinates for middle spike position
     public static double spike2X =  -37.812297556497846;
-    public static double spike2Y = -29.023006373520104;
+    public static double spike2Y = -27.023006373520104;
     public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
@@ -127,9 +127,9 @@ public class StackAutoRed extends LinearOpMode {
                 .build();
 
         // common trajectory for all 3 paths that leads to the backdrop
-        TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
+        //TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
 //                .lineToLinearHeading()
-                .build();
+                //.build();
 
         telemetry.addLine("trajectories built!!!");
 
