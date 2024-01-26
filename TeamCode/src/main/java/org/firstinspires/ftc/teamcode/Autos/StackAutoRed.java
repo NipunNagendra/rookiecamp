@@ -62,16 +62,18 @@ public class StackAutoRed extends LinearOpMode {
 //    public static double spike3Y = 29.54644728121096;
 //    public static double spike3Angle = Math.toRadians(180);
     public static double moveBackwards3 = 31;
-    public static double moveForward3 = 10;
+    public static double moveForward3 = 11;
     public static double turn3 = 90;
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = 40;
-    public static double trussY = -60.13672263931143;
+    public static double trussX = 15;
+    public static double trussY = -55.93672263931143;
     public static double trussAngle = Math.toRadians(180);
-    public static double backdropMiddleX = 80;
-    public static double backdropMiddleY = -40;
+    public static double backdropMiddleX = 46;
+    public static double backdropMiddleY = -38;
     public static double backdropMiddleAngle = trussAngle;
+    public static double backdropLeftStrafe = 8;
+    public static double backdropRightStrafe = 8;
 
     public static double casenum=1;
 
@@ -117,8 +119,11 @@ public class StackAutoRed extends LinearOpMode {
         // post-spike, moving towards prev truss
         TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
                 .back(5)
-                .turn(Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
+//                .turn(Math.toRadians(90))
+                .lineToLinearHeading(
+                        new Pose2d(preTrussX, trussY, trussAngle),
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         TrajectorySequence finishMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
                 .back(5)
@@ -126,8 +131,11 @@ public class StackAutoRed extends LinearOpMode {
                 .build();
         TrajectorySequence finishRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
                 .back(10)
-                .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
+                .turn(Math.toRadians(-180))
+                .lineToLinearHeading(
+                        new Pose2d(preTrussX, trussY, trussAngle),
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         // common trajectory for all 3 paths that leads to the backdrop
@@ -136,14 +144,14 @@ public class StackAutoRed extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
                 .build();
         TrajectorySequence strafeToBackdropPosLeft = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .strafeLeft(
-                        10,
+                .strafeRight(
+                        backdropLeftStrafe,
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         TrajectorySequence strafeToBackdropPosRight = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .strafeRight(
-                        10,
+                .strafeLeft(
+                        backdropRightStrafe,
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
@@ -232,6 +240,7 @@ public class StackAutoRed extends LinearOpMode {
                         // potential placeholder
                     }
 
+                    currentState = State.STOP;
                 case STOP:
                     break;
             }
