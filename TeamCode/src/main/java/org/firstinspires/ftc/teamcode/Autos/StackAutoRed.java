@@ -22,6 +22,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name = "StackAutoRed", group = "Autonomous")
 public class StackAutoRed extends LinearOpMode {
 
+    Manipulators manip;
     enum State{
         IDLE,
         SCORE_PURPLE,
@@ -74,6 +75,11 @@ public class StackAutoRed extends LinearOpMode {
     public static double backdropMiddleAngle = trussAngle;
     public static double backdropLeftStrafe = 8;
     public static double backdropRightStrafe = 8;
+    public static double preParkY = -53;
+    public static double goingIntoPark = 10;
+
+    public static int outtakeEncoderTicks = 10;
+    public static double temporalMarkerTime = 2.5;
 
     public static double casenum=1;
 
@@ -140,6 +146,11 @@ public class StackAutoRed extends LinearOpMode {
 
         // common trajectory for all 3 paths that leads to the backdrop
         TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
+                .addTemporalMarker(temporalMarkerTime, () -> {
+                    // This marker runs two seconds into the trajectory
+                    manip.moveOuttakeLift(outtakeEncoderTicks);
+                    // Run your action in here!
+                })
                 .lineToLinearHeading(new Pose2d(trussX, trussY, trussAngle))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
                 .build();
@@ -154,6 +165,10 @@ public class StackAutoRed extends LinearOpMode {
                         backdropRightStrafe,
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+        TrajectorySequence parkAll = drive.trajectorySequenceBuilder(posEstimate)
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, preParkY, backdropMiddleAngle))
+                .back(goingIntoPark)
                 .build();
 
         telemetry.addLine("trajectories built!!!");
@@ -233,14 +248,21 @@ public class StackAutoRed extends LinearOpMode {
                     // potentially add sensor stuff here (distance sensor for backdrop)
 
                     if (myPosition == "left") {
+                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, backdropMiddleAngle);
                         drive.followTrajectorySequence(strafeToBackdropPosLeft);
                     } else if (myPosition == "right") {
+                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe, backdropMiddleAngle);
                         drive.followTrajectorySequence(strafeToBackdropPosRight);
                     } else {
-                        // potential placeholder
+                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
                     }
 
+                    currentState = State.PARK;
+
+                case PARK:
+                    drive.followTrajectorySequence(parkAll);
                     currentState = State.STOP;
+
                 case STOP:
                     break;
             }
