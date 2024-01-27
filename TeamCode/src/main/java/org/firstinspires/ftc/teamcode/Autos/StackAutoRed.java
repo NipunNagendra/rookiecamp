@@ -26,9 +26,8 @@ public class StackAutoRed extends LinearOpMode {
     enum State{
         IDLE,
         SCORE_PURPLE,
+        UNDER_DOOR_OR_TRUSS,
         SCORE_YELLOW,
-
-//        INTAKE_WHITE,
         PARK,
         STOP
     }
@@ -63,13 +62,18 @@ public class StackAutoRed extends LinearOpMode {
 //    public static double spike3Y = 29.54644728121096;
 //    public static double spike3Angle = Math.toRadians(180);
     public static double moveBackwards3 = 31;
-    public static double moveForward3 = 11;
+    public static double moveForward3 = 12;
     public static double turn3 = 90;
 
     public static double preTrussX = -38.15845302224215;
     public static double trussX = 15;
     public static double trussY = -55.93672263931143;
     public static double trussAngle = Math.toRadians(180);
+
+    public static double goingDirectlyUnderTruss = 15;
+    public static double betweenTruss = 50;
+    public static double exitDoor = 15;
+
     public static double backdropMiddleX = 46;
     public static double backdropMiddleY = -38;
     public static double backdropMiddleAngle = trussAngle;
@@ -86,6 +90,7 @@ public class StackAutoRed extends LinearOpMode {
     public static RedPipeline.Location positionOfVisionPixel;
 
     public static String myPosition;
+    public static Boolean danger = Boolean.TRUE;
 
 
     State currentState = State.IDLE;
@@ -144,12 +149,23 @@ public class StackAutoRed extends LinearOpMode {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
+        TrajectorySequence underDoorScuffed = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
+                .addTemporalMarker(temporalMarkerTime, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicks);
+                })
+                .back(goingDirectlyUnderTruss)
+                .strafeRight(
+                        betweenTruss,
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .back(exitDoor)
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .build();
+
         // common trajectory for all 3 paths that leads to the backdrop
         TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
                 .addTemporalMarker(temporalMarkerTime, () -> {
-                    // This marker runs two seconds into the trajectory
                     manip.moveOuttakeLift(outtakeEncoderTicks);
-                    // Run your action in here!
                 })
                 .lineToLinearHeading(new Pose2d(trussX, trussY, trussAngle))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
@@ -212,6 +228,7 @@ public class StackAutoRed extends LinearOpMode {
 
             switch(currentState){
                 case IDLE:
+                    manip.moveOuttakeLift(5000);
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
@@ -239,13 +256,21 @@ public class StackAutoRed extends LinearOpMode {
                     } else {
                         drive.followTrajectorySequence(finishRight);
                     }
+
+                    currentState = State.UNDER_DOOR_OR_TRUSS;
+
+                case UNDER_DOOR_OR_TRUSS:
+                    // ultrasonic + distance sensor stuff here idk
+
+                    if (/* distance sensor detects robot block is */ danger) {
+                        drive.followTrajectorySequence(underDoorScuffed);
+                    }
+                    else {
+                        drive.followTrajectorySequence(underTrussToBackdropAll);
+                    }
                     currentState = State.SCORE_YELLOW;
-                    // ultrasonic + distance sensor stuff here, potentially
-                    break;
 
                 case SCORE_YELLOW:
-                    drive.followTrajectorySequence(underTrussToBackdropAll);
-                    // potentially add sensor stuff here (distance sensor for backdrop)
 
                     if (myPosition == "left") {
                         posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, backdropMiddleAngle);
@@ -257,6 +282,7 @@ public class StackAutoRed extends LinearOpMode {
                         posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
                     }
 
+                    // outtake here
                     currentState = State.PARK;
 
                 case PARK:

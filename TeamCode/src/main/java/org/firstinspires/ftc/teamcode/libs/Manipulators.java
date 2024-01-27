@@ -81,7 +81,9 @@ public class Manipulators {
         outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLiftMotor");
         outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
         outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         // setting servos for right and left to hardware map
         intakeRightServo = hardwareMap.get(CRServo.class, "intakeRightServo");
@@ -272,7 +274,8 @@ public class Manipulators {
     public void moveOuttakeLift(int encoderTicks){
         outtakeLiftMotor.setTargetPosition(encoderTicks);
         outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        outtakeLiftMotor.setPower(0);
+        outtakeLiftMotor.setPower(0.5);
+
     }
 
     public void bottomOutLift(){

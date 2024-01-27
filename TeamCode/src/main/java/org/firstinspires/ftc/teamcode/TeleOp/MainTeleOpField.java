@@ -5,6 +5,7 @@ import static com.sun.tools.doclint.Entity.pi;
 import android.annotation.SuppressLint;
 import android.util.Pair;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
 
-
+@Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpField", group="TeleOp")
 public class MainTeleOpField extends OpMode {
     Movement move;
@@ -42,6 +43,8 @@ public class MainTeleOpField extends OpMode {
     public static double targetAngle;
 
     public static String lockStatus;
+    public static int outtakeEncoderTicks = 2000;
+
     public void init() {
         manip = new Manipulators(hardwareMap);
         //manip.droneServo.setPosition(0.5);
@@ -149,7 +152,7 @@ public class MainTeleOpField extends OpMode {
 
         telemetry.addData("lockStatus: ", lockStatus);
         telemetry.addData("targetAngle: ", targetAngle);
-        telemetry.addData("touchResult: ", manip.liftTouchSensor.isPressed());
+        telemetry.addData("lift: ", manip.outtakeLiftMotor.getCurrentPosition());
 
 //        if(Math.abs(targetAngle)>=0 && Math.abs(targetAngle)<=Math.toRadians(2)){
 //            targetAngle=0;
@@ -256,5 +259,9 @@ public class MainTeleOpField extends OpMode {
 //        if (sensor.invisibleWallDetect()){
 //
 //    }
+        if (gamepad2.circle) {
+            manip.moveOuttakeLift(outtakeEncoderTicks);
+        }
+
         telemetry.update();
     }}
