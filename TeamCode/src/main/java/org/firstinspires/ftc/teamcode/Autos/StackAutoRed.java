@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
+import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -91,6 +92,8 @@ public class StackAutoRed extends LinearOpMode {
 
     public static String myPosition;
     public static Boolean danger = Boolean.FALSE;
+
+    SensorLibrary sLib;
 
 
     State currentState = State.IDLE;
@@ -261,7 +264,6 @@ public class StackAutoRed extends LinearOpMode {
 
                 case UNDER_DOOR_OR_TRUSS:
                     // ultrasonic + distance sensor stuff here idk
-
                     if (/* distance sensor detects robot block is */ danger) {
                         drive.followTrajectorySequence(underDoorScuffed);
                     }

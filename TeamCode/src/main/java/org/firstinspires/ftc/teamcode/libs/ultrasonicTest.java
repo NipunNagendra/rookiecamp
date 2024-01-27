@@ -39,7 +39,7 @@ public class ultrasonicTest extends OpMode {
             ultrasonicSensor.ping();
         }
         if (move.isPressed("y", gamepad1.y)){
-            telemetry.addData("distance: ", ultrasonicSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("distance: ", ultrasonicSensor.getDistance(DistanceUnit.CM));
         }
         telemetry.addData("range: ultra", rangeSensor.cmUltrasonic());
         telemetry.addData("range: light", rangeSensor.cmOptical());

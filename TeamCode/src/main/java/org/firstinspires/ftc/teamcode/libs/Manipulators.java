@@ -80,8 +80,6 @@ public class Manipulators {
 
         outtakeLiftMotor = hardwareMap.get(DcMotor.class, "outtakeLiftMotor");
         outtakeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
-        outtakeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtakeLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 

@@ -113,41 +113,40 @@ public class MainTeleOpField extends OpMode {
             lockStatus = "unlocked";
         }
         else if(move.isPressed("x", gamepad1.x)) {
-            if (lockStatus == "left") lockStatus = "unlocked";
-            else lockStatus = "left";
+            if (lockStatus == "left"){ lockStatus = "unlocked";}
+            else{ lockStatus = "left";}
         }
         else if(move.isPressed("y", gamepad1.y)) {
-            if (lockStatus == "up") lockStatus = "unlocked";
-            else lockStatus = "up";
+            if (lockStatus == "up"){ lockStatus = "unlocked";}
+            else{ lockStatus = "up";}
         }
         else if(move.isPressed("a", gamepad1.a)){
-            if (lockStatus == "down") lockStatus = "unlocked";
-            else lockStatus = "down";
+            if (lockStatus == "down"){ lockStatus = "unlocked";}
+            else{ lockStatus = "down";}
         }
         else if(move.isPressed("b", gamepad1.b)){
-            if (lockStatus == "right") lockStatus = "unlocked";
-            else lockStatus = "right";
+            if (lockStatus == "right"){ lockStatus = "unlocked";}
+            else{ lockStatus = "right";}
         }
 
         if (lockStatus == "unlocked")
             targetAngle = 0;
         else if (lockStatus == "left")
             targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (-Math.PI/2);
-            if (lockStatus=="down"){
-                targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (Math.PI/2);
-            }
+
         else if (lockStatus == "up")
             targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
         else if (lockStatus == "down") {
-            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            targetAngle = Math.atan2(Math.sin((imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS))), Math.cos(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             if (targetAngle > 0) {
-                    targetAngle -= Math.PI;
+                targetAngle -= Math.PI;
             }else {
                 targetAngle += Math.PI;
             }
         }
         else if (lockStatus == "right")
-            {targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);}
+        {targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);}
+
 
 
         telemetry.addData("lockStatus: ", lockStatus);
