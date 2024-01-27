@@ -67,30 +67,30 @@ public class StackAutoRed extends LinearOpMode {
 
     public static double preTrussX = -38.15845302224215;
     public static double trussX = 15;
-    public static double trussY = -55.93672263931143;
+    public static double trussY = -56.03672263931143;
     public static double trussAngle = Math.toRadians(180);
 
     public static double goingDirectlyUnderTruss = 15;
     public static double betweenTruss = 50;
     public static double exitDoor = 15;
 
-    public static double backdropMiddleX = 46;
-    public static double backdropMiddleY = -38;
+    public static double backdropMiddleX = 52;
+    public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = trussAngle;
-    public static double backdropLeftStrafe = 8;
-    public static double backdropRightStrafe = 8;
+    public static double backdropLeftStrafe = 4;
+    public static double backdropRightStrafe = 4;
     public static double preParkY = -53;
     public static double goingIntoPark = 10;
 
-    public static int outtakeEncoderTicks = 10;
-    public static double temporalMarkerTime = 2.5;
+    public static int outtakeEncoderTicks = 2500;
+    public static double temporalMarkerTime = 1.5;
 
     public static double casenum=1;
 
     public static RedPipeline.Location positionOfVisionPixel;
 
     public static String myPosition;
-    public static Boolean danger = Boolean.TRUE;
+    public static Boolean danger = Boolean.FALSE;
 
 
     State currentState = State.IDLE;
@@ -182,10 +182,10 @@ public class StackAutoRed extends LinearOpMode {
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
-        TrajectorySequence parkAll = drive.trajectorySequenceBuilder(posEstimate)
-                .lineToLinearHeading(new Pose2d(backdropMiddleX, preParkY, backdropMiddleAngle))
-                .back(goingIntoPark)
-                .build();
+//        TrajectorySequence parkAll = drive.trajectorySequenceBuilder(posEstimate)
+//                .lineToLinearHeading(new Pose2d(backdropMiddleX, preParkY, backdropMiddleAngle))
+//                .back(goingIntoPark)
+//                .build();
 
         telemetry.addLine("trajectories built!!!");
 
@@ -228,7 +228,7 @@ public class StackAutoRed extends LinearOpMode {
 
             switch(currentState){
                 case IDLE:
-                    manip.moveOuttakeLift(5000);
+//                    manip.moveOuttakeLift(5000);
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
@@ -247,7 +247,7 @@ public class StackAutoRed extends LinearOpMode {
                     }
                     telemetry.update();
                     manip.setIntakePower(-0.6);
-                    sleep(3500);
+                    sleep(1000);
                     manip.setIntakePower(0);
                     if (myPosition == "left") {
                         drive.followTrajectorySequence(finishLeft);
@@ -281,12 +281,11 @@ public class StackAutoRed extends LinearOpMode {
                     } else {
                         posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
                     }
-
-                    // outtake here
+                    manip.gateToggle();
                     currentState = State.PARK;
 
                 case PARK:
-                    drive.followTrajectorySequence(parkAll);
+//                    drive.followTrajectorySequence(parkAll);
                     currentState = State.STOP;
 
                 case STOP:

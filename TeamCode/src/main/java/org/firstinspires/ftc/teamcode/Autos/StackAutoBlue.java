@@ -41,6 +41,8 @@ public class StackAutoBlue extends LinearOpMode {
     public static double startPoseY= 65.13672263931143;
     public static double startPoseAngle= Math.toRadians(90);
 
+    public static int spikeLoc = 1;
+
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
     Pose2d posEstimate;
@@ -60,11 +62,17 @@ public class StackAutoBlue extends LinearOpMode {
 //    public static double spike3Y = 29.54644728121096;
 //    public static double spike3Angle = Math.toRadians(180);
     public static double moveBackwards3 = 31;
-    public static double moveForward3 = 10;
-    public static double turn3 = -90;
+    public static double moveForward3 = 5.5;
+    public static double turn3 = 90;
 
-    public static double preTrussX = -38.15845302224215;
-    public static double trussY = -60.13672263931143;
+    public static double moveBackwards1 = 31;
+
+    public static double turn1 = -90;
+
+    public static double moveForward1 = 11;
+
+    public static double preTrussX = -44;
+    public static double trussY = 60.13672263931143;
     public static double trussAngle = Math.toRadians(180);
 
     public static double casenum=1;
@@ -95,7 +103,9 @@ public class StackAutoBlue extends LinearOpMode {
         //still need to enter values for these
         // these are the basic to spike part
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+                .back(moveBackwards1)
+                .turn(Math.toRadians(turn1))
+                .forward(moveForward1)
                 .build();
 
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
@@ -111,16 +121,17 @@ public class StackAutoBlue extends LinearOpMode {
 
         // post-spike, moving towards prev truss
         TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .back(5)
+                .back(10)
                 .turn(Math.toRadians(90))
                 .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
+
                 .build();
         TrajectorySequence finishMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
                 .back(5)
                 .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
                 .build();
         TrajectorySequence finishRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
-                .back(10)
+                .back(5)
                 .turn(Math.toRadians(-90))
                 .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
                 .build();
@@ -174,11 +185,11 @@ public class StackAutoBlue extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    if (BluePipeline.positionMain == "left") {
+                    if (spikeLoc == 1) {
                         myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (BluePipeline.positionMain == "middle") {
+                    } else if (spikeLoc == 2) {
                         myPosition="middle";
                         telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
@@ -189,7 +200,7 @@ public class StackAutoBlue extends LinearOpMode {
                     }
                     telemetry.update();
                     manip.setIntakePower(-0.6);
-                    sleep(3500);
+                    sleep(1000);
                     manip.setIntakePower(0);
                     if (myPosition == "left") {
                         drive.followTrajectorySequence(finishLeft);

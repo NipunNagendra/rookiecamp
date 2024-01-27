@@ -39,8 +39,8 @@ public class Manipulators {
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public String officialColor;
 
-    public static double outtakeServoPos1 = 0.23;
-    public static double outtakeServoPos2 = 0.4;
+    public static double outtakeServoPos1 = 0.16;
+    public static double outtakeServoPos2 = 0.5;
 
     public static double droneLaunchPos = 0.5;
 

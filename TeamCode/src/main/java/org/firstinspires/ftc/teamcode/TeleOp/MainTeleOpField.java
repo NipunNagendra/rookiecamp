@@ -221,7 +221,7 @@ public class MainTeleOpField extends OpMode {
         // When receiving power from gamepad2 that is greater than a certain threshold
         if (Math.abs(gamepad2.right_stick_y) > 0.1) {
             // it will move the lift to the certain power that the right joystick set
-            if(manip.liftTouchSensor.isPressed() && gamepad2.right_stick_y < 0){
+            if(manip.liftTouchSensor.isPressed() && gamepad2.right_stick_y > 0){
                 manip.setOuttakeLiftPower(0);
             }
             else{
