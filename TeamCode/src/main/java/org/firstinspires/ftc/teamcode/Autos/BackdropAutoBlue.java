@@ -31,17 +31,17 @@ public class BackdropAutoBlue extends LinearOpMode {
 
 
     //coordinates for starting position (0, 0, 0)
-    public static double startPoseX= 9.926776858771811;
-    public static double startPoseY= -64.67416636208816;
-    public static double startPoseAngle= 270;
+    public static double startPoseX= 11.35845302224215;
+    public static double startPoseY= -65.13672263931143;
+    public static double startPoseAngle= 90;
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, Math.toRadians(startPoseAngle));
 
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = 12.98195894291459;
-    public static double spike1Y = -33.1018426729213;
+    public static double spike1X = 11.35845302224215;
+    public static double spike1Y = 34.44644728121096;
     public static double spike1Angle = Math.toRadians(0);
 
     //coordinates for middle spike position
@@ -50,9 +50,16 @@ public class BackdropAutoBlue extends LinearOpMode {
     public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
-    public static double spike3X = 3.8969040643837674;
-    public static double spike3Y = -32.33020475757467;
+    public static double spike3X = 11.35845302224215;
+    public static double spike3Y = 34.44644728121096;
     public static double spike3Angle = Math.toRadians(180);
+
+    //coordinates for BackDrop position
+    public static double backdropMiddleX = 45;
+    public static double backdropMiddleY = 34;
+    public static double backdropMiddleAngle = Math.toRadians(180);
+
+    public static double strafeToTag = 8;
 
     // stores the result of Vision locally
 
@@ -69,38 +76,41 @@ public class BackdropAutoBlue extends LinearOpMode {
         drive.setPoseEstimate(startPose);
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
                 .build();
 
         TrajectorySequence park1 = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .back(10)
-                .lineToLinearHeading(startPose)
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeRight(strafeToTag)
+                .waitSeconds(0.5)
                 .strafeRight(18)
+                .back(15)
                 .build();
 
         TrajectorySequence park2 = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .back(10)
-                .lineToLinearHeading(startPose)
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeRight(strafeToTag)
+                .waitSeconds(0.5)
                 .strafeRight(18)
+                .back(15)
                 .build();
 
         TrajectorySequence park3 = drive.trajectorySequenceBuilder(scorePurpleRight.end())
                 .back(10)
-                .lineToLinearHeading(startPose)
-                .strafeLeft(18)
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeLeft(strafeToTag)
+                .strafeRight(32)
+                .back(15)
                 .build();
 
 

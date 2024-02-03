@@ -95,9 +95,9 @@ public class BluePipeline extends OpenCvPipeline {
             location = BluePipeline.Location.RIGHT;
         }
         else{
-            positionMain = "right";
-            location = BluePipeline.Location.RIGHT;
-            telemetry.addData("Pixel Location", "right");
+            positionMain = "left";
+            location = BluePipeline.Location.LEFT;
+            telemetry.addData("Pixel Location", "left");
         }
 
         telemetry.update();
