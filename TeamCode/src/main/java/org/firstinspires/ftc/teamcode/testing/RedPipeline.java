@@ -52,8 +52,8 @@ public class RedPipeline extends OpenCvPipeline {
     public static double higherval = 255;
 
     static final Rect LEFT_ROI = new Rect(
-            new Point(0, 60),
-            new Point(60, 120));
+            new Point(25, 60),
+            new Point(85, 120));
     static final Rect FRONT_ROI = new Rect(
             new Point(180, 40),
             new Point(240, 100));

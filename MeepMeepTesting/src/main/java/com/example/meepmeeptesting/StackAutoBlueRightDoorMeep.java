@@ -7,7 +7,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.SampleMecanumDrive;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepTesting {
+public class StackAutoBlueRightDoorMeep {
     //coordinates for starting position
     public static double startPoseX = -38.15845302224215;
     public static double startPoseY = 65.13672263931143;
