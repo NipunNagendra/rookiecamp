@@ -5,8 +5,9 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepTesting {
-    //This is code for NearSideBlueAuto
+
+public class BackdropAutoBlueMeep {
+    //This is code for BackdropAutoBlue
     //coordinates for starting position (0, 0, 0)
     public static double startPoseX= 11.35845302224215;
     public static double startPoseY= 65.13672263931143;
@@ -57,16 +58,17 @@ public class MeepMeepTesting {
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
+                                .back(7)
+                                .turn(Math.toRadians(180))
                                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
-                                //.lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
-                                //.back(moveBackwards3)
-                                //.turn(Math.toRadians(turn3))
-                                //.lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                //.back(moveBackwardsTowardBackDrop)
-
+                                .back(7)
+                                .turn(Math.toRadians(-90))
                                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .strafeRight(26)
-                                .back(15)
+                                .forward(5)
+                                .strafeRight(8)
+                                .strafeRight(16)
+                                .turn(Math.toRadians(90))
+                                .strafeLeft(15)
                                 .build()
 
 

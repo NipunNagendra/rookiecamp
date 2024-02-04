@@ -18,8 +18,6 @@ public class BackdropAutoBlue extends LinearOpMode {
         IDLE,
         SCORE_PURPLE,
         SCORE_YELLOW,
-
-//        INTAKE_WHITE,
         PARK,
         STOP
     }
@@ -61,6 +59,13 @@ public class BackdropAutoBlue extends LinearOpMode {
 
     public static double strafeToTag = 8;
 
+    public static double temporalMarkerTimeUP = 1.5;
+    public static double temporalMarkerTimeDOWN = 0.75;
+
+
+    public static int outtakeEncoderTicks = 2500;
+    public static int outtakeOG = 0;
+
     // stores the result of Vision locally
 
     public static BluePipeline.Location positionOfVisionPixel;
@@ -81,38 +86,68 @@ public class BackdropAutoBlue extends LinearOpMode {
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
+                .back(7)
+                .turn(Math.toRadians(180))
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
-                .build();
-
-        TrajectorySequence park1 = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .strafeRight(strafeToTag)
-                .waitSeconds(0.5)
-                .strafeRight(18)
-                .back(15)
-                .build();
-
-        TrajectorySequence park2 = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .strafeRight(strafeToTag)
-                .waitSeconds(0.5)
-                .strafeRight(18)
-                .back(15)
-                .build();
-
-        TrajectorySequence park3 = drive.trajectorySequenceBuilder(scorePurpleRight.end())
                 .back(10)
+                .turn(Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+                .forward(3)
+                .build();
+
+        TrajectorySequence backDropLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
+                .strafeLeft(27)
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .addTemporalMarker(temporalMarkerTimeUP, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicks);
+                })
+                .strafeRight(strafeToTag)
+                .build();
+
+        TrajectorySequence backDropMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
+                .back(7)
+                .turn(Math.toRadians(-90))
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .forward(5)
+                .strafeRight(strafeToTag)
+                .build();
+
+        TrajectorySequence backDropRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .addTemporalMarker(temporalMarkerTimeUP, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicks);
+                })
                 .strafeLeft(strafeToTag)
+                .build();
+
+        TrajectorySequence parkLeft = drive.trajectorySequenceBuilder(backDropLeft.end())
+                .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
+                    manip.moveOuttakeLift(outtakeOG);
+                })
+                .strafeRight(18)
+                .back(15)
+                .build();
+
+        TrajectorySequence parkMiddle = drive.trajectorySequenceBuilder(backDropMiddle.end())
+                .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
+                    manip.moveOuttakeLift(outtakeOG);
+                })
+                .strafeRight(16)
+                .turn(Math.toRadians(90))
+                .strafeLeft(15)
+                .build();
+
+        TrajectorySequence parkRight = drive.trajectorySequenceBuilder(backDropRight.end())
+                .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
+                    manip.moveOuttakeLift(outtakeOG);
+                })
                 .strafeRight(32)
                 .back(15)
                 .build();
-
 
         telemetry.addLine("trajectories built!!!");
         telemetry.addData("cpos", vision.getLocation());
@@ -149,15 +184,26 @@ public class BackdropAutoBlue extends LinearOpMode {
                     currentState = State.PARK;
                     break;
 
-                case PARK:
+                case SCORE_YELLOW:
                     if (casePos==1) {
-                        drive.followTrajectorySequence(park1);
+                        drive.followTrajectorySequence(backDropLeft);
                     } else if (casePos==2) {
-                        drive.followTrajectorySequence(park2);
+                        drive.followTrajectorySequence(backDropMiddle);
                     } else {
-                        drive.followTrajectorySequence(park3);
+                        drive.followTrajectorySequence(backDropMiddle);
                     }
                     manip.gateToggle();
+                    currentState = BackdropAutoBlue.State.STOP;
+                    break;
+
+                case PARK:
+                    if (casePos==1) {
+                        drive.followTrajectorySequence(parkLeft);
+                    } else if (casePos==2) {
+                        drive.followTrajectorySequence(parkMiddle);
+                    } else {
+                        drive.followTrajectorySequence(parkRight);
+                    }
                     currentState = BackdropAutoBlue.State.STOP;
                     break;
 

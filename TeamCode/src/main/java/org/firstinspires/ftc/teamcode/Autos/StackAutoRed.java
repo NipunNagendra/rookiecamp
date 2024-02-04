@@ -84,6 +84,7 @@ public class StackAutoRed extends LinearOpMode {
     public static double goingIntoPark = 10;
 
     public static int outtakeEncoderTicks = 2500;
+    public static int outtakeOG = 0;
     public static double temporalMarkerTime = 1.5;
 
     public static double casenum=1;
