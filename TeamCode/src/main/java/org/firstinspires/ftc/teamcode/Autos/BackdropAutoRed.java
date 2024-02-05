@@ -38,7 +38,7 @@ public class BackdropAutoRed extends LinearOpMode {
 
 
     //coordinates for starting position (0, 0, 0)
-    public static double startPoseX= 38.15845302224215;
+    public static double startPoseX= 11.35845302224215;
     public static double startPoseY= -65.13672263931143;
     public static double startPoseAngle= Math.toRadians(270);
 
@@ -60,9 +60,10 @@ public class BackdropAutoRed extends LinearOpMode {
     public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for left spike position
-//    public static double spike3X = -34.26642694740993;
-//    public static double spike3Y = 29.54644728121096;
-//    public static double spike3Angle = Math.toRadians(180);
+    public static double spike1X = 11.35845302224215;
+    public static double spike1Y = 34.44644728121096;
+    public static double spike1Angle = Math.toRadians(180);
+
     public static double moveBackwards3 = 31;
     public static double moveForward3 = 4;
     public static double turn3 = 90;
@@ -118,9 +119,10 @@ public class BackdropAutoRed extends LinearOpMode {
         //still need to enter values for these
         // these are the basic to spike part
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
-                .back(moveBackwards1)
-                .turn(turn1)
-                .forward(moveForward1)
+                .back(7)
+                .turn(Math.toRadians(-90))
+                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+                .forward(3)
                 .build();
 
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
@@ -135,44 +137,28 @@ public class BackdropAutoRed extends LinearOpMode {
 
         // post-spike, moving towards prev truss
         TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .back(10)
-//                .turn(Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(preGoingBackdropX, preGoingBackdropY, preGoingBackdropAngle))
-                .build();
-        TrajectorySequence finishMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .back(5)
-                .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(preGoingBackdropX, preGoingBackdropY, preGoingBackdropAngle))
-                .build();
-        TrajectorySequence finishRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
-                .back(8)
-                .turn(Math.toRadians(-180))
-                .lineToLinearHeading(new Pose2d(preGoingBackdropX, preGoingBackdropY, preGoingBackdropAngle))
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeRight(5)
                 .build();
 
-        // common trajectory for all 3 paths that leads to the backdrop
-        TrajectorySequence towardsBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preGoingBackdropX, preGoingBackdropY, preGoingBackdropAngle))
-                .addTemporalMarker(temporalMarkerTime, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicks);
-                })
+        TrajectorySequence finishMiddle = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeRight(5)
                 .build();
-        TrajectorySequence strafeToBackdropPosLeft = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .strafeRight(
-                        backdropLeftStrafe,
-                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+
+        TrajectorySequence finishRight = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
+                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .strafeRight(5)
                 .build();
-        TrajectorySequence strafeToBackdropPosRight = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .strafeLeft(
-                        backdropRightStrafe,
-                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+
+        TrajectorySequence towardsBackdropAll = drive.trajectorySequenceBuilder(finishLeft.end())
+                        .build();
+
+        TrajectorySequence strafeToBackdropPosLeft = drive.trajectorySequenceBuilder(finishMiddle.end())
+                        .build();
+
+        TrajectorySequence strafeToBackdropPosRight = drive.trajectorySequenceBuilder(finishRight.end())
                 .build();
-//        TrajectorySequence parkAll = drive.trajectorySequenceBuilder(posEstimate)
-//                .lineToLinearHeading(new Pose2d(backdropMiddleX, preParkY, backdropMiddleAngle))
-//                .back(goingIntoPark)
-//                .build();
 
         telemetry.addLine("trajectories built!!!");
 
