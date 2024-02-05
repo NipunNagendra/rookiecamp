@@ -17,6 +17,7 @@ public class BluePipeline extends OpenCvPipeline {
     Mat mat = new Mat();
     public enum Location {
         LEFT,
+
         RIGHT,
         FRONT,
         NOT_FOUND
