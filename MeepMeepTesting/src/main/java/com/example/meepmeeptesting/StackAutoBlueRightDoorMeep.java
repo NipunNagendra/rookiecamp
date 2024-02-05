@@ -39,7 +39,7 @@ public class StackAutoBlueRightDoorMeep {
     public static double trussAngle = Math.toRadians(180);
 
     public static double goingDirectlyUnderTruss = 26;
-    public static double betweenTruss = 46;
+    public static double betweenTruss = 35;
     public static double exitDoor = 45;
 
     public static double backdropMiddleX = 52;
@@ -75,8 +75,8 @@ public class StackAutoBlueRightDoorMeep {
                                 .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
                                 .back(goingDirectlyUnderTruss)
                                 .strafeLeft(betweenTruss)
-                                .back(exitDoor)
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                                .splineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle), Math.toRadians(90))
+
                                 .strafeRight(backdropLeftStrafe)
                                 .forward(outFromBackdrop)
                                 .turn(Math.toRadians(90))
