@@ -34,7 +34,7 @@ public class DangerPathRed {
     public static double turn3 = 90;
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = -8;
+    public static double trussX = -14;
     public static double trussY = -55.93672263931143;
     public static double trussAngle = Math.toRadians(180);
     public static double backdropMiddleX = 46;

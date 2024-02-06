@@ -49,7 +49,7 @@ public class StackAutoRed extends LinearOpMode {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -41.64633638294297;
+    public static double spike1X = -42.64633638294297;
     public static double spike1Y = -32.1247700133697;
     public static double spike1Angle = Math.toRadians(180);
 
@@ -67,12 +67,16 @@ public class StackAutoRed extends LinearOpMode {
     public static double turn3 = 90;
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = 15;
+    public static double trussX = -14
+
+
+
+            ;
     public static double trussY = -56.03672263931143;
     public static double trussAngle = Math.toRadians(180);
 
     public static double goingDirectlyUnderTruss = 15;
-    public static double betweenTruss = 50;
+    public static double betweenTruss = 35;
     public static double exitDoor = 15;
 
     public static double backdropMiddleX = 52;
@@ -86,6 +90,8 @@ public class StackAutoRed extends LinearOpMode {
     public static int outtakeEncoderTicks = 2500;
     public static int outtakeOG = 0;
     public static double temporalMarkerTime = 1.5;
+
+    public static double temporalMarkerTimeAlternate = 5;
 
     public static double casenum=1;
 
@@ -146,7 +152,7 @@ public class StackAutoRed extends LinearOpMode {
                 .build();
         TrajectorySequence finishRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
                 .back(10)
-                .turn(Math.toRadians(-180))
+                .turn(Math.toRadians( -180))
                 .lineToLinearHeading(
                         new Pose2d(preTrussX, trussY, trussAngle),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -154,16 +160,15 @@ public class StackAutoRed extends LinearOpMode {
                 .build();
 
         TrajectorySequence underDoorScuffed = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
-                .addTemporalMarker(temporalMarkerTime, () -> {
+                .addTemporalMarker(temporalMarkerTimeAlternate, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
-                .back(goingDirectlyUnderTruss)
+                .lineToLinearHeading(new Pose2d(trussX, trussY, trussAngle))
                 .strafeRight(
                         betweenTruss,
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .back(exitDoor)
-                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .splineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle), Math.toRadians(270))
                 .build();
 
         // common trajectory for all 3 paths that leads to the backdrop
@@ -268,6 +273,7 @@ public class StackAutoRed extends LinearOpMode {
                     if (/* distance sensor detects robot block is */ danger) {
                         drive.followTrajectorySequence(underDoorScuffed);
                     }
+
                     else {
                         drive.followTrajectorySequence(underTrussToBackdropAll);
                     }
