@@ -14,7 +14,13 @@ public class SensorLibrary {
     public Rev2mDistanceSensor distanceSensor;
 
     public static double dsInvisibleWallThreshold = 0;
+
     public static double ultrasonicInvisibleWallThreshold = 0;
+
+    public static double dsRobotBlockThreshold = 0;
+
+    public static double ultrasonicRobotBlockThreshold = 0;
+
 
 
     public SensorLibrary(HardwareMap hardwareMap) {
@@ -26,6 +32,13 @@ public class SensorLibrary {
         return Mb.getDistance(DistanceUnit.CM);
     }
 
+    public boolean robotBlockDetect() {
+        if (distanceSensor.getDistance(DistanceUnit.CM) <= dsRobotBlockThreshold &&
+                ultrasonicSensor.getDistance(DistanceUnit.CM) <= ultrasonicRobotBlockThreshold){
+            return true;
+        }
+        return false;
+    }
 
 
     public boolean invisibleWallDetect()

@@ -21,8 +21,10 @@ public class GuardMode extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-                lockTo(lockLocation, drive);
 
+            if(gamepad1.x) {
+                lockTo(lockLocation, drive);
+            }
             drive.update();
 
         }
