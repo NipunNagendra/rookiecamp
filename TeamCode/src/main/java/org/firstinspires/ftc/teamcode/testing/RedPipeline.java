@@ -55,11 +55,11 @@ public class RedPipeline extends OpenCvPipeline {
             new Point(25, 60),
             new Point(85, 120));
     static final Rect FRONT_ROI = new Rect(
-            new Point(180, 40),
+            new Point(100, 40),
             new Point(240, 100));
     static final Rect RIGHT_ROI = new Rect(
-            new Point(260, 50),
-            new Point(320, 110));
+            new Point(260, 40),
+            new Point(320, 100));
 
     static double PERCENT_COLOR_THRESHOLD_LEFT = 0.25;
     static double PERCENT_COLOR_THRESHOLD_FRONT = PERCENT_COLOR_THRESHOLD_LEFT * FRONT_ROI.area() / LEFT_ROI.area();
@@ -81,13 +81,17 @@ public class RedPipeline extends OpenCvPipeline {
         double leftValue = Core.sumElems(left).val[0] / 255;
         double frontValue = Core.sumElems(front).val[0] / 255;
         double rightValue = Core.sumElems(front).val[0] / 255;
-        double maxValue = leftValue;
-        location = RedPipeline.Location.LEFT;
-        positionMain = "left";
+        double maxValue = 0;
+        location = RedPipeline.Location.NOT_FOUND;
+        positionMain = "not found";
 
         left.release();
         front.release();
         right.release();
+
+        telemetry.addData("Threshold Left", (int) PERCENT_COLOR_THRESHOLD_LEFT);
+        telemetry.addData("Threshold Middle", (int) PERCENT_COLOR_THRESHOLD_FRONT);
+        telemetry.addData("Threshold Right", (int) PERCENT_COLOR_THRESHOLD_RIGHT);
 
         telemetry.addData("Left Raw Value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Front Raw Value", (int) Core.sumElems(front).val[0]);
@@ -131,8 +135,6 @@ public class RedPipeline extends OpenCvPipeline {
 //        }
 //        telemetry.update();
 
-        //telemetry.update();
-
         if (rightValue > maxValue) {
             maxValue = rightValue;
             location = RedPipeline.Location.RIGHT;
@@ -143,21 +145,38 @@ public class RedPipeline extends OpenCvPipeline {
             location = RedPipeline.Location.FRONT;
             positionMain = "middle";
         }
+        else {
+            maxValue = leftValue;
+            location = RedPipeline.Location.LEFT;
+            positionMain = "left";
+        }
 
         if (location == RedPipeline.Location.LEFT) {
             if (!(maxValue / LEFT_ROI.area() > PERCENT_COLOR_THRESHOLD_LEFT)) {
                 location = RedPipeline.Location.NOT_FOUND;
                 positionMain = "not found";
+                telemetry.addData("Pixel Location", "not found, right for backdrop, left for stack");
+            }
+            else {
+                telemetry.addData("Pixel Location", "left");
             }
         } else if (location == RedPipeline.Location.FRONT) {
             if (!(maxValue / FRONT_ROI.area() > PERCENT_COLOR_THRESHOLD_FRONT)) {
                 location = RedPipeline.Location.NOT_FOUND;
                 positionMain = "not found";
+                telemetry.addData("Pixel Location", "not found, right for backdrop, left for stack");
+            }
+            else {
+                telemetry.addData("Pixel Location", "front");
             }
         } else {
             if (!(maxValue / RIGHT_ROI.area() > PERCENT_COLOR_THRESHOLD_RIGHT)) {
                 location = RedPipeline.Location.NOT_FOUND;
                 positionMain = "not found";
+                telemetry.addData("Pixel Location", "not found, right for backdrop, left for stack");
+            }
+            else {
+                telemetry.addData("Pixel Location", "right");
             }
         }
 
@@ -169,6 +188,8 @@ public class RedPipeline extends OpenCvPipeline {
         Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? colorSkystone:colorStone);
         Imgproc.rectangle(mat, FRONT_ROI, location == Location.FRONT? colorSkystone:colorStone);
         Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? colorSkystone:colorStone);
+
+        telemetry.update();
 
         return mat;
     }
