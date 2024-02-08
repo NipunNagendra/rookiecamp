@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
-import org.firstinspires.ftc.teamcode.testing.RedPipeline;
+import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -40,9 +40,9 @@ public class StackAutoBlue extends LinearOpMode {
 
 
     //coordinates for starting position
-    public static double startPoseX = -38.15845302224215;
-    public static double startPoseY = 65.13672263931143;
-    public static double startPoseAngle = Math.toRadians(90);
+    public static double startPoseX= -38.15845302224215;
+    public static double startPoseY= 65.13672263931143;
+    public static double startPoseAngle= Math.toRadians(90);
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
@@ -55,7 +55,7 @@ public class StackAutoBlue extends LinearOpMode {
     public static double turn1 = -90;
 
     //coordinates for middle spike position
-    public static double spike2X = -37.812297556497846;
+    public static double spike2X =  -37.812297556497846;
     public static double spike2Y = 27.023006373520104;
     public static double spike2Angle = Math.toRadians(270);
 
@@ -65,13 +65,13 @@ public class StackAutoBlue extends LinearOpMode {
     public static double spike3Angle = Math.toRadians(180);
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = 20;
+    public static double trussX = 30;
     public static double trussY = 57.93672263931143;
     public static double trussAngle = Math.toRadians(180);
 
-    public static double goingDirectlyUnderTruss = 26;
-    public static double betweenTruss = 46;
-    public static double exitDoor = 45;
+    public static double goingDirectlyUnderTruss = 15;
+    public static double betweenTruss = 50;
+    public static double exitDoor = 15;
 
     public static double backdropMiddleX = 52;
     public static double backdropMiddleY = 35;
@@ -90,7 +90,7 @@ public class StackAutoBlue extends LinearOpMode {
 
     public static double casenum=1;
 
-    public static RedPipeline.Location positionOfVisionPixel;
+    public static BluePipeline.Location positionOfVisionPixel;
 
     public static String myPosition;
     public static Boolean danger = Boolean.FALSE;
@@ -108,7 +108,7 @@ public class StackAutoBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
-        RedPipeline vision =  new RedPipeline(telemetry);
+        BluePipeline vision =  new BluePipeline(telemetry);
 
 
         telemetry.addLine("Init Done");
@@ -224,7 +224,7 @@ public class StackAutoBlue extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        RedPipeline detectBlue = new RedPipeline(telemetry);
+        BluePipeline detectBlue = new BluePipeline(telemetry);
         camera.setPipeline(detectBlue);
 
         camera.setMillisecondsPermissionTimeout(5000);
@@ -262,11 +262,11 @@ public class StackAutoBlue extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    if (RedPipeline.positionMain == "left") {
+                    if (BluePipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (RedPipeline.positionMain == "middle") {
+                    } else if (BluePipeline.positionMain == "middle") {
                         myPosition="middle";
                         telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
