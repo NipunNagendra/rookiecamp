@@ -85,7 +85,7 @@ public class BackdropAutoBlue extends LinearOpMode {
     public static double temporalMarkerTimeUP = 5;
 
 
-    public static int outtakeEncoderTicks = 2500;
+    public static int outtakeEncoderTicks = 2000;
     public static int outtakeOG = 0;
 
     // stores the result of Vision locally
@@ -217,14 +217,16 @@ public class BackdropAutoBlue extends LinearOpMode {
                 case SCORE_PURPLE:
                     positionOfVisionPixel = vision.getLocation();
                     if (BluePipeline.positionMain == "left") {
+                        myPosition="left";
                         telemetry.addLine("going left");
-                        casePos=1;
                         drive.followTrajectorySequence(scorePurpleLeft);
                     } else if (BluePipeline.positionMain == "middle") {
+                        myPosition="middle";
                         telemetry.addLine("going middle");
                         casePos=2;
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
+                        myPosition="right";
                         telemetry.addLine("going right");
                         casePos=3;
                         drive.followTrajectorySequence(scorePurpleRight);
@@ -238,12 +240,12 @@ public class BackdropAutoBlue extends LinearOpMode {
                     break;
 
                 case SCORE_YELLOW:
-                    if (casePos==1) {
+                    if (BluePipeline.positionMain == "left") {
                         drive.followTrajectorySequence(backDropLeft);
-                    } else if (casePos==2) {
+                    } else if (BluePipeline.positionMain == "middle") {
                         drive.followTrajectorySequence(backDropMiddle);
                     } else {
-                        drive.followTrajectorySequence(backDropMiddle);
+                        drive.followTrajectorySequence(backDropRight);
                     }
                     manip.gateToggle();
                     sleep(500);
@@ -251,9 +253,9 @@ public class BackdropAutoBlue extends LinearOpMode {
                     break;
 
                 case PARK:
-                    if (casePos==1) {
+                    if (BluePipeline.positionMain == "left") {
                         drive.followTrajectorySequence(parkLeft);
-                    } else if (casePos==2) {
+                    } else if (BluePipeline.positionMain == "middle") {
                         drive.followTrajectorySequence(parkMiddle);
                     } else {
                         drive.followTrajectorySequence(parkRight);
