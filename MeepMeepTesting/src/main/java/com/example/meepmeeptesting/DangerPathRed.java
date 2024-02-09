@@ -68,6 +68,10 @@ public class DangerPathRed {
 //                                        .back(20)
 //                                        .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
                                         .splineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle), Math.toRadians(270))
+//                                        .forward(10)
+//                                        .strafeLeft(20)
+//                                        .back(10)
+                                        .splineToLinearHeading(new Pose2d(58,-60, Math.toRadians(90)), Math.toRadians(0))
                                         .build()
 
 

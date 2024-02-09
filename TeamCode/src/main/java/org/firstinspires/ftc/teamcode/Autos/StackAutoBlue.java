@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
-import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
+import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -40,9 +40,9 @@ public class StackAutoBlue extends LinearOpMode {
 
 
     //coordinates for starting position
-    public static double startPoseX = -38.15845302224215;
-    public static double startPoseY = 65.13672263931143;
-    public static double startPoseAngle = Math.toRadians(90);
+    public static double startPoseX= -38.15845302224215;
+    public static double startPoseY= 65.13672263931143;
+    public static double startPoseAngle= Math.toRadians(90);
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
@@ -55,23 +55,23 @@ public class StackAutoBlue extends LinearOpMode {
     public static double turn1 = -90;
 
     //coordinates for middle spike position
-    public static double spike2X = -37.812297556497846;
+    public static double spike2X =  -37.812297556497846;
     public static double spike2Y = 27.023006373520104;
     public static double spike2Angle = Math.toRadians(270);
 
     //coordinates for right spike position
     public static double spike3X = -41.64633638294297;
     public static double spike3Y = 32.1247700133697;
-    public static double spike3Angle = Math.toRadians(0);
+    public static double spike3Angle = Math.toRadians(180);
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = 20;
+    public static double trussX = 30;
     public static double trussY = 57.93672263931143;
     public static double trussAngle = Math.toRadians(180);
 
-    public static double goingDirectlyUnderTruss = 26;
-    public static double betweenTruss = 46;
-    public static double exitDoor = 45;
+    public static double goingDirectlyUnderTruss = 15;
+    public static double betweenTruss = 50;
+    public static double exitDoor = 15;
 
     public static double backdropMiddleX = 52;
     public static double backdropMiddleY = 35;
@@ -83,12 +83,14 @@ public class StackAutoBlue extends LinearOpMode {
     public static double preParkY = 58.5;
     public static double goingIntoPark = 15;
 
-    public static int outtakeEncoderTicks = 2500;
-    public static double temporalMarkerTime = 1.5;
+    public static int outtakeEncoderTicksUp = 2500;
+    public static int outtakeEncoderTicksDown = 0;
+    public static double temporalMarkerTimeUp = 1.5;
+    public static double temporalMarkerTimeDown = 0.5;
 
     public static double casenum=1;
 
-    public static RedPipeline.Location positionOfVisionPixel;
+    public static BluePipeline.Location positionOfVisionPixel;
 
     public static String myPosition;
     public static Boolean danger = Boolean.FALSE;
@@ -106,7 +108,7 @@ public class StackAutoBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
-        RedPipeline vision =  new RedPipeline(telemetry);
+        BluePipeline vision =  new BluePipeline(telemetry);
 
 
         telemetry.addLine("Init Done");
@@ -155,8 +157,8 @@ public class StackAutoBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence underDoorScuffed = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
-                .addTemporalMarker(temporalMarkerTime, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicks);
+                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
                 })
                 .back(goingDirectlyUnderTruss)
                 .strafeRight(
@@ -169,8 +171,8 @@ public class StackAutoBlue extends LinearOpMode {
 
         // common trajectory for all 3 paths that leads to the backdrop
         TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
-                .addTemporalMarker(temporalMarkerTime, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicks);
+                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
                 })
                 .lineToLinearHeading(new Pose2d(trussX, trussY, trussAngle))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
@@ -188,18 +190,27 @@ public class StackAutoBlue extends LinearOpMode {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         TrajectorySequence parkLeft = drive.trajectorySequenceBuilder(strafeToBackdropPosLeft.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
                 .forward(outFromBackdrop)
                 .turn(Math.toRadians(90))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
                 .strafeLeft(goingIntoPark)
                 .build();
         TrajectorySequence parkMiddle = drive.trajectorySequenceBuilder(underTrussToBackdropAll.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
                 .forward(outFromBackdrop)
                 .turn(Math.toRadians(90))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
                 .strafeLeft(goingIntoPark)
                 .build();
         TrajectorySequence parkRight = drive.trajectorySequenceBuilder(strafeToBackdropPosRight.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
                 .forward(outFromBackdrop)
                 .turn(Math.toRadians(90))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
@@ -213,8 +224,8 @@ public class StackAutoBlue extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        RedPipeline detectRed = new RedPipeline(telemetry);
-        camera.setPipeline(detectRed);
+        BluePipeline detectBlue = new BluePipeline(telemetry);
+        camera.setPipeline(detectBlue);
 
         camera.setMillisecondsPermissionTimeout(5000);
 
@@ -251,11 +262,11 @@ public class StackAutoBlue extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    if (RedPipeline.positionMain == "left") {
+                    if (BluePipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (RedPipeline.positionMain == "middle") {
+                    } else if (BluePipeline.positionMain == "middle") {
                         myPosition="middle";
                         telemetry.addLine("going middle");
                         drive.followTrajectorySequence(scorePurpleMiddle);
@@ -299,7 +310,9 @@ public class StackAutoBlue extends LinearOpMode {
                     } else {
                         posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
                     }
+                    sleep(500);
                     manip.gateToggle();
+                    sleep(500);
                     currentState = State.PARK;
 
                 case PARK:

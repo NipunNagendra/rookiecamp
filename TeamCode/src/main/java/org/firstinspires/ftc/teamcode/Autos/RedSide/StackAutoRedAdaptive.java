@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autos;
+package org.firstinspires.ftc.teamcode.Autos.RedSide;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
 import org.firstinspires.ftc.teamcode.testing.RedPipeline;
-import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -20,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous(name = "StackAutoRed", group = "Autonomous")
-public class StackAutoRed extends LinearOpMode {
+@Autonomous(name = "StackAutoRedAdaptive", group = "Autonomous")
+public class StackAutoRedAdaptive extends LinearOpMode {
 
     Manipulators manip;
     enum State{
@@ -67,8 +66,7 @@ public class StackAutoRed extends LinearOpMode {
     public static double turn3 = 90;
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = 20;
-    public static double dangerPathX = -15;
+    public static double trussX = -14;
     public static double trussY = -56.03672263931143;
     public static double trussAngle = Math.toRadians(180);
 
@@ -76,10 +74,10 @@ public class StackAutoRed extends LinearOpMode {
     public static double betweenTruss = 35;
     public static double exitDoor = 15;
 
-    public static double backdropMiddleX = 54;
+    public static double backdropMiddleX = 52;
     public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = trussAngle;
-    public static double backdropLeftStrafe = 5;
+    public static double backdropLeftStrafe = 4;
     public static double backdropRightStrafe = 4;
     public static double preParkY = -53;
     public static double goingIntoPark = 10;
@@ -90,19 +88,14 @@ public class StackAutoRed extends LinearOpMode {
 
     public static double temporalMarkerTimeAlternate = 4;
 
-    public static double outFromBackdrop = 10;
-
-    public static int outtakeEncoderTicksUp = 2500;
-    public static int outtakeEncoderTicksDown = 0;
-    public static double temporalMarkerTimeUp = 1.5;
-    public static double temporalMarkerTimeDown = 0.5;
-
     public static double casenum=1;
 
     public static RedPipeline.Location positionOfVisionPixel;
 
     public static String myPosition;
     public static Boolean danger = Boolean.FALSE;
+
+    public static Boolean overrideDanger = Boolean.FALSE;
 
     SensorLibrary sLib;
 
@@ -118,7 +111,7 @@ public class StackAutoRed extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
         RedPipeline vision =  new RedPipeline(telemetry);
-
+        SensorLibrary sLib = new SensorLibrary(hardwareMap);
 
         telemetry.addLine("Init Done");
 
@@ -167,7 +160,7 @@ public class StackAutoRed extends LinearOpMode {
                 .addTemporalMarker(temporalMarkerTimeAlternate, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
-                .lineToLinearHeading(new Pose2d(dangerPathX, trussY, trussAngle))
+                .lineToLinearHeading(new Pose2d(trussX, trussY, trussAngle))
                 .strafeRight(
                         betweenTruss,
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -199,33 +192,6 @@ public class StackAutoRed extends LinearOpMode {
 //                .lineToLinearHeading(new Pose2d(backdropMiddleX, preParkY, backdropMiddleAngle))
 //                .back(goingIntoPark)
 //                .build();
-        TrajectorySequence parkLeft = drive.trajectorySequenceBuilder(strafeToBackdropPosLeft.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
-                })
-                .forward(outFromBackdrop)
-                .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                .strafeRight(goingIntoPark)
-                .build();
-        TrajectorySequence parkMiddle = drive.trajectorySequenceBuilder(underTrussToBackdropAll.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
-                })
-                .forward(outFromBackdrop)
-                .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                .strafeRight(goingIntoPark)
-                .build();
-        TrajectorySequence parkRight = drive.trajectorySequenceBuilder(strafeToBackdropPosRight.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
-                })
-                .forward(outFromBackdrop)
-                .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                .strafeRight(goingIntoPark)
-                .build();
 
         telemetry.addLine("trajectories built!!!");
 
@@ -301,7 +267,9 @@ public class StackAutoRed extends LinearOpMode {
 
                 case UNDER_DOOR_OR_TRUSS:
                     // ultrasonic + distance sensor stuff here idk
-                    if (/* distance sensor detects robot block is */ danger) {
+                    danger = sLib.robotBlockDetect();
+
+                    if (/* distance sensor detects robot block is */ danger && !overrideDanger) {
                         drive.followTrajectorySequence(underDoorScuffed);
                     }
 
@@ -322,17 +290,19 @@ public class StackAutoRed extends LinearOpMode {
                         posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
                     }
                     manip.gateToggle();
+                    manip.gateToggle();
+
+
                     currentState = State.PARK;
 
                 case PARK:
-                    if (myPosition == "left") {
-                        drive.followTrajectorySequence(parkLeft);
-                    } else if (myPosition == "right") {
-                        drive.followTrajectorySequence(parkRight);
-                    } else {
-                        drive.followTrajectorySequence(parkMiddle);
-                    }
-                    currentState = StackAutoRed.State.STOP;
+                    TrajectorySequence parkAll = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                            .forward(goingIntoPark)
+                            .strafeLeft(20)
+                            .back(10)
+                            .build();
+                    drive.followTrajectorySequence(parkAll);
+                    currentState = State.STOP;
 
                 case STOP:
                     break;
