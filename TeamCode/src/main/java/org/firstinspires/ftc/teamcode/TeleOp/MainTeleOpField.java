@@ -43,6 +43,8 @@ public class MainTeleOpField extends OpMode {
     public static double targetAngle;
 
     public static String lockStatus;
+
+    public static boolean invisStatus = false;
     public static int outtakeEncoderTicks = 2000;
 
     public void init() {
@@ -101,9 +103,7 @@ public class MainTeleOpField extends OpMode {
 
 
 
-        if (gamepad1.right_bumper) {multiplier = 0.5;}
-        else if (gamepad1.left_bumper) {multiplier = 0.25;}
-        else{multiplier=1;}
+
 
         heading = move.drive.getExternalHeading();
 
@@ -129,13 +129,18 @@ public class MainTeleOpField extends OpMode {
             else{ lockStatus = "right";}
         }
 
-        if (lockStatus == "unlocked")
+        if (lockStatus == "unlocked") {
             targetAngle = 0;
-        else if (lockStatus == "left")
-            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (-Math.PI/2);
-
-        else if (lockStatus == "up")
-            targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(0);
+        }
+        else if (lockStatus == "left") {
+            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (-Math.PI / 2);
+            if (lockStatus=="down"){
+                targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (Math.PI/2);
+            }
+        }
+        else if (lockStatus == "up") {
+            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (0);
+        }
         else if (lockStatus == "down") {
             targetAngle = Math.atan2(Math.sin((imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS))), Math.cos(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             if (targetAngle > 0) {
@@ -156,6 +161,12 @@ public class MainTeleOpField extends OpMode {
 //        if(Math.abs(targetAngle)>=0 && Math.abs(targetAngle)<=Math.toRadians(2)){
 //            targetAngle=0;
 //        }
+
+        if (gamepad1.right_bumper) {multiplier = 0.5;}
+        else{multiplier=1;}
+
+        if (gamepad1.left_bumper) {invisStatus=true;}
+        else{invisStatus=false;}
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||

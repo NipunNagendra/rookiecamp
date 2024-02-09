@@ -89,17 +89,13 @@ public class JudgeDemoMain extends OpMode {
         double rightX;
 
 
-        if (move.isPressed("options1", gamepad1.options)) {
+        if (move.isPressed("options1",gamepad1.options)) {
             imu.resetYaw();
         }
 
-        if (gamepad1.right_bumper) {
-            multiplier = 0.5;
-        } else if (gamepad1.left_bumper) {
-            multiplier = 0.25;
-        } else {
-            multiplier = 1;
-        }
+
+
+
 
         heading = move.drive.getExternalHeading();
 
@@ -107,49 +103,62 @@ public class JudgeDemoMain extends OpMode {
         if (gamepad1.right_stick_x > 0.01) {
             targetAngle = 0;
             lockStatus = "unlocked";
-        } else if (move.isPressed("x", gamepad1.x)) {
-            if (lockStatus == "left") lockStatus = "unlocked";
-            else lockStatus = "left";
-        } else if (move.isPressed("y", gamepad1.y)) {
-            if (lockStatus == "up") lockStatus = "unlocked";
-            else lockStatus = "up";
-        } else if (move.isPressed("a", gamepad1.a)) {
-            if (lockStatus == "down") lockStatus = "unlocked";
-            else lockStatus = "down";
-        } else if (move.isPressed("b", gamepad1.b)) {
-            if (lockStatus == "right") lockStatus = "unlocked";
-            else lockStatus = "right";
+        }
+        else if(move.isPressed("x", gamepad1.x)) {
+            if (lockStatus == "left"){ lockStatus = "unlocked";}
+            else{ lockStatus = "left";}
+        }
+        else if(move.isPressed("y", gamepad1.y)) {
+            if (lockStatus == "up"){ lockStatus = "unlocked";}
+            else{ lockStatus = "up";}
+        }
+        else if(move.isPressed("a", gamepad1.a)){
+            if (lockStatus == "down"){ lockStatus = "unlocked";}
+            else{ lockStatus = "down";}
+        }
+        else if(move.isPressed("b", gamepad1.b)){
+            if (lockStatus == "right"){ lockStatus = "unlocked";}
+            else{ lockStatus = "right";}
         }
 
         if (lockStatus == "unlocked") {
             targetAngle = 0;
-            gamepad1.setLedColor(0, 0, 255, 2000);
-        } else if (lockStatus == "left") {
-            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (-Math.PI / 2);
-            gamepad1.setLedColor(255, 0, 0, 2000);
         }
-        if (lockStatus == "down") {
-            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (Math.PI / 2);
-            gamepad1.setLedColor(255, 0, 0, 2000);
-        } else if (lockStatus == "up") {
+        else if (lockStatus == "left") {
+            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (-Math.PI / 2);
+            if (lockStatus=="down"){
+                targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (Math.PI/2);
+            }
+        }
+        else if (lockStatus == "up") {
             targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (0);
-            gamepad1.setLedColor(255, 0, 0, 2000);
-        } else if (lockStatus == "down") {
-            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            gamepad1.setLedColor(255, 0, 0, 2000);
+        }
+        else if (lockStatus == "down") {
+            targetAngle = Math.atan2(Math.sin((imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS))), Math.cos(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             if (targetAngle > 0) {
                 targetAngle -= Math.PI;
-            } else {
+            }else {
                 targetAngle += Math.PI;
             }
-        } else if (lockStatus == "right")
-            targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (Math.PI / 2);
+        }
+        else if (lockStatus == "right")
+        {targetAngle=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) +(Math.PI/2);}
+
+
 
         telemetry.addData("lockStatus: ", lockStatus);
         telemetry.addData("targetAngle: ", targetAngle);
 
-        if (Math.abs(gamepad1.left_stick_y) > 0.1 ||
-                Math.abs(gamepad1.left_stick_x) > 0.1 ||
+//        if(Math.abs(targetAngle)>=0 && Math.abs(targetAngle)<=Math.toRadians(2)){
+//            targetAngle=0;
+//        }
+
+        if (gamepad1.right_bumper) {multiplier = 0.5;}
+        else{multiplier=1;}
+
+
+        if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
+                Math.abs(gamepad1.left_stick_x)  > 0.1 ||
                 Math.abs(gamepad1.right_stick_x) > 0.1) {
 
             leftY = gamepad1.left_stick_y * multiplier;
@@ -157,11 +166,10 @@ public class JudgeDemoMain extends OpMode {
             rightX = (gamepad1.right_stick_x * multiplier);
 
             move.fieldDrive(leftX, leftY, rightX, heading, targetAngle);
-        } else {
-            move.fieldDrive(0, 0, 0, heading, targetAngle);
         }
-
-        telemetry.addData("imu:", heading);
+        else {
+            move.fieldDrive(0,0, 0, heading, targetAngle);
+        }
 
         if (ds.getDistance(DistanceUnit.CM) <= 10) {
             gamepad1.rumble(1, 1, 100);
