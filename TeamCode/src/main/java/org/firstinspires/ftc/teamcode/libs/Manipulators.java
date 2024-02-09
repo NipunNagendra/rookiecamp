@@ -68,6 +68,7 @@ public class Manipulators {
         rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimberMotor");
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
+
         //setting climber/hanging motor direction
         leftClimberMotor.setDirection(DcMotor.Direction.FORWARD);
         rightClimberMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -93,8 +94,8 @@ public class Manipulators {
 
         liftTouchSensor = hardwareMap.get(RevTouchSensor.class, "RevTouchSensor");
 //
-//        droneServo = hardwareMap.get(CRServo.class, "droneServo");
-
+        //droneServo = hardwareMap.get(CRServo.class, "droneServo");
+        droneServo = hardwareMap.crservo.get("droneServo");
         //Sensor Declaration
 //        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
 //       ds = hardwareMap.get(DistanceSensor.class, "ds");
@@ -262,9 +263,9 @@ public class Manipulators {
     }
 
     // changes the position of the servo to launch the drone
-//    public void droneLaunch() {
-//        droneServo.setPosition(droneLaunchPos);
-//    }
+    // public void droneLaunch() {
+    //    droneServo.setPosition(droneLaunchPos);
+    //}
 
 
     public void setIntakePower(double power){intakeMotor.setPower(power);}

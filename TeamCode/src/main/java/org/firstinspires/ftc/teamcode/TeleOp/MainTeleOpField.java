@@ -47,7 +47,7 @@ public class MainTeleOpField extends OpMode {
 
     public void init() {
         manip = new Manipulators(hardwareMap);
-        //manip.droneServo.setPosition(0.5);
+        manip.droneServo.setPower(0);
         move = new Movement(hardwareMap);
 //        sensor = new SensorLibrary(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
