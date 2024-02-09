@@ -1,14 +1,21 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
+import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
 @Autonomous(name = "BackdropAutoBlue", group = "Autonomous")
@@ -28,14 +35,24 @@ public class BackdropAutoBlue extends LinearOpMode {
     */
 
 
+    //This is code for BackdropAutoBlue
     //coordinates for starting position (0, 0, 0)
-    public static double startPoseX= 11.35845302224215;
-    public static double startPoseY= -65.13672263931143;
-    public static double startPoseAngle= 90;
+    public static double startPoseX = 11.35845302224215;
+    public static double startPoseY = 65.13672263931143;
+    public static double startPoseAngle = Math.toRadians(90);
 
-    Pose2d startPose = new Pose2d(startPoseX, startPoseY, Math.toRadians(startPoseAngle));
+    Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
     Pose2d posEstimate;
+
+    public static double moveBackwards3 = 31;
+    public static double moveBackwardsTowardBackDrop = 34;
+    public static double turn3 = 90;
+
+    //coordinates for right spike position
+    public static double spike3X = 11.35845302224215;
+    public static double spike3Y = 30.44644728121096;
+    public static double spike3Angle = Math.toRadians(180);
 
     //coordinates for left spike position
     public static double spike1X = 11.35845302224215;
@@ -43,24 +60,29 @@ public class BackdropAutoBlue extends LinearOpMode {
     public static double spike1Angle = Math.toRadians(0);
 
     //coordinates for middle spike position
-    public static double spike2X = 10.043017898968719;
-    public static double spike2Y = -28.911245972675605;
-    public static double spike2Angle = Math.toRadians(90);
+    public static double spike2X =  11.35845302224215;
+    public static double spike2Y = 34.44644728121096;
+    public static double spike2Angle = Math.toRadians(270);
 
-    //coordinates for right spike position
-    public static double spike3X = 11.35845302224215;
-    public static double spike3Y = 34.44644728121096;
-    public static double spike3Angle = Math.toRadians(180);
-
-    //coordinates for BackDrop position
+    public static double preTrussX = -38.15845302224215;
+    public static double trussX = 15;
+    public static double trussY = -55.93672263931143;
+    public static double trussAngle = Math.toRadians(180);
     public static double backdropMiddleX = 45;
     public static double backdropMiddleY = 34;
     public static double backdropMiddleAngle = Math.toRadians(180);
+    public static double strafeForPark = 20;
+    public static double backdropRightStrafe = 8;
+
+    public static double casenum=1;
+
+
+    public static String myPosition;
 
     public static double strafeToTag = 8;
 
-    public static double temporalMarkerTimeUP = 1.5;
-    public static double temporalMarkerTimeDOWN = 0.75;
+    public static double temporalMarkerTimeDOWN = 1.5;
+    public static double temporalMarkerTimeUP = 5;
 
 
     public static int outtakeEncoderTicks = 2500;
@@ -71,6 +93,7 @@ public class BackdropAutoBlue extends LinearOpMode {
     public static BluePipeline.Location positionOfVisionPixel;
     public static double casePos;
     State currentState = State.IDLE;
+    OpenCvWebcam camera;
     @Override
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -152,7 +175,37 @@ public class BackdropAutoBlue extends LinearOpMode {
         telemetry.addLine("trajectories built!!!");
         telemetry.addData("cpos", vision.getLocation());
         telemetry.update();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        BluePipeline detectBlue = new BluePipeline(telemetry);
+        camera.setPipeline(detectBlue);
+
+        camera.setMillisecondsPermissionTimeout(5000);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+
+                camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+
+
+            }
+        });
+
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
+
         waitForStart();
+
+
+        camera.stopStreaming();
 
         while(!isStopRequested() && opModeIsActive()){
             posEstimate = drive.getPoseEstimate();
@@ -172,16 +225,16 @@ public class BackdropAutoBlue extends LinearOpMode {
                         casePos=2;
                         drive.followTrajectorySequence(scorePurpleMiddle);
                     } else {
-                        telemetry.addLine("goingright");
+                        telemetry.addLine("going right");
                         casePos=3;
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
+                    telemetry.update();
                     posEstimate = drive.getPoseEstimate();
                     manip.setIntakePower(-1);
                     sleep(1600);
-
                     manip.setIntakePower(0);
-                    currentState = State.PARK;
+                    currentState = State.SCORE_YELLOW;
                     break;
 
                 case SCORE_YELLOW:
@@ -193,7 +246,8 @@ public class BackdropAutoBlue extends LinearOpMode {
                         drive.followTrajectorySequence(backDropMiddle);
                     }
                     manip.gateToggle();
-                    currentState = BackdropAutoBlue.State.STOP;
+                    sleep(500);
+                    currentState = State.PARK;
                     break;
 
                 case PARK:

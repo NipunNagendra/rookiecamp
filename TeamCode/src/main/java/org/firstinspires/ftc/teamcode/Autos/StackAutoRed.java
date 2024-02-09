@@ -67,11 +67,8 @@ public class StackAutoRed extends LinearOpMode {
     public static double turn3 = 90;
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = -14
-
-
-
-            ;
+    public static double trussX = 20;
+    public static double dangerPathX = -15;
     public static double trussY = -56.03672263931143;
     public static double trussAngle = Math.toRadians(180);
 
@@ -79,19 +76,26 @@ public class StackAutoRed extends LinearOpMode {
     public static double betweenTruss = 35;
     public static double exitDoor = 15;
 
-    public static double backdropMiddleX = 52;
+    public static double backdropMiddleX = 54;
     public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = trussAngle;
-    public static double backdropLeftStrafe = 4;
+    public static double backdropLeftStrafe = 5;
     public static double backdropRightStrafe = 4;
     public static double preParkY = -53;
     public static double goingIntoPark = 10;
 
-    public static int outtakeEncoderTicks = 2500;
+    public static int outtakeEncoderTicks = 1500;
     public static int outtakeOG = 0;
     public static double temporalMarkerTime = 1.5;
 
-    public static double temporalMarkerTimeAlternate = 5;
+    public static double temporalMarkerTimeAlternate = 4;
+
+    public static double outFromBackdrop = 10;
+
+    public static int outtakeEncoderTicksUp = 2500;
+    public static int outtakeEncoderTicksDown = 0;
+    public static double temporalMarkerTimeUp = 1.5;
+    public static double temporalMarkerTimeDown = 0.5;
 
     public static double casenum=1;
 
@@ -163,7 +167,7 @@ public class StackAutoRed extends LinearOpMode {
                 .addTemporalMarker(temporalMarkerTimeAlternate, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
-                .lineToLinearHeading(new Pose2d(trussX, trussY, trussAngle))
+                .lineToLinearHeading(new Pose2d(dangerPathX, trussY, trussAngle))
                 .strafeRight(
                         betweenTruss,
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -195,6 +199,33 @@ public class StackAutoRed extends LinearOpMode {
 //                .lineToLinearHeading(new Pose2d(backdropMiddleX, preParkY, backdropMiddleAngle))
 //                .back(goingIntoPark)
 //                .build();
+        TrajectorySequence parkLeft = drive.trajectorySequenceBuilder(strafeToBackdropPosLeft.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
+                .forward(outFromBackdrop)
+                .turn(Math.toRadians(-90))
+                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
+                .strafeRight(goingIntoPark)
+                .build();
+        TrajectorySequence parkMiddle = drive.trajectorySequenceBuilder(underTrussToBackdropAll.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
+                .forward(outFromBackdrop)
+                .turn(Math.toRadians(-90))
+                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
+                .strafeRight(goingIntoPark)
+                .build();
+        TrajectorySequence parkRight = drive.trajectorySequenceBuilder(strafeToBackdropPosRight.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
+                .forward(outFromBackdrop)
+                .turn(Math.toRadians(-90))
+                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
+                .strafeRight(goingIntoPark)
+                .build();
 
         telemetry.addLine("trajectories built!!!");
 
@@ -294,8 +325,14 @@ public class StackAutoRed extends LinearOpMode {
                     currentState = State.PARK;
 
                 case PARK:
-//                    drive.followTrajectorySequence(parkAll);
-                    currentState = State.STOP;
+                    if (myPosition == "left") {
+                        drive.followTrajectorySequence(parkLeft);
+                    } else if (myPosition == "right") {
+                        drive.followTrajectorySequence(parkRight);
+                    } else {
+                        drive.followTrajectorySequence(parkMiddle);
+                    }
+                    currentState = StackAutoRed.State.STOP;
 
                 case STOP:
                     break;

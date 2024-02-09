@@ -15,44 +15,59 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class BluePipeline extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
+
+    public static String positionMain = "middle";
+
     public enum Location {
-        LEFT,
         RIGHT,
+        LEFT,
         FRONT,
         NOT_FOUND
     }
     private Location location;
 
-    static final Rect LEFT_ROI = new Rect(
-            new Point(0, 60),
-            new Point(60, 120));
+    //Right rectangle coordinates
+//    public static double left_x1 = 60;
+//    public static double left_y1 = 35;
+//    public static double left_x2 = 120;
+//    public static double left_y2 = 75;
+    //Right rectangle coordinates
+//    public static double right_x1 = 280;
+//    public static double right_y1 = 70;
+//    public static double right_x2 = 320;
+//    public static double right_y2 = 130;
+    //Front rectangle coordinates
+//    public static double front_x1 = 110;
+//    public static double front_y1 = 55;
+//    public static double front_x2 = 170;
+//    public static double front_y2 = 115;
+
+    //HSV for Red
+    public static double lowerhue = 0;
+    public static double lowersat = 150;
+    public static double lowerval = 0;
+
+    public static double higherhue = 255;
+    public static double highersat = 255;
+    public static double higherval = 255;
+
     static final Rect RIGHT_ROI = new Rect(
-            new Point(260, 80),
-            new Point(320, 140));
+            new Point(260, 60),
+            new Point(320, 120));
     static final Rect FRONT_ROI = new Rect(
-            new Point(120, 40),
-            new Point(180, 100));
-    public static double PERCENT_COLOR_THRESHOLD = 0.3;
+            new Point(160, 40),
+            new Point(100, 100));
+
+    static double PERCENT_COLOR_THRESHOLD = 0.3;
     public BluePipeline(Telemetry t) { telemetry = t; }
-
-    public static double lh;
-    public static double ls;
-    public static double lv;
-    public static double hh;
-    public static double hs;
-    public static double hv;
-
-    public static String positionMain = "middle";
 
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        Scalar lowerHSV = new Scalar(lowerhue, lowersat, lowerval);
+        Scalar highHSV = new Scalar(higherhue, highersat, higherval);
 
-        //Blue
-        Scalar lowerBlueHSV = new Scalar(100, 60, 100);
-        Scalar highBlueHSV = new Scalar(180, 255, 255);
-
-        Core.inRange(mat, lowerBlueHSV, highBlueHSV, mat);
+        Core.inRange(mat, lowerHSV, highHSV, mat);
 
         Mat right = mat.submat(RIGHT_ROI);
         Mat front = mat.submat(FRONT_ROI);
@@ -70,6 +85,7 @@ public class BluePipeline extends OpenCvPipeline {
 
         boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelFront = frontValue > PERCENT_COLOR_THRESHOLD;
+
 
         if (pixelRight && pixelFront) {
             if(rightValue>=frontValue){
@@ -99,17 +115,17 @@ public class BluePipeline extends OpenCvPipeline {
             location = BluePipeline.Location.LEFT;
             telemetry.addData("Pixel Location", "left");
         }
-
         telemetry.update();
+
+        //telemetry.update();
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 
-        Scalar undetected = new Scalar(255, 0, 0);
-        Scalar detected = new Scalar(0, 255, 0);
+        Scalar colorStone = new Scalar(255, 0, 0);
+        Scalar colorSkystone = new Scalar(0, 255, 0);
 
-
-        Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? detected:undetected);
-        Imgproc.rectangle(mat, FRONT_ROI, location == Location.FRONT? detected:undetected);
+        Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, FRONT_ROI, location == Location.FRONT? colorSkystone:colorStone);
 
         return mat;
     }

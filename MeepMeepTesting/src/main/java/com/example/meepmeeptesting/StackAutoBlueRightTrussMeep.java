@@ -32,7 +32,7 @@ public class StackAutoBlueRightTrussMeep {
     public static double spike3Angle = Math.toRadians(180);
 
     public static double preTrussX = -38.15845302224215;
-    public static double trussX = 20;
+    public static double trussX = 30;
     public static double trussY = 57.93672263931143;
     public static double trussAngle = Math.toRadians(180);
 
