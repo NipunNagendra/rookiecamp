@@ -279,6 +279,7 @@ public class StackAutoBluefromred extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
+                    currentState = State.UNDER_DOOR_OR_TRUSS;
                     if (BluePipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
