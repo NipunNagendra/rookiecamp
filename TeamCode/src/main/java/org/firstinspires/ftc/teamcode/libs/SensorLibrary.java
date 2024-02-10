@@ -40,6 +40,7 @@ public class SensorLibrary {
         return false;
     }
 
+    public double getDSDistance(){return distanceSensor.getDistance(DistanceUnit.CM);}
 
     public boolean invisibleWallDetect()
     {

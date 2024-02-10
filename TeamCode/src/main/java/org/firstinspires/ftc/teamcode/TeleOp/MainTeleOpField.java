@@ -9,12 +9,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
@@ -27,6 +29,9 @@ public class MainTeleOpField extends OpMode {
 
     Manipulators manip;
 
+    DistanceSensor ds;
+
+    public static double threshold =15;
     SensorLibrary sensor;
     //RevColorSensorV3 cs;
     //DistanceSensor ds;
@@ -53,7 +58,6 @@ public class MainTeleOpField extends OpMode {
         move = new Movement(hardwareMap);
 //        sensor = new SensorLibrary(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
-        //ds = hardwareMap.get(DistanceSensor.class, "ds");
         gamepad1.setLedColor(0, 0, 256, 100000);
         telemetry.addData("init", "completed");
         telemetry.update();
@@ -95,6 +99,7 @@ public class MainTeleOpField extends OpMode {
         double leftY;
         double leftX;
         double rightX;
+
 
 
         if (move.isPressed("options1",gamepad1.options)) {
@@ -266,9 +271,11 @@ public class MainTeleOpField extends OpMode {
             manip.intakeRightServo.setPower(0);
         }
 
-//        if (sensor.invisibleWallDetect()){
-//
-//    }
+        if (sensor.invisibleWallDetect()){
+            gamepad1.rumble(100);
+            gamepad2.rumble(100);
+
+        }
         if (gamepad2.circle) {
             manip.moveOuttakeLift(outtakeEncoderTicks);
         }
