@@ -31,7 +31,7 @@ public class ClimberWinchSync extends OpMode {
         winchLeft = hardwareMap.get(CRServo.class, "winchLeft");
         winchRight = hardwareMap.get(CRServo.class, "winchRight");
         winchLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        telemetry.addData("init", "completed");
+                telemetry.addData("init", "completed");
         telemetry.update();
     }
 

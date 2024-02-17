@@ -73,8 +73,8 @@ public class Manipulators {
         this.robot = hardwareMap;
 
         // declaring climber/hanging motors
-        leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimberMotor");
-        rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimberMotor");
+        leftClimberMotor = hardwareMap.get(DcMotor.class, "leftClimber");
+        rightClimberMotor = hardwareMap.get(DcMotor.class, "rightClimber");
         outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 
 

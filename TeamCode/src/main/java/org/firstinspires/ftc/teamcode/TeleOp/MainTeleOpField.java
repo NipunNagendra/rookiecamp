@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import static com.sun.tools.doclint.Entity.pi;
+
 import android.annotation.SuppressLint;
 import android.util.Pair;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -25,9 +29,12 @@ public class MainTeleOpField extends OpMode {
 
     Manipulators manip;
 
+    DistanceSensor ds;
+
+    public static double threshold =15;
     SensorLibrary sensor;
     //RevColorSensorV3 cs;
-    DistanceSensor ds;
+    //DistanceSensor ds;
     String moveType = "robot";
     boolean outtakeServoStatus = false;
     double[] motorPower = {0, 0, 0, 0};
@@ -42,20 +49,15 @@ public class MainTeleOpField extends OpMode {
 
     public static String lockStatus;
 
-    public static double invisWallThreshold = 10;
-
     public static boolean invisStatus = false;
     public static int outtakeEncoderTicks = 2000;
 
-    public static double invisWallMultiplier=1;
-
     public void init() {
         manip = new Manipulators(hardwareMap);
-        //manip.droneServo.setPosition(0.5);
+        manip.droneServo.setPower(0);
         move = new Movement(hardwareMap);
 //        sensor = new SensorLibrary(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
-        ds = hardwareMap.get(DistanceSensor.class, "ds2");
         gamepad1.setLedColor(0, 0, 256, 100000);
         telemetry.addData("init", "completed");
         telemetry.update();
@@ -97,6 +99,7 @@ public class MainTeleOpField extends OpMode {
         double leftY;
         double leftX;
         double rightX;
+
 
 
         if (move.isPressed("options1",gamepad1.options)) {
@@ -170,25 +173,12 @@ public class MainTeleOpField extends OpMode {
         if (gamepad1.left_bumper) {invisStatus=true;}
         else{invisStatus=false;}
 
-        if (gamepad1.left_bumper && (ds.getDistance(DistanceUnit.CM) >=
-                invisWallThreshold-1 && ds.getDistance(DistanceUnit.CM)<=invisWallThreshold+1)){
-            invisWallMultiplier = 0.1;
-            gamepad1.rumble(1,1, 100);
-        }
-        else if(gamepad1.left_bumper){
-            invisWallMultiplier = 0.25;
-        }
-        else{
-            invisWallMultiplier = 1;
-        }
-
-
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||
                 Math.abs(gamepad1.right_stick_x) > 0.1) {
 
             leftY = gamepad1.left_stick_y * multiplier;
-            leftX = (gamepad1.left_stick_x * multiplier * invisWallMultiplier);
+            leftX = (gamepad1.left_stick_x * multiplier);
             rightX = (gamepad1.right_stick_x * multiplier);
 
             move.fieldDrive(leftX, leftY, rightX, heading, targetAngle);
@@ -209,38 +199,44 @@ public class MainTeleOpField extends OpMode {
             manip.gateToggle1();
         }
 
-        if (gamepad2.dpad_up){
-            manip.climberLeft.setPower(manip.climberPower);
-            manip.climberRight.setPower(manip.climberPower);
-            manip.winchLeft.setPower(-1 * manip.winchPower);
-            manip.winchRight.setPower(manip.winchPower);
-        }
-        else if (gamepad2.dpad_down){
-            manip.climberLeft.setPower(-1 * manip.climberPower);
-            manip.climberRight.setPower(-1 * manip.climberPower);
-            manip.winchLeft.setPower(manip.winchPower);
-            manip.winchRight.setPower(-1 * manip.winchPower);
-        } else if (gamepad2.triangle) {
-            manip.winchLeft.setPower(-1 * manip.winchPower);
-            manip.winchRight.setPower(manip.winchPower);
-        }
-        else if(gamepad2.x){
-            manip.winchLeft.setPower(manip.winchPower);
-            manip.winchRight.setPower(-1 * manip.winchPower);
-        }
-        else{
-            manip.climberLeft.setPower(0);
-            manip.climberRight.setPower(0);
-            manip.winchLeft.setPower(0);
-            manip.winchRight.setPower(0);
+//        if(move.isPressed("rightBumper2", gamepad2.right_bumper)){
+//            manip.climberLiftPower(.5);
+//        } else if(move.isPressed("leftBumper2", gamepad2.left_bumper)){
+//            manip.climberLiftPower(-.5);
+//        } else{
+//            manip.climberLiftPower(0);
+//        }
+
+
+        // uses dpad controls up and down to control the climber/hanger
+//        if(gamepad2.right_stick_y > 0){
+//            manip.leftClimberPower(.5);
+//        } else if(gamepad2.right_stick_y < 0){
+//            manip.leftClimberPower(-.5);
+//        } else{
+//            manip.leftClimberPower(0);
+//        }
+
+        if(gamepad2.y){
+            manip.rightClimberPower(.5);
+        } else if(gamepad2.a){
+            manip.rightClimberPower(-.5);
+        } else{
+            manip.rightClimberPower(0);
         }
 
-        telemetry.addData("touchSensor", manip.touchSensor.isPressed());
+        if(gamepad2.dpad_up){
+            manip.leftClimberPower(.5);
+        } else if(gamepad2.dpad_down){
+            manip.leftClimberPower(-.5);
+        } else{
+            manip.leftClimberPower(0);
+        }
 
         // When receiving power from gamepad2 that is greater than a certain threshold
         if (Math.abs(gamepad2.right_stick_y) > 0.1) {
             // it will move the lift to the certain power that the right joystick set
-            if(manip.touchSensor.isPressed() && gamepad2.right_stick_y > 0){
+            if(manip.liftTouchSensor.isPressed() && gamepad2.right_stick_y > 0){
                 manip.setOuttakeLiftPower(0);
             }
             else{
@@ -262,7 +258,7 @@ public class MainTeleOpField extends OpMode {
             manip.setIntakePower(0);
         }
 
-        if (gamepad2.share){
+        if (gamepad2.options){
             manip.droneServo.setPower(1);
         }
 
@@ -275,13 +271,14 @@ public class MainTeleOpField extends OpMode {
             manip.intakeRightServo.setPower(0);
         }
 
-//        if (sensor.invisibleWallDetect()){
-//
-//    }
+        if (sensor.invisibleWallDetect()){
+            gamepad1.rumble(100);
+            gamepad2.rumble(100);
+
+        }
         if (gamepad2.circle) {
             manip.moveOuttakeLift(outtakeEncoderTicks);
         }
 
         telemetry.update();
     }}
-
