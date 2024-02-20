@@ -162,6 +162,8 @@ public class MainTeleOpField extends OpMode {
         telemetry.addData("lockStatus: ", lockStatus);
         telemetry.addData("targetAngle: ", targetAngle);
         telemetry.addData("lift: ", manip.outtakeLiftMotor.getCurrentPosition());
+        telemetry.addData("liftsense:", manip.liftTouchSensor.isPressed());
+
 
 //        if(Math.abs(targetAngle)>=0 && Math.abs(targetAngle)<=Math.toRadians(2)){
 //            targetAngle=0;

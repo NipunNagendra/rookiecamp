@@ -60,6 +60,7 @@ public class Manipulators {
     public static double sensorMarginalThreshold = 0.2;
     public RevTouchSensor liftTouchSensor;
 
+
     public Manipulators(HardwareMap hardwareMap) {
         this.robot = hardwareMap;
 
@@ -111,7 +112,6 @@ public class Manipulators {
             output = true;
             officialColor=color;
         }
-
         return output;
     }
     //returned normalized colors for the upper color sensor, and the color it detects
