@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -58,7 +57,17 @@ public class Manipulators {
 
     public static double restDistance = 106;
     public static double sensorMarginalThreshold = 0.2;
-    public RevTouchSensor liftTouchSensor;
+    public RevTouchSensor touchSensor;
+
+    double[] motorPower = {0, 0, 0, 0};
+    public DcMotor climberLeft;
+    public DcMotor climberRight;
+
+    public CRServo winchLeft;
+    public CRServo winchRight;
+
+    public static double climberPower = .3;
+    public static double winchPower = .5;
 
 
     public Manipulators(HardwareMap hardwareMap) {
@@ -93,13 +102,22 @@ public class Manipulators {
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        liftTouchSensor = hardwareMap.get(RevTouchSensor.class, "RevTouchSensor");
+        touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
 //
         //droneServo = hardwareMap.get(CRServo.class, "droneServo");
         droneServo = hardwareMap.crservo.get("droneServo");
         //Sensor Declaration
 //        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
 //       ds = hardwareMap.get(DistanceSensor.class, "ds");
+
+        climberLeft = hardwareMap.get(DcMotor.class, "leftClimberMotor");
+        climberRight = hardwareMap.get(DcMotor.class, "rightClimberMotor");
+
+        winchLeft = hardwareMap.get(CRServo.class, "winchLeft");
+        winchRight = hardwareMap.get(CRServo.class, "winchRight");
+        winchLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+//        telemetry.addData("init", "completed");
+//        telemetry.update();
     }
 
 
@@ -166,13 +184,13 @@ public class Manipulators {
         outtakeLiftMotor.setPower(liftPower);
     }
 
-//    Gate output toggle method
+    //    Gate output toggle method
     public void gateToggle() {
         //Checking the status of the outtake servo
         //outtakeServo.setDirection(Servo.Direction.FORWARD);
         Thread outtakeMove = new Thread() {
             @Override
-              public void run(){
+            public void run(){
                 outtakeServo.setPosition(outtakeServoPos2);
                 try {
                     Thread.sleep(500);
@@ -186,7 +204,7 @@ public class Manipulators {
         outtakeMove.start();
     }
     public void gateToggle1(){
-       // outtakeServo.setDirection(Servo.Direction.REVERSE);
+        // outtakeServo.setDirection(Servo.Direction.REVERSE);
         Thread outtakeMoveBoth = new Thread() {
             @Override
             public void run(){
@@ -278,9 +296,10 @@ public class Manipulators {
     }
 
     public void bottomOutLift(){
-        while(!liftTouchSensor.isPressed()){
+        while(!touchSensor.isPressed()){
             outtakeLiftMotor.setPower(-.9);
         }
         outtakeLiftMotor.setPower(0);
     }
 }
+
