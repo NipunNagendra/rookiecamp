@@ -26,7 +26,7 @@ public class distanceSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        DistanceSensor ds = hardwareMap.get(DistanceSensor.class, "ds");
+        DistanceSensor ds = hardwareMap.get(DistanceSensor.class, "ds2");
 
         while (!isStopRequested()) {
 
