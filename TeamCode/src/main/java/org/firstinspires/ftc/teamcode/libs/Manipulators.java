@@ -57,7 +57,7 @@ public class Manipulators {
 
     public static double restDistance = 106;
     public static double sensorMarginalThreshold = 0.2;
-    public RevTouchSensor touchSensor;
+    public RevTouchSensor liftTouchSensor;
 
     double[] motorPower = {0, 0, 0, 0};
     public DcMotor climberLeft;
@@ -102,7 +102,7 @@ public class Manipulators {
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
+        liftTouchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
 //
         //droneServo = hardwareMap.get(CRServo.class, "droneServo");
         droneServo = hardwareMap.crservo.get("droneServo");
@@ -110,8 +110,8 @@ public class Manipulators {
 //        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
 //       ds = hardwareMap.get(DistanceSensor.class, "ds");
 
-        climberLeft = hardwareMap.get(DcMotor.class, "leftClimberMotor");
-        climberRight = hardwareMap.get(DcMotor.class, "rightClimberMotor");
+        climberLeft = hardwareMap.get(DcMotor.class, "leftClimber");
+        climberRight = hardwareMap.get(DcMotor.class, "rightClimber");
 
         winchLeft = hardwareMap.get(CRServo.class, "winchLeft");
         winchRight = hardwareMap.get(CRServo.class, "winchRight");
@@ -296,7 +296,7 @@ public class Manipulators {
     }
 
     public void bottomOutLift(){
-        while(!touchSensor.isPressed()){
+        while(!liftTouchSensor.isPressed()){
             outtakeLiftMotor.setPower(-.9);
         }
         outtakeLiftMotor.setPower(0);
