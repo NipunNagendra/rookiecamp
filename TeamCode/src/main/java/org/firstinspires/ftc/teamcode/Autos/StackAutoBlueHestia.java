@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
 import org.firstinspires.ftc.teamcode.testing.BluePipeline;
+import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -19,8 +20,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous(name = "StackAutoBlue", group = "Autonomous")
-public class StackAutoBlue extends LinearOpMode {
+@Autonomous(name = "StackAutoBlueHestia", group = "Autonomous")
+public class StackAutoBlueHestia extends LinearOpMode {
 
     Manipulators manip;
     enum State{
@@ -201,37 +202,6 @@ public class StackAutoBlue extends LinearOpMode {
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
-//        TrajectorySequence parkAll = drive.trajectorySequenceBuilder(posEstimate)
-//                .lineToLinearHeading(new Pose2d(backdropMiddleX, preParkY, backdropMiddleAngle))
-//                .back(goingIntoPark)
-//                .build();
-        TrajectorySequence parkLeft = drive.trajectorySequenceBuilder(strafeToBackdropPosLeft.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
-                })
-                .forward(outFromBackdrop)
-                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle + Math.toRadians(90)))
-                .turn(Math.toRadians(90))
-                .strafeLeft(goingIntoPark)
-                .build();
-        TrajectorySequence parkMiddle = drive.trajectorySequenceBuilder(underTrussToBackdropAll.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
-                })
-                .forward(outFromBackdrop)
-                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle + Math.toRadians(90)))
-                .turn(Math.toRadians(90))
-                .strafeLeft(goingIntoPark)
-                .build();
-        TrajectorySequence parkRight = drive.trajectorySequenceBuilder(strafeToBackdropPosRight.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
-                })
-                .forward(outFromBackdrop)
-                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle + Math.toRadians(90)))
-                .turn(Math.toRadians(90))
-                .strafeLeft(goingIntoPark)
-                .build();
 
         telemetry.addLine("trajectories built!!!");
 
@@ -307,6 +277,7 @@ public class StackAutoBlue extends LinearOpMode {
                     currentState = State.UNDER_DOOR_OR_TRUSS;
 
                 case UNDER_DOOR_OR_TRUSS:
+                    sleep(6210);
                     // ultrasonic + distance sensor stuff here idk
                     if (/* distance sensor detects robot block is */ danger) {
                         drive.followTrajectorySequence(underDoorScuffed);
@@ -331,16 +302,6 @@ public class StackAutoBlue extends LinearOpMode {
                     sleep(500);
                     manip.gateToggle();
                     sleep(800);
-                    currentState = State.PARK;
-
-                case PARK:
-                    if (myPosition == "left") {
-                        drive.followTrajectorySequence(parkLeft);
-                    } else if (myPosition == "right") {
-                        drive.followTrajectorySequence(parkRight);
-                    } else {
-                        drive.followTrajectorySequence(parkMiddle);
-                    }
                     currentState = State.STOP;
 
                 case STOP:

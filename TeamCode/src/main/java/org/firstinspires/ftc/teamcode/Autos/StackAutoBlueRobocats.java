@@ -19,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous(name = "StackAutoBlue", group = "Autonomous")
-public class StackAutoBlue extends LinearOpMode {
+@Autonomous(name = "StackAutoBlueRobocats", group = "Autonomous")
+public class StackAutoBlueRobocats extends LinearOpMode {
 
     Manipulators manip;
     enum State{
@@ -78,7 +78,7 @@ public class StackAutoBlue extends LinearOpMode {
     public static double betweenTruss = 35;
     public static double exitDoor = 15;
 
-    public static double backdropMiddleX = /*51*/ 45.5;
+    public static double backdropMiddleX = /*51*/ 46.75;
     public static double backdropMiddleY = /*32.58*/ 33;
     public static double backdropMiddleAngle = trussAngle;
     public static double backdropLeftStrafe = 5;
@@ -307,6 +307,7 @@ public class StackAutoBlue extends LinearOpMode {
                     currentState = State.UNDER_DOOR_OR_TRUSS;
 
                 case UNDER_DOOR_OR_TRUSS:
+                    sleep(3105);
                     // ultrasonic + distance sensor stuff here idk
                     if (/* distance sensor detects robot block is */ danger) {
                         drive.followTrajectorySequence(underDoorScuffed);
