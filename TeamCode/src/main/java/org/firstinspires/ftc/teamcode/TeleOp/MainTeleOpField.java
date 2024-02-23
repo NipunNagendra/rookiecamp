@@ -54,7 +54,7 @@ public class MainTeleOpField extends OpMode {
 
     public void init() {
         manip = new Manipulators(hardwareMap);
-        manip.droneServo.setPower(0);
+//        manip.droneServo.setPower(0);
         move = new Movement(hardwareMap);
 //        sensor = new SensorLibrary(hardwareMap);
         //cs = hardwareMap.get(RevColorSensorV3.class, "cs");
@@ -260,8 +260,8 @@ public class MainTeleOpField extends OpMode {
             manip.setIntakePower(0);
         }
 
-        if (gamepad2.options){
-            manip.droneServo.setPower(1);
+        if (gamepad2.share){
+            manip.droneServo.setPower(0.8);
         }
 
         if (Math.abs(gamepad2.left_stick_y) > 0.1){
@@ -273,11 +273,11 @@ public class MainTeleOpField extends OpMode {
             manip.intakeRightServo.setPower(0);
         }
 
-        if (sensor.invisibleWallDetect()){
-            gamepad1.rumble(100);
-            gamepad2.rumble(100);
-
-        }
+//        if (sensor.invisibleWallDetect()){
+//            gamepad1.rumble(100);
+//            gamepad2.rumble(100);
+//
+//        }
         if (gamepad2.circle) {
             manip.moveOuttakeLift(outtakeEncoderTicks);
         }

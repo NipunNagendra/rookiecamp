@@ -18,16 +18,16 @@ public class StackAutoRedSplineMeep {
     //coordinates for starting position (0, 0, 0)
     public static double startPoseX= -38.15845302224215;
     public static double startPoseY= -65.13672263931143;
-    public static double startPoseAngle= Math.toRadians(270);
+    public static double startPoseAngle= Math.toRadians(90);
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -40.64633638294297;
-    public static double spike1Y = -24.4247700133697;
-    public static double spike1Angle = Math.toRadians(180);
+    public static double spike1X = -47.14633638294297;
+    public static double spike1Y = -32.4247700133697;
+    public static double spike1Angle = Math.toRadians(90);
 
     //coordinates for middle spike position
     public static double spike2X =  -37.812297556497846;
@@ -121,16 +121,20 @@ public class StackAutoRedSplineMeep {
                                 drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
                                         // to left spike
                                         .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(spike1X, spike1Y - 10, spike1Angle), Math.toRadians(90))
-                                        .strafeRight(10)
+                                        .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+//                                        .strafeRight(10)
 
                                         // to stack
-                                        .back(3)
-                                        .splineToConstantHeading(new Vector2d(spike1X + 3, firstStackY - 5), Math.toRadians(180))
-                                        .forward(16)
-                                        .splineToConstantHeading(new Vector2d(firstStackX + 1, firstStackY), Math.toRadians(180))
-                                        .forward(1)
+                                        .back(8)
+//                                        .splineTo(new Vector2d(spike1X, spike1Y - 3), Math.toRadians(180))
+//                                        .turn(Math.toRadians(90))
+//                                        .forward(16)
+                                        .turn(Math.toRadians(60))
                                         .setReversed(false)
+                                        .splineTo/*SplineHeading*/(new Vector2d(firstStackX + 1, firstStackY), Math.toRadians(180))
+//                                        .splineToConstantHeading(new Vector2d(firstStackX + 1, firstStackY), Math.toRadians(180))
+                                        .forward(1)
+//                                        .setReversed(false)
 
                                         // to backdrop
                                         .setReversed(true)
