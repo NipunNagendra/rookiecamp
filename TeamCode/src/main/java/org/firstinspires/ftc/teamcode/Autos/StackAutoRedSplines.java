@@ -4,10 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
@@ -44,8 +42,8 @@ public class StackAutoRedSplines extends LinearOpMode {
 
 
     //coordinates for starting position (0, 0, 0)
-    public static double startPoseX= -37.95845302224215;
-    public static double startPoseY= -65.63672263931143;
+    public static double startPoseX= -38.15845302224215;
+    public static double startPoseY= -65.13672263931143;
     public static double startPoseAngle= Math.toRadians(270);
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
@@ -53,9 +51,9 @@ public class StackAutoRedSplines extends LinearOpMode {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -47.14633638294297;
-    public static double spike1Y = -32.4247700133697;
-    public static double spike1Angle = Math.toRadians(90);
+    public static double spike1X = -40.64633638294297;
+    public static double spike1Y = -24.4247700133697;
+    public static double spike1Angle = Math.toRadians(180);
     public static double spike1Strafe = 10;
     public static double spike1BackAmount = 3;
     public static double spike1StackOffset = 5;
@@ -129,13 +127,7 @@ public class StackAutoRedSplines extends LinearOpMode {
 
 
     State currentState = State.IDLE;
-    public static double xyParameter = .2;
-    public static double headingParameter = .2;
 
-    public static ElapsedTime lockTime = new ElapsedTime();
-
-    double lockThreshold = 0;
-    Pose2d lockLocation = new Pose2d(0, 0, 0);
 
     OpenCvWebcam camera;
     public static double color = 1;
@@ -147,7 +139,6 @@ public class StackAutoRedSplines extends LinearOpMode {
         RedPipeline vision =  new RedPipeline(telemetry);
 
 
-
         telemetry.addLine("Init Done");
 
         drive.setPoseEstimate(startPose);
@@ -157,7 +148,8 @@ public class StackAutoRedSplines extends LinearOpMode {
         // these are the basic to spike part
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+                .splineToSplineHeading(new Pose2d(spike1X, spike1Y - spike1Strafe, spike1Angle), Math.toRadians(90))
+                .strafeRight(spike1Strafe)
                 .build();
 
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
@@ -193,11 +185,12 @@ public class StackAutoRedSplines extends LinearOpMode {
                 .build();
 
         TrajectorySequence goToStackLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .back(8)
-                .turn(Math.toRadians(60))
-                .setReversed(false)
-                .splineTo/*SplineHeading*/(new Vector2d(firstStackX + 1, firstStackY), Math.toRadians(180))
+                .back(spike1BackAmount)
+                .splineToConstantHeading(new Vector2d(spike1X + spike1BackAmount, firstStackY - spike1StackOffset), Math.toRadians(180))
+                .forward(16)
+                .splineToConstantHeading(new Vector2d(firstStackX + 1, firstStackY), Math.toRadians(180))
                 .forward(1)
+                .setReversed(false)
                 .build();
 
         TrajectorySequence goToStackMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
@@ -282,9 +275,9 @@ public class StackAutoRedSplines extends LinearOpMode {
                 .build();
 
         TrajectorySequence underDoorScuffed = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
-                .addTemporalMarker(temporalMarkerTimeAlternate, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
-                })
+//                .addTemporalMarker(temporalMarkerTimeAlternate, () -> {
+//                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
+//                })
                 .lineToLinearHeading(new Pose2d(dangerPathX, trussY, trussAngle))
                 .strafeRight(
                         betweenTruss,
@@ -295,9 +288,9 @@ public class StackAutoRedSplines extends LinearOpMode {
 
         // common trajectory for all 3 paths that leads to the backdrop
         TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(goToStackLeft.end())
-                .addTemporalMarker(temporalMarkerTimeUp, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
-                })
+//                .addTemporalMarker(temporalMarkerTime, () -> {
+//                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
+//                })
                 .setReversed(true)
                 .splineTo(new Vector2d(prePreTrussX, prePreTrussY), Math.toRadians(0))
                 .splineTo(new Vector2d(preTrussX, trussY), Math.toRadians(0))
@@ -429,18 +422,12 @@ public class StackAutoRedSplines extends LinearOpMode {
                 case INTAKE_STACK:
                     if (myPosition == "left") {
                         drive.followTrajectorySequence(goToStackLeft);
-                        lockLocation = goToStackLeft.end();
                     } else if (myPosition == "middle") {
                         drive.followTrajectorySequence(goToStackMiddle);
-                        lockLocation = goToStackMiddle.end();
                     } else {
                         drive.followTrajectorySequence(goToStackRight);
-                        lockLocation = goToStackMiddle.end();
                     }
-                    lockTime.reset();
-//                    while(lockTime.seconds()<=2) {
-//                        lockTo(lockLocation, drive);
-//                    }
+
                     currentState = State.UNDER_DOOR_OR_TRUSS;
 
                 case UNDER_DOOR_OR_TRUSS:
@@ -484,15 +471,6 @@ public class StackAutoRedSplines extends LinearOpMode {
             }
         }
 
-    }
-
-    public void lockTo(Pose2d targetPos, SampleMecanumDrive drive) {
-        Pose2d currPos = drive.getPoseEstimate();
-        Pose2d difference = targetPos.minus(currPos);
-        Vector2d xy = difference.vec().rotated(-currPos.getHeading());
-        double heading = Angle.normDelta(targetPos.getHeading()) - Angle.normDelta(currPos.getHeading());
-
-        drive.setWeightedDrivePower(new Pose2d(xy.times(xyParameter), heading* headingParameter));
     }
 
 }
