@@ -5,6 +5,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedLight;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
@@ -23,40 +24,65 @@ public class BackdropAutoBlueMeep {
     // TODO: TUNE ALL POSITIONS
 
     //coordinates for left spike position
-    public static double spike1X = -41.64633638294297;
-    public static double spike1Y = -32.1247700133697;
+
+    public static double moveBackwards3 = 31;
+    public static double moveBackwardsTowardBackDrop = 34;
+    public static double turn3 = 90;
+
+    //coordinates for right spike position
+    public static double spike3X = 11.35845302224215;
+    public static double spike3Y = 30.44644728121096;
+    public static double spike3Angle = Math.toRadians(180);
+
+    //coordinates for left spike position
+    public static double spike1X = 11.35845302224215;
+    public static double spike1Y = 34.44644728121096;
     public static double spike1Angle = Math.toRadians(0);
 
     //coordinates for middle spike position
-    public static double spike2X = -37.812297556497846;
-    public static double spike2Y = -27.023006373520104;
-    public static double spike2Angle = Math.toRadians(90);
+    public static double spike2X =  11.35845302224215;
+    public static double spike2Y = 34.44644728121096;
+    public static double spike2Angle = Math.toRadians(270);
 
-    //going to right spike position
-    public static double moveBackwards3 = 31;
-    public static double moveForwards3 = 12;
-    public static double turn3 = 90;
-
-    public static double backdropMiddleX = 52;
-    public static double backdropMiddleY = 35;
+    public static double preTrussX = -38.15845302224215;
+    public static double trussX = 15;
+    public static double trussY = -55.93672263931143;
+    public static double trussAngle = Math.toRadians(180);
+    public static double backdropMiddleX = 45;
+    public static double backdropMiddleY = 34;
     public static double backdropMiddleAngle = Math.toRadians(180);
-    public static double backdropLeftStrafe = 4;
-    public static double backdropRightStrafe = 4;
 
-    public static double preParkY = 58.5;
-    public static double outFromBackdrop = 10;
-    public static double goingIntoPark = 10;
+    public static double backdropLeftX = 44;
+    public static double backdropLeftY = 44;
+    public static double backdropLeftAngle = Math.toRadians(180);
 
-    public static int outtakeEncoderTicks = 2500;
-    public static double temporalMarkerTime = 1.5;
+    public static double backdropRightX = 45;
+    public static double backdropRightY = 29;
+    public static double backdropRightAngle = Math.toRadians(180);
+    public static double strafeForPark = 20;
+    public static double backdropRightStrafe = 8;
 
     public static double casenum=1;
 
 
     public static String myPosition;
 
+    public static double strafeToTag = 8;
+
+    public static double temporalMarkerTimeDOWN = 1.5;
+    public static double temporalMarkerTimeUP = 5;
+
+
+    public static int outtakeEncoderTicks = 2000;
+    public static int outtakeOG = 0;
+
+    // stores the result of Vision locally
+
+
+    public static double casePos;
+
     public static void main(String[] args) {
-        MeepMeep meepmeep = new MeepMeep(800);
+        MeepMeep meepmeep = new MeepMeep(600);
 
         RoadRunnerBotEntity myRightBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be left
@@ -64,32 +90,36 @@ public class BackdropAutoBlueMeep {
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
-                                .back(moveBackwards3)
-                                .turn(Math.toRadians(turn3))
-                                .forward(moveForwards3)
-                                .back(moveForwards3)
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .strafeRight(backdropLeftStrafe)
-                                .forward(outFromBackdrop)
+                                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+                                .forward(3)
+                                .back(5)
+                                .strafeLeft(20)
+                                .lineToLinearHeading(new Pose2d(backdropLeftX, backdropLeftY, backdropLeftAngle))
+                                .forward(5)
+                                .strafeRight(15)
                                 .turn(Math.toRadians(90))
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                                .strafeLeft(goingIntoPark)
+                                .strafeLeft(15)
                                 .build()
                 );
 
         RoadRunnerBotEntity myMiddleBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be middle
-                .setColorScheme(new ColorSchemeRedDark())
+                .setColorScheme(new ColorSchemeRedLight())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
+                                .back(7)
+                                //.turn(Math.toRadians(180))
                                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
-                                .back(5)
+                                .forward(3)
+                                .back(7)
+                                .turn(Math.toRadians(-90))
                                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .forward(outFromBackdrop)
+                                .forward(5)
+                                //.strafeRight(8)
+                                .strafeRight(24)
                                 .turn(Math.toRadians(90))
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                                .strafeLeft(goingIntoPark)
+                                .strafeLeft(15)
                                 .build()
                 );
 
@@ -99,14 +129,16 @@ public class BackdropAutoBlueMeep {
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
-                                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
-                                .back(startPoseX - spike1X)
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .strafeLeft(backdropRightStrafe)
-                                .forward(outFromBackdrop)
+                                .back(10)
+                               // .turn(Math.toRadians(90))
+                                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+                                .forward(3)
+
+                                .lineToLinearHeading(new Pose2d(backdropRightX, backdropRightY, backdropRightAngle))
+                                .forward(5)
+                                .strafeRight(30)
                                 .turn(Math.toRadians(90))
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                                .strafeLeft(goingIntoPark)
+                                .strafeLeft(15)
                                 .build()
                 );
 
