@@ -26,21 +26,34 @@ public class BackdropAutoRedMeep {
     public static double moveForwards1 = 12;
     public static double turn1 = -90;
 
+    //coordinates for left spike position
+    public static double spike1X = 8.74633638294297;
+    public static double spike1Y = -28.8247700133697;
+    public static double spike1Angle = Math.toRadians(180);
+
     //coordinates for middle spike position
-    public static double spike2X = -37.812297556497846;
-    public static double spike2Y = 27.023006373520104;
-    public static double spike2Angle = Math.toRadians(270);
+    public static double spike2X = 11.612297556497846;
+    public static double spike2Y = -32.623006373520104;
+    public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
-    public static double spike3X = -41.64633638294297;
-    public static double spike3Y = 32.1247700133697;
+    public static double spike3X = 14.74633638294297;
+    public static double spike3Y = -29.9247700133697;
     public static double spike3Angle = Math.toRadians(0);
 
-    public static double backdropMiddleX = 52;
+    public static double backdropMiddleX = 47;
     public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = Math.toRadians(180);
     public static double backdropLeftStrafe = 4;
     public static double backdropRightStrafe = 4;
+
+    static double backdropLeftX = 47;
+    public static double backdropLeftY = -28;
+    public static double backdropLeftAngle = Math.toRadians(180);
+
+    public static double backdropRightX = 47;
+    public static double backdropRightY = -41;
+    public static double backdropRightAngle = Math.toRadians(180);
 
     public static double preParkY = -58.5;
     public static double outFromBackdrop = 10;
@@ -55,7 +68,7 @@ public class BackdropAutoRedMeep {
     public static String myPosition;
 
     public static void main(String[] args) {
-        MeepMeep meepmeep = new MeepMeep(800);
+        MeepMeep meepmeep = new MeepMeep(500);
 
         RoadRunnerBotEntity myLeftBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be left
@@ -63,16 +76,12 @@ public class BackdropAutoRedMeep {
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
-                                .back(moveBackwards1)
-                                .turn(Math.toRadians(turn1))
-                                .forward(moveForwards1)
-                                .back(moveForwards1)
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .strafeRight(backdropLeftStrafe)
-                                .forward(outFromBackdrop)
+                                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+                                .lineToLinearHeading(new Pose2d(backdropLeftX, backdropLeftY, backdropLeftAngle))
+                                .forward(5)
+                                .strafeLeft(32)
                                 .turn(Math.toRadians(-90))
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                                .strafeRight(goingIntoPark)
+                                .strafeRight(15)
                                 .build()
                 );
 
@@ -83,12 +92,12 @@ public class BackdropAutoRedMeep {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
                                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
-                                .back(5)
+                                .back(7)
                                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .forward(outFromBackdrop)
+                                .forward(5)
+                                .strafeLeft(24)
                                 .turn(Math.toRadians(-90))
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                                .strafeRight(goingIntoPark)
+                                .strafeRight(15)
                                 .build()
                 );
 
@@ -99,13 +108,13 @@ public class BackdropAutoRedMeep {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
                                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
-                                .back(startPoseX - spike3X)
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .strafeLeft(backdropRightStrafe)
-                                .forward(outFromBackdrop)
+                                .back(5)
+                                .strafeRight(20)
+                                .lineToLinearHeading(new Pose2d(backdropRightX, backdropRightY, backdropRightAngle))
+                                .forward(5)
+                                .strafeLeft(18)
                                 .turn(Math.toRadians(-90))
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX - outFromBackdrop, preParkY, startPoseAngle - Math.toRadians(180)))
-                                .strafeRight(goingIntoPark)
+                                .strafeRight(15)
                                 .build()
                 );
 
