@@ -64,13 +64,22 @@ public class BackdropAutoBlue extends LinearOpMode {
     public static double spike2Y = 34.44644728121096;
     public static double spike2Angle = Math.toRadians(270);
 
+    public static double backdropMiddleX = 45;
+    public static double backdropMiddleY = 34;
+    public static double backdropMiddleAngle = Math.toRadians(180);
+
+    public static double backdropLeftX = 44;
+    public static double backdropLeftY = 44;
+    public static double backdropLeftAngle = Math.toRadians(180);
+
+    public static double backdropRightX = 45;
+    public static double backdropRightY = 29;
+    public static double backdropRightAngle = Math.toRadians(180);
     public static double preTrussX = -38.15845302224215;
     public static double trussX = 15;
     public static double trussY = -55.93672263931143;
     public static double trussAngle = Math.toRadians(180);
-    public static double backdropMiddleX = 45;
-    public static double backdropMiddleY = 34;
-    public static double backdropMiddleAngle = Math.toRadians(180);
+
     public static double strafeForPark = 20;
     public static double backdropRightStrafe = 8;
 
@@ -105,71 +114,77 @@ public class BackdropAutoBlue extends LinearOpMode {
         //still need to enter values for these
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+                .forward(3)
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
                 .back(7)
-                .turn(Math.toRadians(180))
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
+                .forward(3)
                 .build();
 
         //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
                 .back(10)
-                .turn(Math.toRadians(90))
+                // .turn(Math.toRadians(90))
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
                 .forward(3)
                 .build();
 
         TrajectorySequence backDropLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .strafeLeft(27)
-                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
+                .back(5)
+                .strafeLeft(20)
+                .lineToLinearHeading(new Pose2d(backdropLeftX, backdropLeftY, backdropLeftAngle))
                 .addTemporalMarker(temporalMarkerTimeUP, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
-                .strafeRight(strafeToTag)
                 .build();
 
         TrajectorySequence backDropMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
                 .back(7)
                 .turn(Math.toRadians(-90))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .forward(5)
-                .strafeRight(strafeToTag)
-                .build();
-
-        TrajectorySequence backDropRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
-                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
                 .addTemporalMarker(temporalMarkerTimeUP, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
-                .strafeLeft(strafeToTag)
+                .build();
+
+        TrajectorySequence backDropRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
+                .lineToLinearHeading(new Pose2d(backdropRightX, backdropRightY, backdropRightAngle))
+                .addTemporalMarker(temporalMarkerTimeUP, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicks);
+                })
                 .build();
 
         TrajectorySequence parkLeft = drive.trajectorySequenceBuilder(backDropLeft.end())
+                .forward(5)
                 .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
                     manip.moveOuttakeLift(outtakeOG);
                 })
-                .strafeRight(18)
-                .back(15)
+                .strafeRight(15)
+                .turn(Math.toRadians(90))
+                .strafeLeft(15)
                 .build();
 
         TrajectorySequence parkMiddle = drive.trajectorySequenceBuilder(backDropMiddle.end())
+                .forward(5)
                 .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
                     manip.moveOuttakeLift(outtakeOG);
                 })
-                .strafeRight(16)
+                .strafeRight(24)
                 .turn(Math.toRadians(90))
                 .strafeLeft(15)
                 .build();
 
         TrajectorySequence parkRight = drive.trajectorySequenceBuilder(backDropRight.end())
+                .forward(5)
                 .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
                     manip.moveOuttakeLift(outtakeOG);
                 })
-                .strafeRight(32)
-                .back(15)
+                .strafeRight(30)
+                .turn(Math.toRadians(90))
+                .strafeLeft(15)
                 .build();
 
         telemetry.addLine("trajectories built!!!");
