@@ -166,13 +166,14 @@ public class MainTeleOpFieldExp extends OpMode {
 
 
             if(gamepad1.right_trigger>0.1){
-                if ((referenceHeading - Math.atan2(leftY,leftX))
-                    <= (referenceHeading - (Math.atan2(leftY,leftX)-Math.PI))){
-                    tempTargetAngle = referenceHeading - Math.atan2(leftY,leftX);
+                if ((referenceHeading - (Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x)-(Math.PI/2)))
+                    <= (referenceHeading - ((Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x)-(Math.PI/2))-Math.PI))){
+                    tempTargetAngle = referenceHeading - Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x)-(Math.PI/2);
                 }
                 else{
-                    tempTargetAngle = referenceHeading - (Math.atan2(leftY,leftX)-Math.PI);
+                    tempTargetAngle = referenceHeading - ((Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x)-(Math.PI/2))-Math.PI);
                 }
+                telemetry.addData("temptargetangle", tempTargetAngle);
             }
             else{
                 tempTargetAngle=targetAngle;
