@@ -30,6 +30,7 @@ public class ClimberWinchSync extends OpMode {
     public void init() {
         climberLeft = hardwareMap.get(DcMotor.class, "leftClimber");
         climberRight = hardwareMap.get(DcMotor.class, "rightClimber");
+        touch = hardwareMap.get(RevTouchSensor.class,"touchSensor");
 
         winchLeft = hardwareMap.get(CRServo.class, "winchLeft");
         winchRight = hardwareMap.get(CRServo.class, "winchRight");

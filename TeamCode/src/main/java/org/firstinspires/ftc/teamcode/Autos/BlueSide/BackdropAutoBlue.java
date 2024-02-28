@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autos;
+package org.firstinspires.ftc.teamcode.Autos.BlueSide;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
-import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -99,7 +98,7 @@ public class BackdropAutoBlue extends LinearOpMode {
 
     // stores the result of Vision locally
 
-    public static BluePipeline.Location positionOfVisionPixel;
+    public static RedPipeline.Location positionOfVisionPixel;
     public static double casePos;
     State currentState = State.IDLE;
     OpenCvWebcam camera;
@@ -107,7 +106,7 @@ public class BackdropAutoBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
-        BluePipeline vision =  new BluePipeline(telemetry);
+        RedPipeline vision =  new RedPipeline(telemetry);
 
         telemetry.addLine("Init Done");
         drive.setPoseEstimate(startPose);
@@ -192,7 +191,7 @@ public class BackdropAutoBlue extends LinearOpMode {
         telemetry.update();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        BluePipeline detectBlue = new BluePipeline(telemetry);
+        RedPipeline detectBlue = new RedPipeline(telemetry);
         camera.setPipeline(detectBlue);
 
         camera.setMillisecondsPermissionTimeout(5000);
@@ -231,11 +230,11 @@ public class BackdropAutoBlue extends LinearOpMode {
 
                 case SCORE_PURPLE:
                     positionOfVisionPixel = vision.getLocation();
-                    if (BluePipeline.positionMain == "left") {
+                    if (RedPipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (BluePipeline.positionMain == "middle") {
+                    } else if (RedPipeline.positionMain == "middle") {
                         myPosition="middle";
                         telemetry.addLine("going middle");
                         casePos=2;
@@ -255,9 +254,9 @@ public class BackdropAutoBlue extends LinearOpMode {
                     break;
 
                 case SCORE_YELLOW:
-                    if (BluePipeline.positionMain == "left") {
+                    if (RedPipeline.positionMain == "left") {
                         drive.followTrajectorySequence(backDropLeft);
-                    } else if (BluePipeline.positionMain == "middle") {
+                    } else if (RedPipeline.positionMain == "middle") {
                         drive.followTrajectorySequence(backDropMiddle);
                     } else {
                         drive.followTrajectorySequence(backDropRight);
@@ -268,9 +267,9 @@ public class BackdropAutoBlue extends LinearOpMode {
                     break;
 
                 case PARK:
-                    if (BluePipeline.positionMain == "left") {
+                    if (RedPipeline.positionMain == "left") {
                         drive.followTrajectorySequence(parkLeft);
-                    } else if (BluePipeline.positionMain == "middle") {
+                    } else if (RedPipeline.positionMain == "middle") {
                         drive.followTrajectorySequence(parkMiddle);
                     } else {
                         drive.followTrajectorySequence(parkRight);

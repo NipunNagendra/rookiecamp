@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autos;
+package org.firstinspires.ftc.teamcode.Autos.RedSide;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -53,8 +53,8 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -42.64633638294297;
-    public static double spike1Y = -31.1247700133697;
+    public static double spike1X = -39.64633638294297;
+    public static double spike1Y = -32.1247700133697;
     public static double spike1Angle = Math.toRadians(180);
     public static double spike1Strafe = 10;
     public static double spike1BackAmount = 3;
@@ -62,7 +62,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 
     //coordinates for middle spike position
     public static double spike2X =  -37.812297556497846;
-    public static double spike2Y = -27.023006373520104;
+    public static double spike2Y = -32.023006373520104;
     public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
@@ -82,23 +82,23 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
     public static double prePreTrussY = -39;
     public static double preTrussX = -32.5;
     public static double trussX = 27;
-    public static double trussY = -58.5;
+    public static double trussY = -60;
     public static double trussAngle = Math.toRadians(180);
 
     public static double preBackdropX = 42;
     public static double preBackdropY = -35.30;
 
-    public static double backdropMiddleX = 46;
+    public static double backdropMiddleX = 54;
     public static double backdropMiddleY = -35.3;
     public static double backdropMiddleAngle = trussAngle;
     public static double backdropLeftStrafe = 8;
     public static double backdropRightStrafe = 8;
 
     public static double preParkX = 46.5;
-    public static double preParkY = -58;
+    public static double preParkY = -61;
 
-    public static double moveBackwards3 = 31;
-    public static double moveForward3 = 12;
+    public static double moveBackwards3 = 29;
+    public static double moveForward3 = 10;
     public static double turn3 = 90;
     public static double dangerPathX = -15;
 
@@ -112,9 +112,9 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 
     public static double outFromBackdrop = 10;
 
-    public static int outtakeEncoderTicksUp = 1800;
+    public static int outtakeEncoderTicksUp = 1500;
     public static int outtakeEncoderTicksDown = 0;
-    public static double temporalMarkerTimeUp = 2.5;
+    public static double temporalMarkerTimeUp = 5;
     public static double temporalMarkerTimeDown = 0.5;
 
     public static double casenum=1;
@@ -214,34 +214,32 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 //                .build();
 
         TrajectorySequence goToBackdropLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
-                .setConstraints(SampleMecanumDrive.getVelocityConstraint(25, Math.toRadians(200), DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(temporalMarkerTimeUp, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicksUp);
                 })
                 .setReversed(true)
-                .back(5)
-                .splineTo(new Vector2d(preTrussX, trussY), Math.toRadians(0))
+                .back(3)
+                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle),
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                .lineToLinearHeading(new Pose2d(preTrussX + 1, trussY, trussAngle))
                 .lineTo(new Vector2d(trussX, trussY),
-                        SampleMecanumDrive.getVelocityConstraint(15, Math.toRadians(200), DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineTo(new Vector2d(preBackdropX, preBackdropY), Math.toRadians(0))
 
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, backdropMiddleAngle),
-                        SampleMecanumDrive.getVelocityConstraint(15, Math.toRadians(200), DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         TrajectorySequence goToBackdropMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .setConstraints(SampleMecanumDrive.getVelocityConstraint(25, Math.toRadians(200), DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(temporalMarkerTimeUp, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicksUp);
                 })
                 // to backdrop
                 .back(5)
-                .splineTo(new Vector2d(preTrussX, trussY), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
                 .lineTo(new Vector2d(trussX, trussY),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -253,14 +251,12 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                 .build();
 
         TrajectorySequence goToBackdropRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
-                .setConstraints(SampleMecanumDrive.getVelocityConstraint(25, Math.toRadians(200), DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(temporalMarkerTimeUp, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicksUp);
                 })
                 .setReversed(true)
                 .back(10)
-                .splineTo(new Vector2d(preTrussX, trussY), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
                 .lineTo(new Vector2d(trussX, trussY),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -487,9 +483,9 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 //                    } else {
 //                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
 //                    }
-                    sleep(500);
                     manip.gateToggle();
-                    sleep(800);
+                    manip.gateToggle();
+                    sleep(1000);
                     currentState = State.PARK;
 
                 case PARK:

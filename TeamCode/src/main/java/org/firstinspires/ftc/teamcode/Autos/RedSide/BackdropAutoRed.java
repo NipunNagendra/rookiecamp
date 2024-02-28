@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autos;
+package org.firstinspires.ftc.teamcode.Autos.RedSide;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -7,10 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
-import org.firstinspires.ftc.teamcode.testing.RedPipeline;
+import org.firstinspires.ftc.teamcode.testing.BluePipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -53,19 +52,19 @@ public class BackdropAutoRed extends LinearOpMode {
     public static double turn1 = -90;
 
     //coordinates for left spike position
-    public static double spike1X = 8.74633638294297;
+    public static double spike1X = 6.74633638294297;
     public static double spike1Y = -28.8247700133697;
     public static double spike1Angle = Math.toRadians(180);
 
     //coordinates for middle spike position
-    public static double spike2X = 11.612297556497846;
-    public static double spike2Y = -32.623006373520104;
-    public static double spike2Angle = Math.toRadians(90);
+    public static double spike2X = 20;
+    public static double spike2Y = -25.08633;
+    public static double spike2Angle = Math.toRadians(180);
 
     //coordinates for right spike position
-    public static double spike3X = 14.74633638294297;
+    public static double spike3X = 28.74633638294297;
     public static double spike3Y = -29.9247700133697;
-    public static double spike3Angle = Math.toRadians(0);
+    public static double spike3Angle = Math.toRadians(180);
 
     public static double backdropMiddleX = 47;
     public static double backdropMiddleY = -35;
@@ -85,8 +84,8 @@ public class BackdropAutoRed extends LinearOpMode {
     public static double preParkY = -53;
     public static double goingIntoPark = 10;
 
-    public static double temporalMarkerTimeDOWN = 1.5;
-    public static double temporalMarkerTimeUP = 5;
+    public static double temporalMarkerTimeDOWN = .5;
+    public static double temporalMarkerTimeUP = 1;
 
 
     public static int outtakeEncoderTicks = 2000;
@@ -94,7 +93,7 @@ public class BackdropAutoRed extends LinearOpMode {
 
     public static double casenum=1;
 
-    public static RedPipeline.Location positionOfVisionPixel;
+    public static BluePipeline.Location positionOfVisionPixel;
 
     public static String myPosition;
 
@@ -110,7 +109,7 @@ public class BackdropAutoRed extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
-        RedPipeline vision =  new RedPipeline(telemetry);
+        BluePipeline vision =  new BluePipeline(telemetry);
 
 
         telemetry.addLine("Init Done");
@@ -121,6 +120,7 @@ public class BackdropAutoRed extends LinearOpMode {
         //still need to enter values for these
         // these are the basic to spike part
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
+                .back(  25)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
                 .build();
 
@@ -141,7 +141,6 @@ public class BackdropAutoRed extends LinearOpMode {
 
         TrajectorySequence backDropMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
                 .back(5)
-                .strafeRight(20)
                 .lineToLinearHeading(new Pose2d(backdropRightX, backdropRightY, backdropRightAngle))
                 .addTemporalMarker(temporalMarkerTimeUP, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
@@ -190,7 +189,7 @@ public class BackdropAutoRed extends LinearOpMode {
         telemetry.update();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        RedPipeline detectRed = new RedPipeline(telemetry);
+        BluePipeline detectRed = new BluePipeline(telemetry);
         camera.setPipeline(detectRed);
 
         camera.setMillisecondsPermissionTimeout(5000);
@@ -229,11 +228,11 @@ public class BackdropAutoRed extends LinearOpMode {
 
                 case SCORE_PURPLE:
                     positionOfVisionPixel = vision.getLocation();
-                    if (RedPipeline.positionMain == "left") {
+                    if (BluePipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (RedPipeline.positionMain == "middle") {
+                    } else if (BluePipeline.positionMain == "middle") {
                         myPosition="middle";
                         telemetry.addLine("going middle");
                         casePos=2;
@@ -253,9 +252,9 @@ public class BackdropAutoRed extends LinearOpMode {
                     break;
 
                 case SCORE_YELLOW:
-                    if (RedPipeline.positionMain == "left") {
+                    if (BluePipeline.positionMain == "left") {
                         drive.followTrajectorySequence(backDropLeft);
-                    } else if (RedPipeline.positionMain == "middle") {
+                    } else if (BluePipeline.positionMain == "middle") {
                         drive.followTrajectorySequence(backDropMiddle);
                     } else {
                         drive.followTrajectorySequence(backDropRight);
@@ -266,9 +265,9 @@ public class BackdropAutoRed extends LinearOpMode {
                     break;
 
                 case PARK:
-                    if (RedPipeline.positionMain == "left") {
+                    if (BluePipeline.positionMain == "left") {
                         drive.followTrajectorySequence(parkLeft);
-                    } else if (RedPipeline.positionMain == "middle") {
+                    } else if (BluePipeline.positionMain == "middle") {
                         drive.followTrajectorySequence(parkMiddle);
                     } else {
                         drive.followTrajectorySequence(parkRight);

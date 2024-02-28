@@ -40,8 +40,8 @@ public class Manipulators {
 
 
     // flipped pos 1 and pos 2
-    public static double outtakeServoPos1 = 0.3;
-    public static double outtakeServoPos2 = 0.55;
+    public static double outtakeServoPos1 = 0;
+    public static double outtakeServoPos2 = 0.2;
 
     public static double droneLaunchPos = 0.5;
 
@@ -196,6 +196,24 @@ public class Manipulators {
                 outtakeServo.setPosition(outtakeServoPos2);
                 try {
                     Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                outtakeServo.setPosition(outtakeServoPos1);
+            }
+
+        };
+        outtakeMove.start();
+    }
+    public void gateToggleAuto() {
+        //Checking the status of the outtake servo
+        //outtakeServo.setDirection(Servo.Direction.FORWARD);
+        Thread outtakeMove = new Thread() {
+            @Override
+            public void run(){
+                outtakeServo.setPosition(outtakeServoPos2);
+                try {
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
