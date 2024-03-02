@@ -91,24 +91,24 @@ public class BackdropAutoRedSpleneCycleMeep {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
                                 .setReversed(true)
-                                .splineTo(new Vector2d(spike1X+8, spike1Y), Math.toRadians(0))
-                                .forward(8)
+                                .splineTo(new Vector2d(spike1X+12, spike1Y), Math.toRadians(0))
+                                .forward(9)
                                 .back(8)
                                 .splineTo(new Vector2d(backdropLeftX, backdropLeftY), Math.toRadians(0))
 
                                 .setReversed(false)
-                                .splineToConstantHeading(new Vector2d(38, -16), Math.toRadians(180))
+                                .splineTo(new Vector2d(20, -12), Math.toRadians(180))
                                 .splineTo(new Vector2d(-50, -12), Math.toRadians(180))
                                 .forward(10)
 //
                                 .setReversed(true)
                                 .back(10)
-                                .splineTo(new Vector2d(38, -16), Math.toRadians(0))
-                                .splineToConstantHeading(new Vector2d(backdropLeftX, backdropLeftY), Math.toRadians(0))
+                                .splineTo(new Vector2d(20, -12), Math.toRadians(0))
+                                .splineTo(new Vector2d(backdropLeftX, backdropLeftY), Math.toRadians(0))
 
                                 .setReversed(false)
-                                .splineToConstantHeading(new Vector2d(38, -65), Math.toRadians(270))
-                                .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(90)))
+                                .splineToConstantHeading(new Vector2d(38, -59), Math.toRadians(270))
+                                .lineToLinearHeading(new Pose2d(60, -58, Math.toRadians(90)))
                                 .build()
                 );
 

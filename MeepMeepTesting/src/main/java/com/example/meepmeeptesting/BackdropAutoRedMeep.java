@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
@@ -70,7 +71,7 @@ public class BackdropAutoRedMeep {
     public static void main(String[] args) {
         MeepMeep meepmeep = new MeepMeep(500);
 
-        RoadRunnerBotEntity myLeftBot = new DefaultBotBuilder(meepmeep)
+        /*RoadRunnerBotEntity myLeftBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be left
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
@@ -83,7 +84,7 @@ public class BackdropAutoRedMeep {
                                 .turn(Math.toRadians(-90))
                                 .strafeRight(15)
                                 .build()
-                );
+                );*/
 
         RoadRunnerBotEntity myMiddleBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be middle
@@ -91,17 +92,16 @@ public class BackdropAutoRedMeep {
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
-                                .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
-                                .back(7)
-                                .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                                .forward(5)
-                                .strafeLeft(24)
-                                .turn(Math.toRadians(-90))
-                                .strafeRight(15)
+                                .setReversed(true)
+                                .splineTo(new Vector2d(28, -29), Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(backdropMiddleX + 7, -34), Math.toRadians(0))
+
+                                //parking in the corner:
+                                .splineToConstantHeading(new Vector2d(50, -50), Math.toRadians(0))
                                 .build()
                 );
 
-        RoadRunnerBotEntity myRightBot = new DefaultBotBuilder(meepmeep)
+        /*RoadRunnerBotEntity myRightBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be right
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
@@ -116,14 +116,14 @@ public class BackdropAutoRedMeep {
                                 .turn(Math.toRadians(-90))
                                 .strafeRight(15)
                                 .build()
-                );
+                );*/
 
         meepmeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(.95f)
-                .addEntity(myLeftBot)
+                //.addEntity(myLeftBot)
                 .addEntity(myMiddleBot)
-                .addEntity(myRightBot)
+                //.addEntity(myRightBot)
                 .start();
     }
 }
