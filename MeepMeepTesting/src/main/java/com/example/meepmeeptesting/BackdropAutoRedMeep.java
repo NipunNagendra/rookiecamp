@@ -6,7 +6,10 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
+import com.noahbres.meepmeep.roadrunner.SampleMecanumDrive;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+
+import java.util.Vector;
 
 
 public class BackdropAutoRedMeep {
@@ -28,7 +31,7 @@ public class BackdropAutoRedMeep {
     public static double turn1 = -90;
 
     //coordinates for left spike position
-    public static double spike1X = 8.74633638294297;
+    public static double spike1X = 10.24633638294297;
     public static double spike1Y = -28.8247700133697;
     public static double spike1Angle = Math.toRadians(180);
 
@@ -45,8 +48,8 @@ public class BackdropAutoRedMeep {
     public static double backdropMiddleX = 47;
     public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = Math.toRadians(180);
-    public static double backdropLeftStrafe = 4;
-    public static double backdropRightStrafe = 4;
+    public static double backdropLeftStrafe = 8;
+    public static double backdropRightStrafe = 8;
 
     static double backdropLeftX = 47;
     public static double backdropLeftY = -28;
@@ -71,59 +74,98 @@ public class BackdropAutoRedMeep {
     public static void main(String[] args) {
         MeepMeep meepmeep = new MeepMeep(500);
 
-        /*RoadRunnerBotEntity myLeftBot = new DefaultBotBuilder(meepmeep)
+        RoadRunnerBotEntity myLeftBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be left
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
-                                .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
-                                .lineToLinearHeading(new Pose2d(backdropLeftX, backdropLeftY, backdropLeftAngle))
-                                .forward(5)
-                                .strafeLeft(32)
-                                .turn(Math.toRadians(-90))
-                                .strafeRight(15)
-                                .build()
-                );*/
+                                .setReversed(true)
+//                                .back(5)
+                                .splineToSplineHeading(new Pose2d(19.2, -33.3, Math.toRadians(180)), Math.toRadians(90))
+                                .splineToConstantHeading(new Vector2d(spike1X, spike1Y), Math.toRadians(0))
+                                .back(5,
+                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
+                                        SampleMecanumDrive.getAccelerationConstraint(50))
+                                .splineToConstantHeading(new Vector2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
 
-        RoadRunnerBotEntity myMiddleBot = new DefaultBotBuilder(meepmeep)
-                // We set this bot to be middle
+                                //parking in the corner:
+                                .setReversed(false)
+                                .forward(3)
+                                .splineToConstantHeading(new Vector2d(44, -56), Math.toRadians(0))
+                                .turn(Math.toRadians(-90))
+                                .lineToLinearHeading(new Pose2d(58.7, -60, Math.toRadians(90)))
+
+                                // alt park
+//                                .setReversed(false)
+//                                .forward(4.5)
+//                                .splineTo(new Vector2d(backdropMiddleX - 10, -20), Math.toRadians(90))
+//                                .splineToConstantHeading(new Vector2d(58.7, -11.3), Math.toRadians(0))
+
+                                .build()
+                );
+
+        RoadRunnerBotEntity myRightBot = new DefaultBotBuilder(meepmeep)
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
                                 .setReversed(true)
-                                .splineTo(new Vector2d(28, -29), Math.toRadians(0))
-                                .splineToConstantHeading(new Vector2d(backdropMiddleX + 7, -34), Math.toRadians(0))
+                                .splineTo(new Vector2d(31.5, -31), Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
 
                                 //parking in the corner:
-                                .splineToConstantHeading(new Vector2d(50, -50), Math.toRadians(0))
+//                                .setReversed(false)
+//                                .forward(3)
+//                                .splineToConstantHeading(new Vector2d(44, -56), Math.toRadians(0))
+//                                .turn(Math.toRadians(-90))
+//                                .lineToLinearHeading(new Pose2d(58.7, -60, Math.toRadians(90)))
+
+                                // alt park
+                                .setReversed(false)
+                                .forward(4.5)
+                                .splineTo(new Vector2d(backdropMiddleX - 10, -34), Math.toRadians(90))
+                                .lineToLinearHeading(new Pose2d(backdropMiddleX - 10, -20, Math.toRadians(90)))
+                                .splineToConstantHeading(new Vector2d(58.7, -11.3), Math.toRadians(0))
+
                                 .build()
                 );
 
-        /*RoadRunnerBotEntity myRightBot = new DefaultBotBuilder(meepmeep)
+        RoadRunnerBotEntity myMiddleBot = new DefaultBotBuilder(meepmeep)
                 // We set this bot to be right
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(startPoseX, startPoseY, startPoseAngle))
-                                .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
-                                .back(5)
-                                .strafeRight(20)
-                                .lineToLinearHeading(new Pose2d(backdropRightX, backdropRightY, backdropRightAngle))
-                                .forward(5)
-                                .strafeLeft(18)
+                                .setReversed(true)
+//                                .back(12)
+                                .splineTo(new Vector2d(12.3, -42.3), Math.toRadians(90))
+                                .splineTo(new Vector2d(21.8, -24), Math.toRadians(0))
+
+                                .splineTo(new Vector2d(backdropMiddleX, backdropMiddleY), Math.toRadians(0))
+
+                                //parking in the corner:
+                                .setReversed(false)
+                                .forward(3)
+                                .splineToConstantHeading(new Vector2d(44, -56), Math.toRadians(0))
                                 .turn(Math.toRadians(-90))
-                                .strafeRight(15)
+                                .lineToLinearHeading(new Pose2d(58.7, -60, Math.toRadians(90)))
+
+                                // alt park
+//                                .setReversed(false)
+//                                .forward(4.5)
+//                                .splineTo(new Vector2d(backdropMiddleX - 10, -20), Math.toRadians(90))
+//                                .splineToConstantHeading(new Vector2d(58.7, -11.3), Math.toRadians(0))
+
                                 .build()
-                );*/
+                );
 
         meepmeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(.95f)
-                //.addEntity(myLeftBot)
+                .addEntity(myLeftBot)
                 .addEntity(myMiddleBot)
-                //.addEntity(myRightBot)
+                .addEntity(myRightBot)
                 .start();
     }
 }
