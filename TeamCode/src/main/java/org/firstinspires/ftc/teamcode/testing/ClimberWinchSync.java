@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,10 +24,13 @@ public class ClimberWinchSync extends OpMode {
     public static double climberPower = .3;
     public static double winchPower = .5;
 
+    public static RevTouchSensor touch;
+
 
     public void init() {
-        climberLeft = hardwareMap.get(DcMotor.class, "leftClimberMotor");
-        climberRight = hardwareMap.get(DcMotor.class, "rightClimberMotor");
+        climberLeft = hardwareMap.get(DcMotor.class, "leftClimber");
+        climberRight = hardwareMap.get(DcMotor.class, "rightClimber");
+        touch = hardwareMap.get(RevTouchSensor.class,"touchSensor");
 
         winchLeft = hardwareMap.get(CRServo.class, "winchLeft");
         winchRight = hardwareMap.get(CRServo.class, "winchRight");
@@ -38,6 +42,8 @@ public class ClimberWinchSync extends OpMode {
     @Override
     public void loop()
     {
+        telemetry.addData("touch", touch.isPressed());
+        telemetry.update();
         if (gamepad1.dpad_up){
             climberLeft.setPower(climberPower);
             climberRight.setPower(climberPower);

@@ -38,8 +38,10 @@ public class Manipulators {
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
     public String officialColor;
 
-    public static double outtakeServoPos1 = 0.16;
-    public static double outtakeServoPos2 = 0.5;
+
+    // flipped pos 1 and pos 2
+    public static double outtakeServoPos1 = 0;
+    public static double outtakeServoPos2 = 0.2;
 
     public static double droneLaunchPos = 0.5;
 
@@ -57,7 +59,7 @@ public class Manipulators {
 
     public static double restDistance = 106;
     public static double sensorMarginalThreshold = 0.2;
-    public RevTouchSensor touchSensor;
+    public RevTouchSensor liftTouchSensor;
 
     double[] motorPower = {0, 0, 0, 0};
     public DcMotor climberLeft;
@@ -68,6 +70,7 @@ public class Manipulators {
 
     public static double climberPower = .3;
     public static double winchPower = .5;
+
 
     public Manipulators(HardwareMap hardwareMap) {
         this.robot = hardwareMap;
@@ -101,7 +104,7 @@ public class Manipulators {
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
+        liftTouchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
 //
         //droneServo = hardwareMap.get(CRServo.class, "droneServo");
         droneServo = hardwareMap.crservo.get("droneServo");
@@ -109,8 +112,8 @@ public class Manipulators {
 //        lowerCS = hardwareMap.get(RevColorSensorV3.class, "lowerCS");
 //       ds = hardwareMap.get(DistanceSensor.class, "ds");
 
-        climberLeft = hardwareMap.get(DcMotor.class, "leftClimberMotor");
-        climberRight = hardwareMap.get(DcMotor.class, "rightClimberMotor");
+        climberLeft = hardwareMap.get(DcMotor.class, "leftClimber");
+        climberRight = hardwareMap.get(DcMotor.class, "rightClimber");
 
         winchLeft = hardwareMap.get(CRServo.class, "winchLeft");
         winchRight = hardwareMap.get(CRServo.class, "winchRight");
@@ -129,7 +132,6 @@ public class Manipulators {
             output = true;
             officialColor=color;
         }
-
         return output;
     }
     //returned normalized colors for the upper color sensor, and the color it detects
@@ -194,6 +196,24 @@ public class Manipulators {
                 outtakeServo.setPosition(outtakeServoPos2);
                 try {
                     Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                outtakeServo.setPosition(outtakeServoPos1);
+            }
+
+        };
+        outtakeMove.start();
+    }
+    public void gateToggleAuto() {
+        //Checking the status of the outtake servo
+        //outtakeServo.setDirection(Servo.Direction.FORWARD);
+        Thread outtakeMove = new Thread() {
+            @Override
+            public void run(){
+                outtakeServo.setPosition(outtakeServoPos2);
+                try {
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -296,7 +316,7 @@ public class Manipulators {
     }
 
     public void bottomOutLift(){
-        while(!touchSensor.isPressed()){
+        while(!liftTouchSensor.isPressed()){
             outtakeLiftMotor.setPower(-.9);
         }
         outtakeLiftMotor.setPower(0);

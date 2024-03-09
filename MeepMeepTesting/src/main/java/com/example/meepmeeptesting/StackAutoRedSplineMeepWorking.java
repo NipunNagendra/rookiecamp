@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
-import com.noahbres.meepmeep.roadrunner.SampleMecanumDrive;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 // TODO:
@@ -13,13 +12,13 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 //  MAKE SPLINE TO BACKDROP NOT TOUCH SPIKE MARK AS MUCH
 
 
-public class StackAutoRedSplineMeep {
+public class StackAutoRedSplineMeepWorking {
     MeepMeep meepmeep = new MeepMeep(600);
 
     //coordinates for starting position (0, 0, 0)
     public static double startPoseX= -37.95845302224215;
-    public static double startPoseY= 65.63672263931143;
-    public static double startPoseAngle= Math.toRadians(90);
+    public static double startPoseY= -65.63672263931143;
+    public static double startPoseAngle= Math.toRadians(270);
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
@@ -27,48 +26,48 @@ public class StackAutoRedSplineMeep {
 
     //coordinates for left spike position
     public static double spike1X = -42.64633638294297;
-    public static double spike1Y = 31.1247700133697;
-    public static double spike1Angle = Math.toRadians(0);
+    public static double spike1Y = -31.1247700133697;
+    public static double spike1Angle = Math.toRadians(180);
     public static double spike1Strafe = 10;
     public static double spike1BackAmount = 3;
     public static double spike1StackOffset = 5;
 
     //coordinates for middle spike position
     public static double spike2X =  -37.812297556497846;
-    public static double spike2Y = 27.023006373520104;
-    public static double spike2Angle = Math.toRadians(270);
+    public static double spike2Y = -27.023006373520104;
+    public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
     public static double spike3X = -32.76642694740993;
-    public static double spike3Y = 34.04644728121096;
-    public static double spike3Angle = Math.toRadians(180);
+    public static double spike3Y = -34.04644728121096;
+    public static double spike3Angle = Math.toRadians(0);
 
 //    public static double moveBackwards3 = 31;
 //    public static double moveForward3 = 11;
 //    public static double turn3 = 90;
 
     public static double firstStackX = -60;
-    public static double firstStackY = 35;
-    public static double firstStackAngle = Math.toRadians(0);
+    public static double firstStackY = -35;
+    public static double firstStackAngle = Math.toRadians(180);
 
     public static double prePreTrussX = -55.7;
-    public static double prePreTrussY = 39;
+    public static double prePreTrussY = -39;
     public static double preTrussX = -32.5;
     public static double trussX = 27;
-    public static double trussY = 58.5;
-    public static double trussAngle = Math.toRadians(0);
+    public static double trussY = -58.5;
+    public static double trussAngle = Math.toRadians(180);
 
     public static double preBackdropX = 42;
-    public static double preBackdropY = 35.30;
+    public static double preBackdropY = -35.30;
 
     public static double backdropMiddleX = 46;
-    public static double backdropMiddleY = 35.3;
+    public static double backdropMiddleY = -35.3;
     public static double backdropMiddleAngle = trussAngle;
     public static double backdropLeftStrafe = 8;
     public static double backdropRightStrafe = 8;
 
     public static double preParkX = 46.5;
-    public static double preParkY = 58;
+    public static double preParkY = -58;
 
     public static double moveBackwards3 = 31;
     public static double moveForward3 = 12;

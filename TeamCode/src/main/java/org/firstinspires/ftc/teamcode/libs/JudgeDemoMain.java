@@ -171,7 +171,7 @@ public class JudgeDemoMain extends OpMode {
             move.fieldDrive(0,0, 0, heading, targetAngle);
         }
 
-        if (ds.getDistance(DistanceUnit.CM) <= 10) {
+        if (ds.getDistance(DistanceUnit.CM) <= 16) {
             gamepad1.rumble(1, 1, 100);
         }
 

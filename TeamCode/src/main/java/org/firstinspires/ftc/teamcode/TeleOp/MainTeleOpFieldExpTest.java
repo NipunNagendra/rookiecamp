@@ -1,55 +1,36 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static com.sun.tools.doclint.Entity.pi;
-
 import android.annotation.SuppressLint;
 import android.util.Pair;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpField", group="TeleOp")
-public class MainTeleOpField extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpFieldExPTEST", group="TeleOp")
+public class MainTeleOpFieldExpTest extends OpMode {
     Movement move;
 
     Manipulators manip;
-
-    DistanceSensor ds;
-
-    public static double threshold =15;
-    SensorLibrary sensor;
-    //RevColorSensorV3 cs;
-    //DistanceSensor ds;
-    String moveType = "robot";
-    boolean outtakeServoStatus = false;
-    double[] motorPower = {0, 0, 0, 0};
     double multiplier = 1;
-    Pair<float[], String> hsv_color;
+    static IMU imu;
 
-    IMU imu;
-
-    public static double heading;
+    public static double currentNormalizedHeading;
 
     public static double targetAngle;
+
+    public static boolean changePrint;
 
     public static String lockStatus;
 
@@ -58,7 +39,13 @@ public class MainTeleOpField extends OpMode {
 
     public static double climberPower = .3;
     public static double winchPower = .5;
-    boolean augmentedSwerve;
+    public static double referenceHeading;
+    public static double tempTargetAngle;
+    public static double tempTargetAnglePRINT;
+    public static double referenceHeadingPRINT;
+    public static boolean joystickChange = true;
+    public static double previousLeftStickX = 0;
+    boolean print = true;
 
     public void init() {
         manip = new Manipulators(hardwareMap);
@@ -71,7 +58,7 @@ public class MainTeleOpField extends OpMode {
         telemetry.update();
         // imu for field oriented drive
         imu = hardwareMap.get(IMU.class, "imu");
-        //TODO: Change for acc roibot
+
 
         // season bot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(new Orientation(
@@ -100,25 +87,18 @@ public class MainTeleOpField extends OpMode {
 
     @SuppressLint("SuspiciousIndentation")
     @Override
-    public void loop()
-    {
-
+    public void loop() {
 
         double leftY;
         double leftX;
         double rightX;
-
-
 
         if (move.isPressed("options1",gamepad1.options)) {
             imu.resetYaw();
         }
 
 
-
-
-
-        heading = move.drive.getExternalHeading();
+        currentNormalizedHeading = move.drive.getExternalHeading();
 
 
         if (gamepad1.right_stick_x > 0.01) {
@@ -155,7 +135,8 @@ public class MainTeleOpField extends OpMode {
             targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + (0);
         }
         else if (lockStatus == "down") {
-            targetAngle = Math.atan2(Math.sin((imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS))), Math.cos(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
+            targetAngle = Math.atan2(Math.sin((imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS))),
+                    Math.cos(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             if (targetAngle > 0) {
                 targetAngle -= Math.PI;
             }else {
@@ -173,22 +154,12 @@ public class MainTeleOpField extends OpMode {
         telemetry.addData("liftsense:", manip.liftTouchSensor.isPressed());
 
 
-//        if(Math.abs(targetAngle)>=0 && Math.abs(targetAngle)<=Math.toRadians(2)){
-//            targetAngle=0;
-//        }
 
         if (gamepad1.right_bumper) {multiplier = 0.5;}
         else{multiplier=1;}
 
-//        if (gamepad1.left_bumper) {invisStatus=true;}
-//        else{invisStatus=false;}
-
-        if (gamepad1.left_bumper) {
-            augmentedSwerve = true;
-        }
-        else {
-            augmentedSwerve = false;
-        }
+        if (gamepad1.left_bumper) {invisStatus=true;}
+        else{invisStatus=false;}
 
         if (Math.abs(gamepad1.left_stick_y)  > 0.1 ||
                 Math.abs(gamepad1.left_stick_x)  > 0.1 ||
@@ -198,13 +169,58 @@ public class MainTeleOpField extends OpMode {
             leftX = (gamepad1.left_stick_x * multiplier);
             rightX = (gamepad1.right_stick_x * multiplier);
 
-            move.fieldDrive(leftX, leftY, rightX, heading, targetAngle);
+            referenceHeading=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+
+            if(gamepad1.right_trigger>0.1){
+                joystickChange = Math.abs(gamepad1.left_stick_x - previousLeftStickX) > 0.1;
+                previousLeftStickX = gamepad1.left_stick_x;
+
+
+                if (joystickChange) {
+                    if (
+                            Math.abs(referenceHeading - (Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 2)) <=
+                                    2 * Math.PI - Math.abs(referenceHeading - (Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 2))
+                    ) {
+                        tempTargetAngle = referenceHeading - Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - (Math.PI / 2);
+                    } else {
+                        tempTargetAngle = referenceHeading - (Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - (Math.PI / 2));
+                    }
+
+                    if (tempTargetAngle <= 0 && tempTargetAngle >= Math.toRadians(-90)) {
+                        // okay
+                    } else if (tempTargetAngle < Math.toRadians(-90) && tempTargetAngle >= Math.toRadians(-180)) {
+                        tempTargetAngle += Math.toRadians(180);
+                    } else if (tempTargetAngle < Math.toRadians(-180) && tempTargetAngle >= Math.toRadians(-270)) {
+                        tempTargetAngle += Math.toRadians(180);
+                    } else {
+                        // okay
+                    }
+                }
+                else {
+                    tempTargetAngle = targetAngle;
+                }
+
+                if (print) {
+                    tempTargetAnglePRINT = tempTargetAngle;
+                    print = false;
+                }
+
+                telemetry.addData("temptargetangle", Math.toDegrees(tempTargetAnglePRINT));
+//                telemetry.addData("theotherifstatement", Math.toDegrees(Math.abs(referenceHeading - ((Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x)-(Math.PI/2))-Math.PI))));
+            }
+            else{
+                tempTargetAngle=targetAngle;
+            }
+
+            move.fieldDrive(0, 0, rightX, currentNormalizedHeading, tempTargetAngle);
         }
         else {
-            move.fieldDrive(0,0, 0, heading, targetAngle);
+            print = true;
+            move.fieldDrive(0,0, 0, currentNormalizedHeading, targetAngle);
         }
 
-        telemetry.addData("imu:",  heading);
+        telemetry.addData("imu:", currentNormalizedHeading);
 
 
 
@@ -215,24 +231,6 @@ public class MainTeleOpField extends OpMode {
         if (move.isPressed("leftBumper2", gamepad2.left_bumper)) {
             manip.gateToggle1();
         }
-
-//        if(move.isPressed("rightBumper2", gamepad2.right_bumper)){
-//            manip.climberLiftPower(.5);
-//        } else if(move.isPressed("leftBumper2", gamepad2.left_bumper)){
-//            manip.climberLiftPower(-.5);
-//        } else{
-//            manip.climberLiftPower(0);
-//        }
-
-
-        // uses dpad controls up and down to control the climber/hanger
-//        if(gamepad2.right_stick_y > 0){
-//            manip.leftClimberPower(.5);
-//        } else if(gamepad2.right_stick_y < 0){
-//            manip.leftClimberPower(-.5);
-//        } else{
-//            manip.leftClimberPower(0);
-//        }
 
         if (gamepad2.dpad_up){
             manip.climberLeft.setPower(climberPower);
@@ -308,4 +306,6 @@ public class MainTeleOpField extends OpMode {
         }
 
         telemetry.update();
-    }}
+    }
+
+}
