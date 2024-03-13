@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.libs;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.opencv.core.Mat;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class Movement {
@@ -19,25 +19,19 @@ public class Movement {
     private DcMotor FR;
     private DcMotor BL;
     private DcMotor BR;
-    private DcMotor outtakeMotor;
-    private DcMotor climberleft;
-    private DcMotor climberRight;
-    private DcMotor inttakeMotor;
 
     public final double FL_PROPORTION;
     public final double FR_PROPORTION;
     public final double BL_PROPORTION;
     public final double BR_PROPORTION;
-
+    public static Pose2d vel;
     public HashMap<String, Boolean> buttons = new HashMap<String, Boolean>();
 
     public static Vector2d input;
 
-    public static double dir;
 
     public SampleMecanumDrive drive;
 
-    double rotValue;
 
     public Movement(HardwareMap hardwareMap) {
         this.robot = hardwareMap;
@@ -75,20 +69,7 @@ public class Movement {
         motorpowers[3] = leftY - leftX + rightX;
         return motorpowers;
     }
-//motor[]: fl,fr,bl,br
-//    public double[] fieldDrive(double leftX, double leftY, double rightX, double imu) {
-//        double botHeading = imu;
-//        double rotX = leftX * Math.cos(-botHeading) - leftY * Math.sin(-botHeading);
-//        double rotY = leftX * Math.sin(-botHeading) + leftY * Math.cos(-botHeading);
-//
-//        rotX = rotX * 1.1;
-//        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rightX), 1);
-//
-//        return new double[]{(rotY + rotX + rightX) / denominator,
-//                (rotY - rotX - rightX) / denominator,
-//                (rotY - rotX + rightX) / denominator,
-//                (rotY + rotX - rightX) / denominator};
-//    }
+
     public void fieldDrive(double leftX, double leftY, double rightX, double imu, double targetAngle) {
         input = new Vector2d(
                 leftY,
@@ -96,28 +77,25 @@ public class Movement {
         ).rotated(-imu);
 
 
-        drive.setWeightedDrivePower(
-                new Pose2d(
+        vel = CustomMecanumKinematics.normalizedDrivePowerPose(new Pose2d(
                         input.getX(),
                         input.getY(),
                         rightX+targetAngle
                         //make this imu to lock in
-                )
-        );
+                ));
+
+        setPowers(CustomMecanumKinematics.inverseKinematicModel(vel));
 
     }
 
-    //returns and accepts radians
-    public double angleDifferenceCalc(double currAngle, double targetAngle){
-        return Math.atan2(Math.sin(targetAngle - currAngle), Math.cos(targetAngle - currAngle));
-    }
 
-    public void setPowers(double[] motorPower, double multiplier) {
 
-        FL.setPower(motorPower[0]*multiplier* FL_PROPORTION);
-        FR.setPower(motorPower[1]*multiplier* FR_PROPORTION);
-        BL.setPower(motorPower[2]*multiplier* BL_PROPORTION);
-        BR.setPower(motorPower[3]*multiplier* BR_PROPORTION);
+    public void setPowers(double[] motorPower) {
+
+        FL.setPower(motorPower[0] * FL_PROPORTION);
+        FR.setPower(motorPower[1] * FR_PROPORTION);
+        BL.setPower(motorPower[2] * BL_PROPORTION);
+        BR.setPower(motorPower[3] * BR_PROPORTION);
     }
 
     public void setPowers(double fr, double fl, double br, double bl) {
@@ -155,6 +133,8 @@ public class Movement {
         return output;
     }
 
-//    public double
+    public List<Double> getWheelPowers(){
+        return Arrays.asList(FL.getPower(), FR.getPower(), BL.getPower(), BR.getPower());
+    }
 }
 
