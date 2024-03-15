@@ -2,9 +2,9 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.example.meepmeeptesting.latest.BackdropAutoRedSplines2plus0Meep;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
-import com.noahbres.meepmeep.roadrunner.SampleMecanumDrive;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 // TODO:
@@ -61,8 +61,8 @@ public class StackAutoRedSplineMeep {
     public static double preBackdropX = 42;
     public static double preBackdropY = 35.30;
 
-    public static double backdropMiddleX = BackdropAutoRedSplinesMeep.backdropMiddleX;
-    public static double backdropMiddleY = BackdropAutoRedSplinesMeep.backdropMiddleY;
+    public static double backdropMiddleX = BackdropAutoRedSplines2plus0Meep.backdropMiddleX;
+    public static double backdropMiddleY = BackdropAutoRedSplines2plus0Meep.backdropMiddleY;
     public static double backdropMiddleAngle = trussAngle;
     public static double backdropLeftStrafe = 4;
     public static double backdropRightStrafe = 4;
