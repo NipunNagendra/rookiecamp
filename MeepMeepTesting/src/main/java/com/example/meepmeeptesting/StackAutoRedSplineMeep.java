@@ -61,11 +61,11 @@ public class StackAutoRedSplineMeep {
     public static double preBackdropX = 42;
     public static double preBackdropY = 35.30;
 
-    public static double backdropMiddleX = 46;
-    public static double backdropMiddleY = 35.3;
+    public static double backdropMiddleX = BackdropAutoRedSplinesMeep.backdropMiddleX;
+    public static double backdropMiddleY = BackdropAutoRedSplinesMeep.backdropMiddleY;
     public static double backdropMiddleAngle = trussAngle;
-    public static double backdropLeftStrafe = 8;
-    public static double backdropRightStrafe = 8;
+    public static double backdropLeftStrafe = 4;
+    public static double backdropRightStrafe = 4;
 
     public static double preParkX = 46.5;
     public static double preParkY = 58;

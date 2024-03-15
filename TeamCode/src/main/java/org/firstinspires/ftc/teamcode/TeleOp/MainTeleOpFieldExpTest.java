@@ -42,10 +42,12 @@ public class MainTeleOpFieldExpTest extends OpMode {
     public static double referenceHeading;
     public static double tempTargetAngle;
     public static double tempTargetAnglePRINT;
-    public static double referenceHeadingPRINT;
+    public static boolean joystickChangePRINT;
     public static boolean joystickChange = true;
     public static double previousLeftStickX = 0;
+    public static double previousLeftStickY = 0;
     boolean print = true;
+
 
     public void init() {
         manip = new Manipulators(hardwareMap);
@@ -173,8 +175,9 @@ public class MainTeleOpFieldExpTest extends OpMode {
 
 
             if(gamepad1.right_trigger>0.1){
-                joystickChange = Math.abs(gamepad1.left_stick_x - previousLeftStickX) > 0.1;
+                joystickChange = Math.abs(gamepad1.left_stick_x - previousLeftStickX) > 0.1 && Math.abs(gamepad1.left_stick_y - previousLeftStickY) > 0.1;
                 previousLeftStickX = gamepad1.left_stick_x;
+                previousLeftStickY = gamepad1.left_stick_y;
 
 
                 if (joystickChange) {
@@ -202,12 +205,13 @@ public class MainTeleOpFieldExpTest extends OpMode {
                 }
 
                 if (print) {
+                    joystickChangePRINT = joystickChange;
                     tempTargetAnglePRINT = tempTargetAngle;
                     print = false;
                 }
 
                 telemetry.addData("temptargetangle", Math.toDegrees(tempTargetAnglePRINT));
-//                telemetry.addData("theotherifstatement", Math.toDegrees(Math.abs(referenceHeading - ((Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x)-(Math.PI/2))-Math.PI))));
+                telemetry.addData("joystickchange", joystickChangePRINT);
             }
             else{
                 tempTargetAngle=targetAngle;
