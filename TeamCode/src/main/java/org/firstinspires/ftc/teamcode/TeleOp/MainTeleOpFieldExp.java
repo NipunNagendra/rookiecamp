@@ -30,6 +30,8 @@ public class MainTeleOpFieldExp extends OpMode {
 
     public static double targetAngle;
 
+    public static boolean changePrint;
+
     public static String lockStatus;
 
     public static boolean invisStatus = false;
@@ -39,6 +41,9 @@ public class MainTeleOpFieldExp extends OpMode {
     public static double winchPower = .5;
     public static double referenceHeading;
     public static double tempTargetAngle;
+    public static double tempTargetAnglePRINT;
+    public static double referenceHeadingPRINT;
+    boolean print = true;
 
     public void init() {
         manip = new Manipulators(hardwareMap);
@@ -89,6 +94,7 @@ public class MainTeleOpFieldExp extends OpMode {
         if (move.isPressed("options1",gamepad1.options)) {
             imu.resetYaw();
         }
+
 
 
         currentNormalizedHeading = move.drive.getExternalHeading();
@@ -166,13 +172,58 @@ public class MainTeleOpFieldExp extends OpMode {
 
 
             if(gamepad1.right_trigger>0.1){
-                if ((referenceHeading - Math.atan2(leftY,leftX))
-                    <= (referenceHeading - (Math.atan2(leftY,leftX)-Math.PI))){
-                    tempTargetAngle = referenceHeading - Math.atan2(leftY,leftX);
+//                if (
+//                    Math.abs(referenceHeading - (Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x) - Math.PI/2)) <=
+//                    2 * Math.PI - Math.abs(referenceHeading - (Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x) - Math.PI/2))
+//                ) {
+//                    tempTargetAngle = referenceHeading - Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x)-(Math.PI/2);
+//                }
+//                else {
+//                    tempTargetAngle = referenceHeading - (Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x)-(Math.PI/2));
+//                }
+//
+//                if (print) {
+//                    tempTargetAnglePRINT = tempTargetAngle + Math.PI * 2;
+//                    referenceHeadingPRINT = Math.abs(referenceHeading - ((Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x)-(Math.PI/2))-Math.PI));
+//                    print = false;
+//                }
+//
+//                if (tempTargetAngle < Math.toRadians(-180)) {
+//                    tempTargetAngle += Math.toRadians(360);
+//                }
+
+//                tempTargetAngle = referenceHeading - Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x)-(Math.PI/2);
+
+                if (true) {
+                    if (
+                            Math.abs(referenceHeading - (Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 2)) <=
+                                    2 * Math.PI - Math.abs(referenceHeading - (Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 2))
+                    ) {
+                        tempTargetAngle = referenceHeading - Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - (Math.PI / 2);
+                    } else {
+                        tempTargetAngle = referenceHeading - (Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - (Math.PI / 2));
+                    }
+
+                    if (tempTargetAngle <= 0 && tempTargetAngle >= Math.toRadians(-90)) {
+                        // okay
+//                        tempTargetAngle += Math.toRadians(0);
+                    } else if (tempTargetAngle < Math.toRadians(-90) && tempTargetAngle >= Math.toRadians(-180)) {
+                        tempTargetAngle += Math.toRadians(180);
+                    } else if (tempTargetAngle < Math.toRadians(-180) && tempTargetAngle >= Math.toRadians(-270)) {
+                        tempTargetAngle += Math.toRadians(180);
+                    } else {
+                        // okay
+//                        tempTargetAngle += Math.toRadians(0);
+                    }
                 }
-                else{
-                    tempTargetAngle = referenceHeading - (Math.atan2(leftY,leftX)-Math.PI);
+
+                if (print) {
+                    tempTargetAnglePRINT = tempTargetAngle;
+                    print = false;
                 }
+
+                telemetry.addData("temptargetangle", Math.toDegrees(tempTargetAnglePRINT));
+//                telemetry.addData("theotherifstatement", Math.toDegrees(Math.abs(referenceHeading - ((Math.atan2(gamepad1.left_stick_y,-gamepad1.left_stick_x)-(Math.PI/2))-Math.PI))));
             }
             else{
                 tempTargetAngle=targetAngle;
@@ -181,6 +232,7 @@ public class MainTeleOpFieldExp extends OpMode {
             move.fieldDrive(0, 0, rightX, currentNormalizedHeading, tempTargetAngle);
         }
         else {
+            print = true;
             move.fieldDrive(0,0, 0, currentNormalizedHeading, targetAngle);
         }
 

@@ -1,34 +1,25 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static com.sun.tools.doclint.Entity.pi;
-
 import android.annotation.SuppressLint;
 import android.util.Pair;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.libs.Movement;
 import org.firstinspires.ftc.teamcode.libs.SensorLibrary;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpField", group="TeleOp")
-public class MainTeleOpField extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MainTeleOpFieldExpExp", group="TeleOp")
+public class MainTeleOpFieldExpExp extends OpMode {
     Movement move;
 
     Manipulators manip;
@@ -121,7 +112,7 @@ public class MainTeleOpField extends OpMode {
         heading = move.drive.getExternalHeading();
 
 
-        if (gamepad1.right_stick_x > 0.01) {
+        if (gamepad1.right_stick_x > 0.01 || gamepad1.right_trigger > 0.1) {
             targetAngle = 0;
             lockStatus = "unlocked";
         }

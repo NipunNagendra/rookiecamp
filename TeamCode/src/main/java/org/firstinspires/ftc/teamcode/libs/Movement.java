@@ -107,47 +107,6 @@ public class Movement {
 
     }
 
-    public void turnToMovement(double leftX, double leftY, double rightX, double imu, double targetHeading) {
-        input = new Vector2d(
-                leftY,
-                leftX
-        ).rotated(imu);
-
-        if (Math.abs(angleDifferenceCalc(imu, targetHeading))>=Math.abs(angleDifferenceCalc(-imu,targetHeading))){
-            rotValue=angleDifferenceCalc(imu, targetHeading);
-        }
-        else{
-            rotValue=angleDifferenceCalc(imu, targetHeading);
-        }
-
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        rotValue
-                        //make this imu to lock in
-                )
-        );
-
-    }
-
-    public void lockIn(double leftX, double leftY, double rightX, double imu, double lockAngle) {
-        input = new Vector2d(
-                leftY,
-                leftX
-        ).rotated(-imu);
-        double angleError = angleDifferenceCalc(imu, lockAngle);
-
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        imu
-                        //make this imu to lock in
-                )
-        );
-
-    }
     //returns and accepts radians
     public double angleDifferenceCalc(double currAngle, double targetAngle){
         return Math.atan2(Math.sin(targetAngle - currAngle), Math.cos(targetAngle - currAngle));
@@ -169,18 +128,6 @@ public class Movement {
         BL.setPower(bl);
     }
 
-    public void strafeRight(double power){
-        FR.setPower(-power);
-        FL.setPower(power);
-        BR.setPower(power);
-        BL.setPower(-power);
-    }
-    public void strafeLeft(double power){
-        FR.setPower(power);
-        FL.setPower(-power);
-        BR.setPower(-power);
-        BL.setPower(power);
-    }
 
     public void kill(){
         FR.setPower(0);
