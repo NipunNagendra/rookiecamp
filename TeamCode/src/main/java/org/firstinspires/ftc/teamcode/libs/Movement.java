@@ -76,7 +76,8 @@ public class Movement {
                 leftX
         ).rotated(-imu);
 
-         vel = CustomMecanumKinematics.normalizedDrivePowerPose(new Pose2d(
+
+        vel = CustomMecanumKinematics.normalizedDrivePowerPose(new Pose2d(
                         input.getX(),
                         input.getY(),
                         rightX+targetAngle
