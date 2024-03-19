@@ -167,8 +167,8 @@ public class BackdropAutoRedSpleneCycleMeep {
                 .setDarkMode(true)
                 .setBackgroundAlpha(.95f)
                 .addEntity(myLeftBot)
-//                .addEntity(myMiddleBot)
-//                .addEntity(myRightBot)
+                .addEntity(myMiddleBot)
+                .addEntity(myRightBot)
                 .start();
     }
 }
