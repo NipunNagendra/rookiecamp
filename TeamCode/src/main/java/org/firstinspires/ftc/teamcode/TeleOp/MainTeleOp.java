@@ -85,7 +85,7 @@ public class MainTeleOp extends OpMode {
         else if (gamepad1.left_bumper) {multiplier = 0.25;}
         else{multiplier=1;}
 
-        move.setPowers(motorPower, multiplier);
+        move.setPowers(motorPower);
 
 
 
