@@ -41,9 +41,9 @@ public class CustomMecanumKinematics {
         double d = (trackWidth + wheelBase) / 2.0;
         return new double[]{
                 robotVel.getX() - lateralMultiplier * robotVel.getY() - d * robotVel.getHeading(),
+                robotVel.getX() + lateralMultiplier * robotVel.getY() + d * robotVel.getHeading(),
                 robotVel.getX() + lateralMultiplier * robotVel.getY() - d * robotVel.getHeading(),
-                robotVel.getX() - lateralMultiplier * robotVel.getY() + d * robotVel.getHeading(),
-                robotVel.getX() + lateralMultiplier * robotVel.getY() + d * robotVel.getHeading()
+                robotVel.getX() - lateralMultiplier * robotVel.getY() + d * robotVel.getHeading()
         };
     }
 

@@ -23,8 +23,8 @@ import java.util.HashMap;
 public class Manipulators {
     HardwareMap robot;
     public Servo outtakeServo;
-    public CRServo intakeRightServo;
-    public CRServo intakeLeftServo;
+    public Servo intakeRightServo;
+
     public CRServo droneServo;
     public DcMotor leftClimberMotor;
     public DcMotor rightClimberMotor;
@@ -97,10 +97,10 @@ public class Manipulators {
 
 
         // setting servos for right and left to hardware map
-        intakeRightServo = hardwareMap.get(CRServo.class, "intakeRightServo");
-        intakeLeftServo = hardwareMap.get(CRServo.class, "intakeLeftServo");
+        intakeRightServo = hardwareMap.get(Servo.class, "intakeRightServo");
 
-        intakeRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //intakeRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 

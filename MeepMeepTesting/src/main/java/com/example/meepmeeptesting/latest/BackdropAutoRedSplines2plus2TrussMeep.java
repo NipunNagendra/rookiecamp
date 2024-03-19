@@ -25,15 +25,21 @@ public class BackdropAutoRedSplines2plus2TrussMeep {
 
     //coordinates for left spike position
     public static double spike1ForwardAmount = 5;
-    public static Pose2d preSpike1Pose = new Pose2d(19.2, -33.8 - 4, Math.toRadians(180));
-    public static Vector2d spike1Vector = new Vector2d(13.25 - spike1ForwardAmount, -33.8);
+    public static double preSpike1X = 19.2;
+    public static double preSpike1Y = -37.8;
+    public static double preSpike1Angle = Math.toRadians(180);
+    public static double spike1X = 13.25 - spike1ForwardAmount;
+    public static double spike1Y = -33.8;
 
     //coordinates for middle spike position
-    public static Vector2d preSpike2Vector = new Vector2d(12.3, -42.3);
-    public static Vector2d spike2Vector = new Vector2d(21.8, -24);
+    public static double preSpike2X = 12.3;
+    public static double preSpike2Y = -42.3;
+    public static double spike2X = 21.8;
+    public static double spike2Y = -24;
 
     //coordinates for right spike position
-    public static Vector2d spike3Vector = new Vector2d(31.5, -31);
+    public static double spike3X = 31.5;
+    public static double spike3Y = -31;
     public static double spike3BackAmount = 3;
 
     //coordinates for backdrop positions
@@ -41,9 +47,21 @@ public class BackdropAutoRedSplines2plus2TrussMeep {
     public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = Math.toRadians(180);
     public static double backdropBackAmount = 5;
+    public static double cycleBackdropBackAmount = 4;
 
     public static double backdropLeftStrafe = 4;
     public static double backdropRightStrafe = 4;
+
+    //coordinates for cycling
+    public static double preTrussX = 20;
+    public static double preTrussY = -58.5;
+    public static double underTrussX = -47;
+    public static double underTrussY = preTrussY;
+    public static double postTrussX = -57;
+    public static double postTrussY = -46.5;
+    public static double trussStackX = -60;
+    public static double trussStackY = -35.5;
+    public static double trussStackForwardAmount = 2;
 
     //intake and outtake movement
     public static int outtakeEncoderTicksUp = 2500;
@@ -53,19 +71,27 @@ public class BackdropAutoRedSplines2plus2TrussMeep {
 
     //coordiantes for park in corner
     public static double parkForwardAmount = 3;
-    public static Vector2d preParkVector = new Vector2d(44, -56);
-    public static Pose2d parkPose = new Pose2d(58.7, -59, Math.toRadians(90));
+    public static double parkStrafeAmount = 25;
 
     //coordiantes for alt park
-    public static double prePreAltParkXChange = 8;
-    public static double prePreAltParkY = -38;
-    public static double preAltParkXChange = prePreAltParkXChange;
+    public static double altParkForwardAmount = 4.5;
     public static double preAltParkY = -20;
-    public static Vector2d altParkVector = new Vector2d(58.7, -11.3);
+    public static double preAltParkXChange = -10;
+    public static double altParkX = 58.7, altParkY = -12.3;
 
     public static double casenum = 1;
 
-    public static String myPosition;
+    public static int myPosition = 1;
+    public static double underDoorWaitTime = 0.01;
+    public static double altParkWaitTime = 0.01;
+
+
+    public static double temporalMarkerTimeDOWN = .5;
+    public static double temporalMarkerTimeUP = 1;
+
+
+    public static int outtakeEncoderTicks = 2000;
+    public static int outtakeOG = 0;
 
     public static void main(String[] args) {
         MeepMeep meepmeep = new MeepMeep(500);
@@ -75,56 +101,37 @@ public class BackdropAutoRedSplines2plus2TrussMeep {
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(startPose)
-                                        .setReversed(true)
-                                        .back(1)
-                                        .splineToSplineHeading(preSpike1Pose, Math.toRadians(90))
-                                        .splineToConstantHeading(spike1Vector, Math.toRadians(0))
-                                        .back(spike1ForwardAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                        drive.trajectorySequenceBuilder(startPose)
+                                .setReversed(true)
+                                .back(1)
+                                .splineToSplineHeading(new Pose2d(preSpike1X, preSpike1Y, preSpike1Angle), Math.toRadians(90))
+                                .splineToConstantHeading(new Vector2d(spike1X, spike1Y), Math.toRadians(0))
+                                .back(spike1ForwardAmount)
 
-                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                                        .back(backdropBackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
+                                .back(backdropBackAmount)
 
-                                        //cycling
-                                        .setReversed(false)
-                                        .splineToConstantHeading(new Vector2d(20, -58.5), Math.toRadians(180))
-                                        .lineToConstantHeading(new Vector2d(-47, -58.5))
-                                        .splineToConstantHeading(new Vector2d(-57, -46.5), Math.toRadians(90))
-                                        .splineToConstantHeading(new Vector2d(-60, -35.5), Math.toRadians(180))
-                                        .forward(2,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
-                                        .setReversed(true)
-                                        .back(2)
-                                        .splineToConstantHeading(new Vector2d(-57, -46.5), Math.toRadians(270))
-                                        .splineToConstantHeading(new Vector2d(-47, -58.5), Math.toRadians(0))
-                                        .lineToConstantHeading(new Vector2d(20, -58.5))
-                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - 4, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
-                                        .back(4,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
-
-                                        //parking in the corner:
+                                //cycling
                                 .setReversed(false)
-                                .forward(parkForwardAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
-                                .splineToConstantHeading(preParkVector, Math.toRadians(0))
-                                .turn(Math.toRadians(-90))
-                                .lineToLinearHeading(parkPose)
+                                .splineToConstantHeading(new Vector2d(preTrussX, preTrussY), Math.toRadians(180))
+                                .lineToConstantHeading(new Vector2d(underTrussX, underTrussY))
+                                .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(90))
+                                .splineToConstantHeading(new Vector2d(trussStackX, trussStackY), Math.toRadians(180))
+                                .forward(trussStackForwardAmount)
+                                .setReversed(true)
+                                .back(trussStackForwardAmount)
+                                .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(270))
+                                .splineToConstantHeading(new Vector2d(underTrussX, underTrussY), Math.toRadians(0))
+                                .lineToConstantHeading(new Vector2d(preTrussX, preTrussY))
+                                .splineToConstantHeading(new Vector2d(backdropMiddleX - cycleBackdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
+                                .back(cycleBackdropBackAmount)
 
-                                        // alt park
-//                                        .setReversed(false)
-//                                        .forward(4.5)
-//                                        .splineTo(new Vector2d(backdropMiddleX - 10, -20), Math.toRadians(90))
-//                                        .splineToConstantHeading(new Vector2d(58.7, -11.3), Math.toRadians(0))
+                                //parking in the corner:
+                                .setReversed(false)
+                                .forward(parkForwardAmount)
+                                .strafeLeft(parkStrafeAmount)
 
-
-                                        .build()
+                                .build()
                 );
 
         RoadRunnerBotEntity myMiddleBot = new DefaultBotBuilder(meepmeep)
@@ -134,45 +141,31 @@ public class BackdropAutoRedSplines2plus2TrussMeep {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(startPose)
                                         .setReversed(true)
-//                                .back(12)
-                                        .splineTo(preSpike2Vector, Math.toRadians(90))
-                                        .splineTo(spike2Vector, Math.toRadians(0))
+                                        .splineTo(new Vector2d(preSpike2X, preSpike2Y), Math.toRadians(90))
+                                        .splineTo(new Vector2d(spike2X, spike2Y), Math.toRadians(0))
 
                                         .splineTo(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY), Math.toRadians(0))
-                                        .back(backdropBackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
-
-                                        //parking in the corner:
-//                                .setReversed(false)
-//                                .forward(parkForwardAmount,
-//                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-//                                        SampleMecanumDrive.getAccelerationConstraint(50))
-//                                .splineToConstantHeading(preParkVector, Math.toRadians(0))
-//                                .turn(Math.toRadians(-90))
-//                                .lineToLinearHeading(parkPose)
+                                        .back(backdropBackAmount)
 
                                         //cycling
                                         .setReversed(false)
-                                        .splineTo(new Vector2d(35.5, -59.5), Math.toRadians(180))
-                                        .lineToConstantHeading(new Vector2d(-45.3, -59.5))
-                                        .splineTo(new Vector2d(-55.3, -50), Math.toRadians(180))
-                                        .forward(4,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .splineToConstantHeading(new Vector2d(preTrussX, preTrussY), Math.toRadians(180))
+                                        .lineToConstantHeading(new Vector2d(underTrussX, underTrussY))
+                                        .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(90))
+                                        .splineToConstantHeading(new Vector2d(trussStackX, trussStackY), Math.toRadians(180))
+                                        .forward(trussStackForwardAmount)
                                         .setReversed(true)
-                                        .splineTo(new Vector2d(-45.3, -59.5), Math.toRadians(180))
-                                        .lineToConstantHeading(new Vector2d(35.5, -59.5))
-                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                                        .back(backdropBackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .back(trussStackForwardAmount)
+                                        .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(270))
+                                        .splineToConstantHeading(new Vector2d(underTrussX, underTrussY), Math.toRadians(0))
+                                        .lineToConstantHeading(new Vector2d(preTrussX, preTrussY))
+                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - cycleBackdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
+                                        .back(cycleBackdropBackAmount)
 
-                                        // alt park
+                                        //parking in the corner:
                                         .setReversed(false)
-                                        .forward(4.5)
-                                        .splineTo(new Vector2d(backdropMiddleX - 10, -20), Math.toRadians(90))
-                                        .splineToConstantHeading(new Vector2d(58.7, -11.3), Math.toRadians(0))
+                                        .forward(parkForwardAmount)
+                                        .strafeLeft(parkStrafeAmount)
 
                                         .build()
                 );
@@ -183,42 +176,31 @@ public class BackdropAutoRedSplines2plus2TrussMeep {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(startPose)
                                         .setReversed(true)
-                                        .splineTo(spike3Vector, Math.toRadians(0))
-                                        .back(spike3BackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .splineTo(new Vector2d(spike3X, spike3Y), Math.toRadians(0))
+                                        .back(spike3BackAmount)
 
                                         .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
-                                        .back(backdropBackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .back(backdropBackAmount)
 
                                         //cycling
                                         .setReversed(false)
-                                        .splineTo(new Vector2d(24, -12), Math.toRadians(180))
-                                        .splineToConstantHeading(new Vector2d(-55.3, -12), Math.toRadians(180))
-                                        .forward(4,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .splineToConstantHeading(new Vector2d(preTrussX, preTrussY), Math.toRadians(180))
+                                        .lineToConstantHeading(new Vector2d(underTrussX, underTrussY))
+                                        .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(90))
+                                        .splineToConstantHeading(new Vector2d(trussStackX, trussStackY), Math.toRadians(180))
+                                        .forward(trussStackForwardAmount)
                                         .setReversed(true)
-                                        .lineToConstantHeading(new Vector2d(27, -12))
-                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                                        .back(backdropBackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .back(trussStackForwardAmount)
+                                        .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(270))
+                                        .splineToConstantHeading(new Vector2d(underTrussX, underTrussY), Math.toRadians(0))
+                                        .lineToConstantHeading(new Vector2d(preTrussX, preTrussY))
+                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - cycleBackdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
+                                        .back(cycleBackdropBackAmount)
 
                                         //parking in the corner:
-//                                .setReversed(false)
-//                                .forward(3)
-//                                .splineToConstantHeading(new Vector2d(44, -56), Math.toRadians(0))
-//                                .turn(Math.toRadians(-90))
-//                                .lineToLinearHeading(new Pose2d(58.7, -60, Math.toRadians(90)))
-
-                                        // alt park
                                         .setReversed(false)
-                                        .forward(4.5)
-                                        .splineTo(new Vector2d(backdropMiddleX - 10, -20), Math.toRadians(90))
-                                        .splineToConstantHeading(new Vector2d(58.7, -11.3), Math.toRadians(0))
+                                        .forward(parkForwardAmount)
+                                        .strafeLeft(parkStrafeAmount)
 
                                         .build()
                 );
@@ -227,8 +209,8 @@ public class BackdropAutoRedSplines2plus2TrussMeep {
                 .setDarkMode(true)
                 .setBackgroundAlpha(.95f)
                 .addEntity(myLeftBot)
-//                .addEntity(myMiddleBot)
-//                .addEntity(myRightBot)
+                .addEntity(myMiddleBot)
+                .addEntity(myRightBot)
                 .start();
     }
 }

@@ -9,15 +9,15 @@ import com.noahbres.meepmeep.roadrunner.SampleMecanumDrive;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 
-public class BackdropAutoRedSplines2plus2DoorMeep {
+public class StackAutoRedSplines2plus1DoorMeep {
 
     //This is code for BackdropAutoBlue
 
     //coordinates for start position
 
-    public static double startPoseX = 14.65845302224215;
-    public static double startPoseY = -65.13672263931143;
-    public static double startPoseAngle = Math.toRadians(270);
+    public static double startPoseX= -37.89893;
+    public static double startPoseY= -62.90750;
+    public static double startPoseAngle= Math.toRadians(270);
 
     public static Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
@@ -80,51 +80,23 @@ public class BackdropAutoRedSplines2plus2DoorMeep {
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(startPose)
-                                .setReversed(true)
-                                .back(1)
-                                .splineToSplineHeading(preSpike1Pose, Math.toRadians(90))
-                                .splineToConstantHeading(spike1Vector, Math.toRadians(0))
-                                .back(spike1ForwardAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
+                                drive.trajectorySequenceBuilder(startPose)
+                                        .lineToLinearHeading(new Pose2d(-38.1, -25.2, Math.toRadians(180)))
+                                        .lineToConstantHeading(new Vector2d(-34, -25.2))
+                                        .lineToConstantHeading(new Vector2d(-34, -22))
+                                        .splineToConstantHeading(new Vector2d(-60, -11.3), Math.toRadians(180))
 
-                                .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                                .back(backdropBackAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .setReversed(true)
+                                        .lineToConstantHeading(new Vector2d(23, -11.3))
+                                        .splineTo(new Vector2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
 
-                                //cycling
-                                .setReversed(false)
-                                .splineToConstantHeading(preDoorVector, Math.toRadians(180))
-                                .splineToConstantHeading(underDoorVector, Math.toRadians(180))
-                                .forward(doorStackForwardAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
-                                .setReversed(true)
-                                .lineToConstantHeading(new Vector2d(backUnderDoorX, preDoorVector.getY()))
-                                .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY), Math.toRadians(0))
-                                .back(backdropBackAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
+                                        // alt park
+                                        .setReversed(false)
+                                        .forward(altParkForwardAmount)
+                                        .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(90))
+                                        .splineToConstantHeading(altParkVector, Math.toRadians(0))
 
-                                //parking in the corner:
-//                                .setReversed(false)
-//                                .forward(parkForwardAmount,
-//                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-//                                        SampleMecanumDrive.getAccelerationConstraint(50))
-//                                .splineToConstantHeading(preParkVector, Math.toRadians(0))
-//                                .turn(Math.toRadians(-90))
-//                                .lineToLinearHeading(parkPose)
-
-                                // alt park
-                                .setReversed(false)
-                                .forward(altParkForwardAmount)
-                                .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(90))
-                                .splineToConstantHeading(altParkVector, Math.toRadians(0))
-
-
-                                .build()
+                                        .build()
                 );
 
         RoadRunnerBotEntity myMiddleBot = new DefaultBotBuilder(meepmeep)
@@ -132,47 +104,27 @@ public class BackdropAutoRedSplines2plus2DoorMeep {
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(startPose)
-                                .setReversed(true)
-//                                .back(12)
-                                .splineTo(preSpike2Vector, Math.toRadians(90))
-                                .splineTo(spike2Vector, Math.toRadians(0))
+                                drive.trajectorySequenceBuilder(startPose)
+                                        .setReversed(false)
+                                        .lineToLinearHeading(new Pose2d(-38.3, -19.2, Math.toRadians(330)))
+                                        .lineToConstantHeading(new Vector2d(-45, -14))
+//                                        .lineToSplineHeading(new Pose2d(-48.8, -12.9, Math.toRadians(180)))
+                                        .turn(Math.toRadians(-150))
+//                                        .splineToConstantHeading(new Vector2d(-2 0, -11.3), Math.toRadians(180))
+//                                        .splineToConstantHeading(new Vector2d(-50.2, -11.3), Math.toRadians(180))
+                                        .lineToConstantHeading(new Vector2d(-60, -11.3))
 
-                                .splineTo(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY), Math.toRadians(0))
-                                .back(backdropBackAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .setReversed(true)
+                                        .lineToConstantHeading(new Vector2d(23, -11.3))
+                                        .splineTo(new Vector2d(backdropMiddleX, backdropMiddleY), Math.toRadians(0))
 
-                                //cycling
-                                .setReversed(false)
-                                .splineToConstantHeading(preDoorVector, Math.toRadians(180))
-                                .splineToConstantHeading(underDoorVector, Math.toRadians(180))
-                                .forward(doorStackForwardAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
-                                .setReversed(true)
-                                .lineToConstantHeading(new Vector2d(backUnderDoorX, -12))
-                                .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                                .back(backdropBackAmount,
-                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                        SampleMecanumDrive.getAccelerationConstraint(50))
+                                        // alt park
+                                        .setReversed(false)
+                                        .forward(altParkForwardAmount)
+                                        .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(90))
+                                        .splineToConstantHeading(altParkVector, Math.toRadians(0))
 
-                                //parking in the corner:
-//                                .setReversed(false)
-//                                .forward(parkForwardAmount,
-//                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-//                                        SampleMecanumDrive.getAccelerationConstraint(50))
-//                                .splineToConstantHeading(preParkVector, Math.toRadians(0))
-//                                .turn(Math.toRadians(-90))
-//                                .lineToLinearHeading(parkPose)
-
-                                // alt park
-                                .setReversed(false)
-                                .forward(altParkForwardAmount)
-                                .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(90))
-                                .splineToConstantHeading(altParkVector, Math.toRadians(0))
-
-                                .build()
+                                        .build()
                 );
 
         RoadRunnerBotEntity myRightBot = new DefaultBotBuilder(meepmeep)
@@ -180,39 +132,18 @@ public class BackdropAutoRedSplines2plus2DoorMeep {
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(startPose)
-                                        .setReversed(true)
-                                        .splineTo(spike3Vector, Math.toRadians(0))
-                                        .back(spike3BackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
-
-                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
-                                        .back(backdropBackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
-
-                                        //cycling
                                         .setReversed(false)
-                                        .splineToConstantHeading(preDoorVector, Math.toRadians(180))
-                                        .splineToConstantHeading(underDoorVector, Math.toRadians(180))
-                                        .forward(doorStackForwardAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
-                                        .setReversed(true)
-                                        .lineToConstantHeading(new Vector2d(backUnderDoorX, -12))
-                                        .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                                        .back(backdropBackAmount,
-                                                SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-                                                SampleMecanumDrive.getAccelerationConstraint(50))
+                                        .lineToSplineHeading(new Pose2d(-40, -36, Math.toRadians(0)))
+                                        .splineToConstantHeading(new Vector2d(-33, -30), Math.toRadians(0))
+                                        .setReversed(false)
+                                        .back(8)
+                                        .lineToSplineHeading(new Pose2d(-47, -16, Math.toRadians(181)))
+//                                        .lineToConstantHeading(new Vector2d(-34, -22))
+                                        .splineToConstantHeading(new Vector2d(-60, -11.3), Math.toRadians(180))
 
-                                        //parking in the corner:
-//                                .setReversed(false)
-//                                .forward(parkForwardAmount,
-//                                        SampleMecanumDrive.getVelocityConstraint(10, 2, 14),
-//                                        SampleMecanumDrive.getAccelerationConstraint(50))
-//                                .splineToConstantHeading(preParkVector, Math.toRadians(0))
-//                                .turn(Math.toRadians(-90))
-//                                .lineToLinearHeading(parkPose)
+                                        .setReversed(true)
+                                        .lineToConstantHeading(new Vector2d(23, -11.3))
+                                        .splineTo(new Vector2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
 
                                         // alt park
                                         .setReversed(false)
@@ -288,10 +219,10 @@ public class BackdropAutoRedSplines2plus2DoorMeep {
         meepmeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(.95f)
-//                .addEntity(myLeftBot)
-//                .addEntity(myMiddleBot)
-//                .addEntity(myRightBot)
-                .addEntity(myTestBot)
+                .addEntity(myLeftBot)
+                .addEntity(myMiddleBot)
+                .addEntity(myRightBot)
+//                .addEntity(myTestBot)
                 .start();
     }
 }

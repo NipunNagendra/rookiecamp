@@ -56,9 +56,11 @@ public class MainTeleOpField extends OpMode {
     public static boolean invisStatus = false;
     public static int outtakeEncoderTicks = 2000;
 
-    public static double climberPower = .3;
-    public static double winchPower = .5;
+    public static double climberPower = .6;
+    public static double winchPower = 1;
     boolean augmentedSwerve;
+
+    public static double intakePosFullyUp;
 
     public void init() {
         manip = new Manipulators(hardwareMap);
@@ -289,14 +291,12 @@ public class MainTeleOpField extends OpMode {
             manip.droneServo.setPower(0.8);
         }
 
-        if (Math.abs(gamepad2.left_stick_y) > 0.1){
-            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
+       /* if (Math.abs(gamepad2.left_stick_y) > 0.1){
             manip.intakeRightServo.setPower(gamepad2.left_stick_y);
         }
         else{
-            manip.intakeLeftServo.setPower(0);
             manip.intakeRightServo.setPower(0);
-        }
+        }*/
 
 //        if (sensor.invisibleWallDetect()){
 //            gamepad1.rumble(100);
