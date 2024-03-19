@@ -23,8 +23,7 @@ import java.util.HashMap;
 public class Manipulators {
     HardwareMap robot;
     public Servo outtakeServo;
-    public CRServo intakeRightServo;
-    public CRServo intakeLeftServo;
+    public Servo intakeRightServo;
     public CRServo droneServo;
     public DcMotor leftClimberMotor;
     public DcMotor rightClimberMotor;
@@ -97,10 +96,10 @@ public class Manipulators {
 
 
         // setting servos for right and left to hardware map
-        intakeRightServo = hardwareMap.get(CRServo.class, "intakeRightServo");
-        intakeLeftServo = hardwareMap.get(CRServo.class, "intakeLeftServo");
+        intakeRightServo = hardwareMap.get(Servo.class, "intakeRightServo");
 
-        intakeRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
+
+//        intakeRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
         //declaring intake motor
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
@@ -255,39 +254,39 @@ public class Manipulators {
 
 
     // Intake servo toggle method
-//    public void intakeToggle(boolean intakeServoStatus) {
-//        // intakeServoStatus = true -> down
-//        // false -> up
-//        if (intakeServoStatus == false) {
-//            intakeRightServo.setPosition(intakeServoPos5);
+    public void intakeToggle(boolean intakeServoStatus) {
+        // intakeServoStatus = true -> down
+        // false -> up
+        if (intakeServoStatus == false) {
+            intakeRightServo.setPosition(intakeServoPos5);
 //            intakeLeftServo.setPosition(intakeServoPos5);
-//        } else if (intakeServoStatus) {
-//            intakeRightServo.setPosition(intakeServoPos1);
+        } else if (intakeServoStatus) {
+            intakeRightServo.setPosition(intakeServoPos1);
 //            intakeLeftServo.setPosition(intakeServoPos1);
-//        }
-//    }
+        }
+    }
 
     // sets the intake servo to different positions based on the number of pixels/height of the stack
-//    public void intakeServoHeights(int numOfPixels) {
-//        if (numOfPixels == 1) {
-//            intakeRightServo.setPosition(intakeServoPos1);
+    public void intakeServoHeights(int numOfPixels) {
+        if (numOfPixels == 1) {
+            intakeRightServo.setPosition(intakeServoPos1);
 //            intakeLeftServo.setPosition(intakeServoPos1);
-//        } else if (numOfPixels == 2) {
-//            intakeRightServo.setPosition(intakeServoPos2);
+        } else if (numOfPixels == 2) {
+            intakeRightServo.setPosition(intakeServoPos2);
 //            intakeLeftServo.setPosition(intakeServoPos2);
-//        } else if (numOfPixels == 3) {
-//            intakeRightServo.setPosition(intakeServoPos3);
+        } else if (numOfPixels == 3) {
+            intakeRightServo.setPosition(intakeServoPos3);
 //            intakeLeftServo.setPosition(intakeServoPos3);
-//        } else if (numOfPixels == 4) {
-//            intakeRightServo.setPosition(intakeServoPos4);
+        } else if (numOfPixels == 4) {
+            intakeRightServo.setPosition(intakeServoPos4);
 //            intakeLeftServo.setPosition(intakeServoPos4);
-//        } else if (numOfPixels == 5) {
-//            intakeRightServo.setPosition(intakeServoPos5);
+        } else if (numOfPixels == 5) {
+            intakeRightServo.setPosition(intakeServoPos5);
 //            intakeLeftServo.setPosition(intakeServoPos5);
-//        } else {
-//            // invalid
-//        }
-//    }
+        } else {
+            // invalid
+        }
+    }
     // sets power to control climber/hanging motors
     public void climberLiftPower(double motorPower){
         leftClimberMotor.setPower(motorPower);
