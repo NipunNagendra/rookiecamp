@@ -85,6 +85,9 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
     public static double temporalMarkerTimeUp = 1.5;
     public static int outtakeEncoderTicksDown = 0;
     public static double temporalMarkerTimeDown = 1;
+    public static int outtakeEncoderTicksCycle = 3000;
+    public static double temporalMarkerTimeCycleUp = 4;
+    public static double temporalMarkerTimeCycleDown = 0.5;
 
     //coordiantes for park in corner
     public static double parkForwardAmount = 3;
@@ -141,14 +144,17 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftSpikeToBackdrop = drive.trajectorySequenceBuilder(new Pose2d(spike1X, spike1Y, preSpike1Angle))
+                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
+                })
                 .back(spike1ForwardAmount/*,
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
 
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                .back(backdropBackAmount/*,
-                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
+                .back(backdropBackAmount,
+                        SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         TrajectorySequence middleToSpike = drive.trajectorySequenceBuilder(startPose)
@@ -158,11 +164,14 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                 .build();
 
         TrajectorySequence middleSpikeToBackdrop = drive.trajectorySequenceBuilder(new Pose2d(spike2X, spike2Y, Math.toRadians(180)))
+                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
+                })
                 .setReversed(true)
                 .splineTo(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY), Math.toRadians(0))
-                .back(backdropBackAmount/*,
-                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
+                .back(backdropBackAmount,
+                        SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         TrajectorySequence rightToSpike = drive.trajectorySequenceBuilder(startPose)
@@ -171,88 +180,103 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                 .build();
 
         TrajectorySequence rightSpikeToBackdrop = drive.trajectorySequenceBuilder(new Pose2d(spike3X, spike3Y, Math.toRadians(180)))
+                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
+                })
                 .setReversed(true)
                 .back(spike3BackAmount/*,
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
-                .waitSeconds(0.5)
+                .waitSeconds(0.01)
 
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
-                .back(backdropBackAmount/*,
-                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
+                .back(backdropBackAmount,
+                        SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         TrajectorySequence leftCycle = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, Math.toRadians(180)))
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(preDoorX, preDoorY), Math.toRadians(180))
                 .waitSeconds(underDoorWaitTime)
                 .lineToConstantHeading(new Vector2d(underDoorX, underDoorY))
-                .forward(doorStackForwardAmount)
+                .forward(doorStackForwardAmount,
+                        SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         TrajectorySequence leftReturn = drive.trajectorySequenceBuilder(leftCycle.end())
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(backUnderDoorX, preDoorY))
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY), Math.toRadians(0))
-                .back(backdropBackAmount/*,
+                .back(backdropBackAmount,
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         TrajectorySequence middleCycle = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, Math.toRadians(180)))
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(preDoorX, preDoorY), Math.toRadians(180))
                 .waitSeconds(underDoorWaitTime)
                 .splineToConstantHeading(new Vector2d(underDoorX, underDoorY), Math.toRadians(180))
-                .forward(doorStackForwardAmount)
+                .forward(doorStackForwardAmount,
+                        SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         TrajectorySequence middleReturn = drive.trajectorySequenceBuilder(middleCycle.end())
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(backUnderDoorX, preDoorY))
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                .back(backdropBackAmount/*,
+                .back(backdropBackAmount,
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         TrajectorySequence rightCycle = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe, Math.toRadians(180)))
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(preDoorX, preDoorY), Math.toRadians(180))
                 .waitSeconds(underDoorWaitTime)
                 .splineToConstantHeading(new Vector2d(underDoorX, underDoorY), Math.toRadians(180))
-                .forward(doorStackForwardAmount)
+                .forward(doorStackForwardAmount,
+                        SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         TrajectorySequence rightReturn = drive.trajectorySequenceBuilder(rightCycle.end())
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(backUnderDoorX, preDoorY))
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
-                .back(backdropBackAmount/*,
+                .back(backdropBackAmount,
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)*/)
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, Math.toRadians(180)))
                 .setReversed(false)
                 .forward(altParkForwardAmount)
-                .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(180))
-                .waitSeconds(altParkWaitTime)
-                .splineToConstantHeading(new Vector2d(altParkX, altParkY), Math.toRadians(0))
+                .strafeTo(new Vector2d(altParkX, altParkY))
+                .turn(Math.toRadians(90))
                 .build();
 
         TrajectorySequence middlePark = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, Math.toRadians(180)))
                 .setReversed(false)
                 .forward(altParkForwardAmount)
-                .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(180))
-                .waitSeconds(altParkWaitTime)
-                .splineToConstantHeading(new Vector2d(altParkX, altParkY), Math.toRadians(0))
+                .strafeTo(new Vector2d(altParkX, altParkY))
+                .turn(Math.toRadians(90))
                 .build();
 
         TrajectorySequence rightPark = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, Math.toRadians(180)))
                 .setReversed(false)
                 .forward(altParkForwardAmount)
-                .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(180))
-                .waitSeconds(altParkWaitTime)
-                .splineToConstantHeading(new Vector2d(altParkX, altParkY), Math.toRadians(0))
+                .strafeTo(new Vector2d(altParkX, altParkY))
+                .turn(Math.toRadians(90))
                 .build();
 
         telemetry.addLine("trajectories built!!!");
@@ -299,6 +323,7 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
 
                 case SCORE_PURPLE:
 //                    positionOfVisionPixel = vision.getLocation();
+                    manip.autoIntakeToggle(true);
                     if (myPosition == 1) {
 //                        myPosition="left";
                         telemetry.addLine("going left");
@@ -314,9 +339,9 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                     }
                     telemetry.update();
                     posEstimate = drive.getPoseEstimate();
-//                    manip.setIntakePower(-1);
-//                    sleep(1600);
-//                    manip.setIntakePower(0);
+                    manip.setIntakePower(-1);
+                    sleep(1500);
+                    manip.setIntakePower(0);
                     sleep(500);
                     currentState = State.SCORE_YELLOW;
                     break;
@@ -337,15 +362,29 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                 case CYCLING:
                     if (myPosition == 1) {
                         drive.followTrajectorySequence(leftCycle);
+                        manip.autoIntakeToggle(false);
+                        manip.setIntakePower(1);
+                        sleep(2500);
+                        manip.autoIntakeToggle(true);
+                        sleep(500);
                         drive.followTrajectorySequence(leftReturn);
                     } else if (myPosition == 2) {
                         drive.followTrajectorySequence(middleCycle);
+                        manip.autoIntakeToggle(false);
+                        manip.setIntakePower(1);
+                        sleep(2500);
+                        manip.autoIntakeToggle(true);
+                        sleep(500);
                         drive.followTrajectorySequence(middleReturn);
                     } else {
                         drive.followTrajectorySequence(rightCycle);
+                        manip.autoIntakeToggle(false);
+                        manip.setIntakePower(1);
+                        sleep(2500);
+                        manip.autoIntakeToggle(true);
+                        sleep(500);
                         drive.followTrajectorySequence(rightReturn);
                     }
-//                    sleep(500);
                     currentState = State.PARK;
 
                 case PARK:

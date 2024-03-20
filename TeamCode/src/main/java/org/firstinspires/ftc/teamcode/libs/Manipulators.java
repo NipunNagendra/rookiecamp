@@ -252,6 +252,14 @@ public class Manipulators {
         };
         outtakeMoveBoth.start();    }
 
+    public void gateOpen() {
+        outtakeServo.setPosition(outtakeServoPos2);
+    }
+
+    public void gateClose() {
+        outtakeServo.setPosition(outtakeServoPos1);
+    }
+
 
     // Intake servo toggle method
     public void intakeToggle(boolean intakeServoStatus) {
@@ -287,6 +295,12 @@ public class Manipulators {
             // invalid
         }
     }
+
+    public void autoIntakeToggle(boolean up) {
+        if (up) intakeRightServo.setPosition(0.5);
+        else intakeRightServo.setPosition(0.17);
+    }
+
     // sets power to control climber/hanging motors
     public void climberLiftPower(double motorPower){
         leftClimberMotor.setPower(motorPower);
