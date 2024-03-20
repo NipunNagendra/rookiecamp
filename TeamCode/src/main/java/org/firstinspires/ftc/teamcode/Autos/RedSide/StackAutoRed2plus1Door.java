@@ -44,7 +44,7 @@ public class StackAutoRed2plus1Door extends LinearOpMode {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1X = -38.1, spike1Y = -25.2;
+    public static double spike1X = -40.1, spike1Y = -30.2;
     public static double spike1BackX = -34, spike1BackY = spike1Y;
     public static double spike1PreStackX = spike1BackX, spike1PreStackY = -22;
 
@@ -55,17 +55,17 @@ public class StackAutoRed2plus1Door extends LinearOpMode {
 
     //coordinates for right spike position
     public static double spike3PreX = -40, spike3PreY = -36;
-    public static double spike3X = -33, spike3Y = -30;
+    public static double spike3X = -30, spike3Y = -30;
     public static double spike3BackAmount = 8;
     public static double spike3PreStackX = -47, spike3PreStackY = -16, spike3PreStackAngle = Math.toRadians(181);
 
     //coordinates for stack and to backdrop
-    public static double doorStackX = BackdropAutoRedSplines2plus2Door.underDoorX, doorStackY = BackdropAutoRedSplines2plus2Door.underDoorY;
+    public static double doorStackX = -56.3, doorStackY = -12;
     public static double doorStackForwardAmount = BackdropAutoRedSplines2plus2Door.doorStackForwardAmount;
-    public static double underDoorX = BackdropAutoRedSplines2plus2Door.preDoorX, underDoorY = doorStackY;
+    public static double underDoorX = 24, underDoorY = doorStackY;
 
     //coordinates for backdrop positions
-    public static double backdropMiddleX = BackdropAutoRedSplines2plus2Door.backdropMiddleX;
+    public static double backdropMiddleX = 52;
     public static double backdropMiddleY = BackdropAutoRedSplines2plus2Door.backdropMiddleY;
     public static double backdropMiddleAngle = Math.toRadians(180);
     public static double backdropBackAmount = BackdropAutoRedSplines2plus2Door.backdropBackAmount;
@@ -81,7 +81,7 @@ public class StackAutoRed2plus1Door extends LinearOpMode {
 
     //coordiantes for alt park
     public static double altParkForwardAmount = 4.5;
-    public static double altParkX = backdropMiddleX - altParkForwardAmount, altParkY = 10;
+    public static double altParkX = 46.5, altParkY = -11;
 
     public static double casenum = 1;
 

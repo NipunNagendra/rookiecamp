@@ -291,14 +291,14 @@ public class MainTeleOpFieldExpTest extends OpMode {
             manip.droneServo.setPower(0.8);
         }
 
-        if (Math.abs(gamepad2.left_stick_y) > 0.1){
-            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
-            manip.intakeRightServo.setPower(gamepad2.left_stick_y);
-        }
-        else{
-            manip.intakeLeftServo.setPower(0);
-            manip.intakeRightServo.setPower(0);
-        }
+//        if (Math.abs(gamepad2.left_stick_y) > 0.1){
+//            manip.intakeLeftServo.setPower(gamepad2.left_stick_y);
+//            manip.intakeRightServo.setPower(gamepad2.left_stick_y);
+//        }
+//        else{
+//            manip.intakeLeftServo.setPower(0);
+//            manip.intakeRightServo.setPower(0);
+//        }
 
 //        if (sensor.invisibleWallDetect()){
 //            gamepad1.rumble(100);
