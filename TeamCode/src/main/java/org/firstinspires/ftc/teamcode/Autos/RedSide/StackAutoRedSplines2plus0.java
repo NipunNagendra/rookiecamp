@@ -148,7 +148,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 
 
         telemetry.addLine("Init Done");
-
+        manip.autoIntakeToggle(false);
         drive.setPoseEstimate(startPose);
         //
 
@@ -418,6 +418,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
+                    manip.autoIntakeToggle(false);
                     if (RedPipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
@@ -432,8 +433,8 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     telemetry.update();
-                    manip.setIntakePower(-0.6);
-                    sleep(1000);
+                    manip.setIntakePower(-1);
+                    sleep(1500);
                     manip.setIntakePower(0);
 //                    if (myPosition == "left") {
 //                        drive.followTrajectorySequence(finishLeft);
@@ -485,7 +486,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 //                    }
                     manip.gateToggle();
                     manip.gateToggle();
-                    sleep(1000);
+                    sleep(1500);
                     currentState = State.PARK;
 
                 case PARK:

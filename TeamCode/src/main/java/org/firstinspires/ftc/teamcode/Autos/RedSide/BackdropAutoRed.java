@@ -110,7 +110,7 @@ public class BackdropAutoRed extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
         BluePipeline vision =  new BluePipeline(telemetry);
-
+        manip.autoIntakeToggle(false);
 
         telemetry.addLine("Init Done");
 
