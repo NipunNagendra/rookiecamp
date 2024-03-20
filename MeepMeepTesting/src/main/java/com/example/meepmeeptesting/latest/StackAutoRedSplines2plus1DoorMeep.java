@@ -24,17 +24,25 @@ public class StackAutoRedSplines2plus1DoorMeep {
     Pose2d posEstimate;
 
     //coordinates for left spike position
-    public static double spike1ForwardAmount = 5;
-    public static Pose2d preSpike1Pose = new Pose2d(19.2, -33.8 - 4, Math.toRadians(180));
-    public static Vector2d spike1Vector = new Vector2d(13.25 - spike1ForwardAmount, -33.8);
+    public static double spike1X = -38.1, spike1Y = -25.2;
+    public static double spike1BackX = -34, spike1BackY = spike1Y;
+    public static double spike1PreStackX = spike1BackX, spike1PreStackY = -22;
 
     //coordinates for middle spike position
-    public static Vector2d preSpike2Vector = new Vector2d(12.3, -42.3);
-    public static Vector2d spike2Vector = new Vector2d(21.8, -24);
+    public static double spike2X = -38.3, spike2Y = -19.2, spike2Angle = Math.toRadians(330);
+    public static double spike2BackX = -45, spike2BackY = -14;
+    public static double spike2TurnAmount = Math.toRadians(180) - spike2Angle;
 
     //coordinates for right spike position
-    public static Vector2d spike3Vector = new Vector2d(31.5, -31);
-    public static double spike3BackAmount = 3;
+    public static double spike3PreX = -40, spike3PreY = -36;
+    public static double spike3X = -33, spike3Y = -30;
+    public static double spike3BackAmount = 8;
+    public static double spike3PreStackX = -47, spike3PreStackY = -16, spike3PreStackAngle = Math.toRadians(181);
+
+    //coordinates for stack and to backdrop
+    public static double doorStackX = -60, doorStackY = -11.3;
+    public static double doorStackForwardAmount = 4;
+    public static double underDoorX = 23, underDoorY = doorStackY;
 
     //coordinates for backdrop positions
     public static double backdropMiddleX = 47;
@@ -45,28 +53,15 @@ public class StackAutoRedSplines2plus1DoorMeep {
     public static double backdropLeftStrafe = 4;
     public static double backdropRightStrafe = 4;
 
-    //coordinates for cycling
-    public static Vector2d preDoorVector = new Vector2d(24, -12);
-    public static Vector2d underDoorVector = new Vector2d(-55.3, preDoorVector.getY());
-    public static double doorStackForwardAmount = 4;
-    public static double backUnderDoorX = 27;
-
     //intake and outtake movement
     public static int outtakeEncoderTicksUp = 2500;
     public static double temporalMarkerTimeUp = 1.5;
     public static int outtakeEncoderTicksDown = 0;
     public static double temporalMarkerTimeDown = 1;
 
-    //coordiantes for park in corner
-    public static double parkForwardAmount = 3;
-    public static Vector2d preParkVector = new Vector2d(44, -56);
-    public static Pose2d parkPose = new Pose2d(58.7, -59, Math.toRadians(90));
-
     //coordiantes for alt park
     public static double altParkForwardAmount = 4.5;
-    public static double preAltParkY = -20;
-    public static double preAltParkXChange = -10;
-    public static Vector2d altParkVector = new Vector2d(58.7, -11.3);
+    public static double altParkX = backdropMiddleX - altParkForwardAmount, altParkY = 10;
 
     public static double casenum = 1;
 
@@ -81,20 +76,22 @@ public class StackAutoRedSplines2plus1DoorMeep {
                 .setConstraints(35.86228895377674, 35.86228895377674, 2.4242626190185548, Math.toRadians(214.79), 14)
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(startPose)
-                                        .lineToLinearHeading(new Pose2d(-38.1, -25.2, Math.toRadians(180)))
-                                        .lineToConstantHeading(new Vector2d(-34, -25.2))
-                                        .lineToConstantHeading(new Vector2d(-34, -22))
-                                        .splineToConstantHeading(new Vector2d(-60, -11.3), Math.toRadians(180))
+                                        .lineToLinearHeading(new Pose2d(spike1X, spike1Y, Math.toRadians(180)))
+                                        .lineToConstantHeading(new Vector2d(spike1BackX, spike1BackY))
+
+                                        .lineToConstantHeading(new Vector2d(spike1PreStackX, spike1PreStackY))
+                                        .splineToConstantHeading(new Vector2d(doorStackX, doorStackY), Math.toRadians(180))
+                                        .forward(doorStackForwardAmount)
 
                                         .setReversed(true)
-                                        .lineToConstantHeading(new Vector2d(23, -11.3))
-                                        .splineTo(new Vector2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
+                                        .lineToConstantHeading(new Vector2d(underDoorX, underDoorY))
+                                        .splineTo(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
+                                        .forward(backdropBackAmount)
 
                                         // alt park
                                         .setReversed(false)
                                         .forward(altParkForwardAmount)
-                                        .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(90))
-                                        .splineToConstantHeading(altParkVector, Math.toRadians(0))
+                                        .lineToConstantHeading(new Vector2d(altParkX, altParkY))
 
                                         .build()
                 );
@@ -106,10 +103,11 @@ public class StackAutoRedSplines2plus1DoorMeep {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(startPose)
                                         .setReversed(false)
-                                        .lineToLinearHeading(new Pose2d(-38.3, -19.2, Math.toRadians(330)))
-                                        .lineToConstantHeading(new Vector2d(-45, -14))
+                                        .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
+                                        .lineToConstantHeading(new Vector2d(spike2BackX, spike2BackY))
 //                                        .lineToSplineHeading(new Pose2d(-48.8, -12.9, Math.toRadians(180)))
-                                        .turn(Math.toRadians(-150))
+                                        .turn(spike2TurnAmount)
+
 //                                        .splineToConstantHeading(new Vector2d(-2 0, -11.3), Math.toRadians(180))
 //                                        .splineToConstantHeading(new Vector2d(-50.2, -11.3), Math.toRadians(180))
                                         .lineToConstantHeading(new Vector2d(-60, -11.3))
@@ -117,12 +115,12 @@ public class StackAutoRedSplines2plus1DoorMeep {
                                         .setReversed(true)
                                         .lineToConstantHeading(new Vector2d(23, -11.3))
                                         .splineTo(new Vector2d(backdropMiddleX, backdropMiddleY), Math.toRadians(0))
+                                        .forward(backdropBackAmount)
 
                                         // alt park
                                         .setReversed(false)
                                         .forward(altParkForwardAmount)
-                                        .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(90))
-                                        .splineToConstantHeading(altParkVector, Math.toRadians(0))
+                                        .lineToConstantHeading(new Vector2d(altParkX, altParkY))
 
                                         .build()
                 );
@@ -133,23 +131,23 @@ public class StackAutoRedSplines2plus1DoorMeep {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(startPose)
                                         .setReversed(false)
-                                        .lineToSplineHeading(new Pose2d(-40, -36, Math.toRadians(0)))
-                                        .splineToConstantHeading(new Vector2d(-33, -30), Math.toRadians(0))
+                                        .lineToSplineHeading(new Pose2d(spike3PreX, spike3PreY, Math.toRadians(0)))
+                                        .splineToConstantHeading(new Vector2d(spike3X, spike3Y), Math.toRadians(0))
                                         .setReversed(false)
-                                        .back(8)
-                                        .lineToSplineHeading(new Pose2d(-47, -16, Math.toRadians(181)))
+                                        .back(spike3BackAmount)
+                                        .lineToSplineHeading(new Pose2d(spike3PreStackX, spike3PreStackY, spike3PreStackAngle))
 //                                        .lineToConstantHeading(new Vector2d(-34, -22))
                                         .splineToConstantHeading(new Vector2d(-60, -11.3), Math.toRadians(180))
 
                                         .setReversed(true)
                                         .lineToConstantHeading(new Vector2d(23, -11.3))
                                         .splineTo(new Vector2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
+                                        .forward(backdropBackAmount)
 
                                         // alt park
                                         .setReversed(false)
                                         .forward(altParkForwardAmount)
-                                        .splineTo(new Vector2d(backdropMiddleX + preAltParkXChange, preAltParkY), Math.toRadians(90))
-                                        .splineToConstantHeading(altParkVector, Math.toRadians(0))
+                                        .lineToConstantHeading(new Vector2d(altParkX, altParkY))
 
                                         .build()
                 );

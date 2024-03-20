@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -56,14 +55,14 @@ public class StackAutoRed2plus1Door extends LinearOpMode {
 
     //coordinates for right spike position
     public static double spike3PreX = -40, spike3PreY = -36;
-    public static double spike3X = -33, spike3Y = -30;
+    public static double spike3X = -30, spike3Y = -30;
     public static double spike3BackAmount = 8;
     public static double spike3PreStackX = -47, spike3PreStackY = -16, spike3PreStackAngle = Math.toRadians(181);
 
     //coordinates for stack and to backdrop
     public static double doorStackX = -56.3, doorStackY = -12;
     public static double doorStackForwardAmount = BackdropAutoRedSplines2plus2Door.doorStackForwardAmount;
-    public static double underDoorX = BackdropAutoRedSplines2plus2Door.preDoorX, underDoorY = doorStackY;
+    public static double underDoorX = 24, underDoorY = doorStackY;
 
     //coordinates for backdrop positions
     public static double backdropMiddleX = 52;
@@ -112,9 +111,7 @@ public class StackAutoRed2plus1Door extends LinearOpMode {
 
         TrajectorySequence leftSpikeToStack = drive.trajectorySequenceBuilder(new Pose2d(spike1X, spike1Y, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(spike1BackX, spike1BackY))
-                .lineToConstantHeading(new Vector2d(spike1PreStackX, spike1PreStackY),
-                        SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .lineToConstantHeading(new Vector2d(spike1PreStackX, spike1PreStackY))
                 .waitSeconds(0.01)
                 .splineToConstantHeading(new Vector2d(doorStackX, doorStackY), Math.toRadians(180))
                 .forward(doorStackForwardAmount)
@@ -174,9 +171,7 @@ public class StackAutoRed2plus1Door extends LinearOpMode {
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(leftStackToBackdrop.end())
                 .setReversed(false)
                 .forward(altParkForwardAmount)
-                .strafeTo(new Vector2d(altParkX, altParkY),
-                        SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .strafeTo(new Vector2d(altParkX, altParkY))
                 .build();
 
         TrajectorySequence middlePark = drive.trajectorySequenceBuilder(middleStackToBackdrop.end())
