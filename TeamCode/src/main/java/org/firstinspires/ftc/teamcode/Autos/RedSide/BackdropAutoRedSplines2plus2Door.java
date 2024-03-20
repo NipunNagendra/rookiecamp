@@ -49,8 +49,8 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
     public static double preSpike1X = 19.2;
     public static double preSpike1Y = -37.8;
     public static double preSpike1Angle = Math.toRadians(180);
-    public static double spike1X = 5.25;
-    public static double spike1Y = -37.8;
+    public static double spike1X = 8.25;
+    public static double spike1Y = -33.8;
 
     //coordinates for middle spike position
     public static double preSpike2X = 12.3;
@@ -64,7 +64,7 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
     public static double spike3BackAmount = 3;
 
     //coordinates for backdrop positions
-    public static double backdropMiddleX = 47;
+    public static double backdropMiddleX = 50;
     public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = Math.toRadians(180);
     public static double backdropBackAmount = 5;
@@ -190,8 +190,7 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(underDoorX, underDoorY))
                 .forward(doorStackForwardAmount)
                 .build();
-        TrajectorySequence leftReturn = drive.trajectorySequenceBuilder(new Pose2d(underDoorX - doorStackForwardAmount, underDoorY))
-                .waitSeconds(1)
+        TrajectorySequence leftReturn = drive.trajectorySequenceBuilder(leftCycle.end())
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(backUnderDoorX, preDoorY))
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY), Math.toRadians(0))
@@ -207,8 +206,7 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(underDoorX, underDoorY), Math.toRadians(180))
                 .forward(doorStackForwardAmount)
                 .build();
-        TrajectorySequence middleReturn = drive.trajectorySequenceBuilder(new Pose2d(underDoorX - doorStackForwardAmount, underDoorY))
-                .waitSeconds(1)
+        TrajectorySequence middleReturn = drive.trajectorySequenceBuilder(middleCycle.end())
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(backUnderDoorX, preDoorY))
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
@@ -224,8 +222,7 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(underDoorX, underDoorY), Math.toRadians(180))
                 .forward(doorStackForwardAmount)
                 .build();
-        TrajectorySequence rightReturn = drive.trajectorySequenceBuilder(new Pose2d(underDoorX - doorStackForwardAmount, underDoorY, Math.toRadians(180)))
-                .waitSeconds(1)
+        TrajectorySequence rightReturn = drive.trajectorySequenceBuilder(rightCycle.end())
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(backUnderDoorX, preDoorY))
                 .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY + backdropLeftStrafe), Math.toRadians(0))
