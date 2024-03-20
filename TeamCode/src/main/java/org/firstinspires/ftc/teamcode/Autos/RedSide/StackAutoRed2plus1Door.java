@@ -63,7 +63,7 @@ public class StackAutoRed2plus1Door extends LinearOpMode {
     //coordinates for stack and to backdrop
     public static double doorStackX = -56.3, doorStackY = -12;
     public static double doorStackForwardAmount = BackdropAutoRedSplines2plus2Door.doorStackForwardAmount;
-    public static double underDoorX = 24, underDoorY = -12;
+    public static double underDoorX = BackdropAutoRedSplines2plus2Door.preDoorX, underDoorY = doorStackY;
 
     //coordinates for backdrop positions
     public static double backdropMiddleX = 52;
