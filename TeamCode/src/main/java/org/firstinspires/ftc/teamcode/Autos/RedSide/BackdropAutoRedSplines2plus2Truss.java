@@ -33,7 +33,6 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
 
 
     //coordinates for start position
-
     public static double startPoseX = 14.65845302224215;
     public static double startPoseY = -65.13672263931143;
     public static double startPoseAngle = Math.toRadians(270);
@@ -47,38 +46,37 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
     public static double preSpike1X = 19.2;
     public static double preSpike1Y = -37.8;
     public static double preSpike1Angle = Math.toRadians(180);
-    public static double spike1X = 13.25 - spike1ForwardAmount;
+    public static double spike1X = 8.25;
     public static double spike1Y = -33.8;
 
     //coordinates for middle spike position
     public static double preSpike2X = 12.3;
     public static double preSpike2Y = -42.3;
-    public static double spike2X = 21.8;
-    public static double spike2Y = -24;
+    public static double spike2X = 23.8;
+    public static double spike2Y = -26;
 
     //coordinates for right spike position
-    public static double spike3X = 31.5;
+    public static double spike3X = 29.5;
     public static double spike3Y = -31;
     public static double spike3BackAmount = 3;
 
     //coordinates for backdrop positions
-    public static double backdropMiddleX = 47;
+    public static double backdropMiddleX = 50;
     public static double backdropMiddleY = -35;
     public static double backdropMiddleAngle = Math.toRadians(180);
     public static double backdropBackAmount = 5;
-    public static double cycleBackdropBackAmount = 4;
 
     public static double backdropLeftStrafe = 4;
     public static double backdropRightStrafe = 4;
 
     //coordinates for cycling
     public static double preTrussX = 20;
-    public static double preTrussY = -58.5;
+    public static double preTrussY = -60.5;
     public static double underTrussX = -47;
     public static double underTrussY = preTrussY;
     public static double postTrussX = -57;
     public static double postTrussY = -46.5;
-    public static double trussStackX = -60;
+    public static double trussStackX = -54.3;
     public static double trussStackY = -35.5;
     public static double trussStackForwardAmount = 2;
 
@@ -188,13 +186,12 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
                 .waitSeconds(underTrussWaitTime)
                 .lineToConstantHeading(new Vector2d(underTrussX, underTrussY))
                 .waitSeconds(underTrussWaitTime)
-                .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(postTrussX,  postTrussY), Math.toRadians(90))
                 .waitSeconds(underTrussWaitTime)
                 .splineToConstantHeading(new Vector2d(trussStackX, trussStackY), Math.toRadians(180))
                 .forward(trussStackForwardAmount)
                 .build();
-        TrajectorySequence leftReturn = drive.trajectorySequenceBuilder(new Pose2d(trussStackX - trussStackForwardAmount, trussStackY))
-                .waitSeconds(1)
+        TrajectorySequence leftReturn = drive.trajectorySequenceBuilder(leftCycle.end())
                 .setReversed(true)
                 .back(trussStackForwardAmount)
                 .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(270))
@@ -203,8 +200,8 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
                 .waitSeconds(underTrussWaitTime)
                 .lineToConstantHeading(new Vector2d(preTrussX, preTrussY))
                 .waitSeconds(underTrussWaitTime)
-                .splineToConstantHeading(new Vector2d(backdropMiddleX - cycleBackdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
-                .back(cycleBackdropBackAmount)
+                .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
+                .back(backdropBackAmount)
                 .build();
 
         TrajectorySequence middleCycle = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY, Math.toRadians(180)))
@@ -218,8 +215,7 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(trussStackX, trussStackY), Math.toRadians(180))
                 .forward(trussStackForwardAmount)
                 .build();
-        TrajectorySequence middleReturn = drive.trajectorySequenceBuilder(new Pose2d(trussStackX - trussStackForwardAmount, trussStackY))
-                .waitSeconds(1)
+        TrajectorySequence middleReturn = drive.trajectorySequenceBuilder(middleCycle.end())
                 .setReversed(true)
                 .back(trussStackForwardAmount)
                 .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(270))
@@ -228,8 +224,8 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
                 .waitSeconds(underTrussWaitTime)
                 .lineToConstantHeading(new Vector2d(preTrussX, preTrussY))
                 .waitSeconds(underTrussWaitTime)
-                .splineToConstantHeading(new Vector2d(backdropMiddleX - cycleBackdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
-                .back(cycleBackdropBackAmount)
+                .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
+                .back(backdropBackAmount)
                 .build();
 
 
@@ -244,8 +240,7 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(trussStackX, trussStackY), Math.toRadians(180))
                 .forward(trussStackForwardAmount)
                 .build();
-        TrajectorySequence rightReturn = drive.trajectorySequenceBuilder(new Pose2d(trussStackX - trussStackForwardAmount, trussStackY))
-                .waitSeconds(1)
+        TrajectorySequence rightReturn = drive.trajectorySequenceBuilder(rightCycle.end())
                 .setReversed(true)
                 .back(trussStackForwardAmount)
                 .splineToConstantHeading(new Vector2d(postTrussX, postTrussY), Math.toRadians(270))
@@ -254,8 +249,8 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
                 .waitSeconds(underTrussWaitTime)
                 .lineToConstantHeading(new Vector2d(preTrussX, preTrussY))
                 .waitSeconds(underTrussWaitTime)
-                .splineToConstantHeading(new Vector2d(backdropMiddleX - cycleBackdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
-                .back(cycleBackdropBackAmount)
+                .splineToConstantHeading(new Vector2d(backdropMiddleX - backdropBackAmount, backdropMiddleY - backdropRightStrafe), Math.toRadians(0))
+                .back(backdropBackAmount)
                 .build();
 
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(new Pose2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe, Math.toRadians(180)))
@@ -388,3 +383,4 @@ public class BackdropAutoRedSplines2plus2Truss extends LinearOpMode {
     }
 
 }
+
