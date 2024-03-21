@@ -81,11 +81,11 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
     public static double prePreTrussX = -55.7;
     public static double prePreTrussY = -39;
     public static double preTrussX = -32.5;
-    public static double trussX = 27;
+    public static double trussX = 34;
     public static double trussY = -60;
     public static double trussAngle = Math.toRadians(180);
 
-    public static double preBackdropX = 42;
+    public static double preBackdropX = 40;
     public static double preBackdropY = -35.30;
 
     public static double backdropMiddleX = 54;
@@ -95,7 +95,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
     public static double backdropRightStrafe = 8;
 
     public static double preParkX = 46.5;
-    public static double preParkY = -61;
+    public static double preParkY = -62;
 
     public static double moveBackwards3 = 29;
     public static double moveForward3 = 10;
@@ -113,6 +113,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
     public static double outFromBackdrop = 10;
 
     public static int outtakeEncoderTicksUp = 1500;
+    public static int outtakeEncoderTicksUp2 = 2500;
     public static int outtakeEncoderTicksDown = 0;
     public static double temporalMarkerTimeUp = 5;
     public static double temporalMarkerTimeDown = 0.5;
@@ -300,18 +301,6 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                 .strafeRight(10)
                 .build();
 
-        TrajectorySequence underDoorScuffed = drive.trajectorySequenceBuilder(new Pose2d(preTrussX, trussY, trussAngle))
-                .addTemporalMarker(temporalMarkerTimeAlternate, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksUp);
-                })
-                .lineToLinearHeading(new Pose2d(dangerPathX, trussY, trussAngle))
-                .strafeRight(
-                        betweenTruss,
-                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .splineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle), Math.toRadians(270))
-                .build();
-
         // common trajectory for all 3 paths that leads to the backdrop
 //        TrajectorySequence underTrussToBackdropAll = drive.trajectorySequenceBuilder(goToStackLeft.end())
 //                .addTemporalMarker(temporalMarkerTimeUp, () -> {
@@ -484,8 +473,10 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 //                    } else {
 //                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
 //                    }
-                    manip.gateToggle();
-                    manip.gateToggle();
+                    manip.gateOpen();
+                    sleep(500);
+                    manip.moveOuttakeLift(outtakeEncoderTicksUp2);
+                    manip.gateClose();
                     sleep(1500);
                     currentState = State.PARK;
 

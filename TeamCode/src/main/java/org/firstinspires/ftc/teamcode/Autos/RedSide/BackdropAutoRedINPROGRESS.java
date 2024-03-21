@@ -18,8 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous(name = "BackdropAutoRed", group = "Autonomous")
-public class BackdropAutoRed extends LinearOpMode {
+@Autonomous(name = "BackdropAutoRedINPROGRESS", group = "Autonomous")
+public class BackdropAutoRedINPROGRESS extends LinearOpMode {
 
     Manipulators manip;
     enum State{
@@ -96,6 +96,8 @@ public class BackdropAutoRed extends LinearOpMode {
     public static String myPosition;
 
     public static double casePos;
+
+    public static boolean cornerPark = true;
 
     State currentState = State.IDLE;
 
@@ -181,6 +183,36 @@ public class BackdropAutoRed extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .strafeRight(10)
                 .build();
+
+        TrajectorySequence parkLeftCenter = drive.trajectorySequenceBuilder(backDropLeft.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
+                .forward(3)
+                .splineToConstantHeading(new Vector2d(preParkXCenter, preParkYCenter), Math.toRadians(0))
+                .turn(Math.toRadians(-90))
+                .strafeRight(10)
+                .build();
+
+        TrajectorySequence parkMiddleCenter = drive.trajectorySequenceBuilder(backDropMiddle.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
+                .forward(3)
+                .splineToConstantHeading(new Vector2d(preParkXCenter, preParkYCenter), Math.toRadians(0))
+                .turn(Math.toRadians(-90))
+                .strafeRight(10)
+                .build();
+
+        TrajectorySequence parkRightCenter = drive.trajectorySequenceBuilder(backDropRight.end())
+                .addTemporalMarker(temporalMarkerTimeDown, () -> {
+                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+                })
+                .forward(3)
+                .splineToConstantHeading(new Vector2d(preParkXCenter, preParkYCenter), Math.toRadians(0))
+                .turn(Math.toRadians(-90))
+                .strafeRight(10)
+                .build();
         
 
         telemetry.addLine("trajectories built!!!");
@@ -223,7 +255,7 @@ public class BackdropAutoRed extends LinearOpMode {
 
             switch(currentState){
                 case IDLE:
-                    currentState = BackdropAutoRed.State.SCORE_PURPLE;
+                    currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
                     positionOfVisionPixel = vision.getLocation();
@@ -247,7 +279,7 @@ public class BackdropAutoRed extends LinearOpMode {
                     manip.setIntakePower(-1);
                     sleep(1600);
                     manip.setIntakePower(0);
-                    currentState = BackdropAutoRed.State.SCORE_YELLOW;
+                    currentState = State.SCORE_YELLOW;
                     break;
 
                 case SCORE_YELLOW:
@@ -263,18 +295,29 @@ public class BackdropAutoRed extends LinearOpMode {
                     manip.moveOuttakeLift(outtakeEncoderTicksUp2);
                     manip.gateClose();
                     sleep(1500);
-                    currentState = BackdropAutoRed.State.PARK;
+                    currentState = State.PARK;
                     break;
 
                 case PARK:
-                    if (BluePipeline.positionMain == "left") {
-                        drive.followTrajectorySequence(parkLeftCorner);
-                    } else if (BluePipeline.positionMain == "middle") {
-                        drive.followTrajectorySequence(parkMiddleCorner);
-                    } else {
-                        drive.followTrajectorySequence(parkRightCorner);
+                    if (cornerPark) {
+                        if (BluePipeline.positionMain == "left") {
+                            drive.followTrajectorySequence(parkLeftCorner);
+                        } else if (BluePipeline.positionMain == "middle") {
+                            drive.followTrajectorySequence(parkMiddleCorner);
+                        } else {
+                            drive.followTrajectorySequence(parkRightCorner);
+                        }
                     }
-                    currentState = BackdropAutoRed.State.STOP;
+                    else {
+                        if (BluePipeline.positionMain == "left") {
+                            drive.followTrajectorySequence(parkLeftCenter);
+                        } else if (BluePipeline.positionMain == "middle") {
+                            drive.followTrajectorySequence(parkMiddleCenter);
+                        } else {
+                            drive.followTrajectorySequence(parkRightCenter);
+                        }
+                    }
+                    currentState = State.STOP;
                     break;
 
                 case STOP:
