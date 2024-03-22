@@ -88,11 +88,11 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
     public static double preBackdropX = 40;
     public static double preBackdropY = -35.30;
 
-    public static double backdropMiddleX = 54;
+    public static double backdropMiddleX = 55;
     public static double backdropMiddleY = -35.3;
     public static double backdropMiddleAngle = trussAngle;
-    public static double backdropLeftStrafe = 8;
-    public static double backdropRightStrafe = 8;
+    public static double backdropLeftStrafe = 7;
+    public static double backdropRightStrafe = 7;
 
     public static double preParkX = 46.5;
     public static double preParkY = -62;
@@ -112,7 +112,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 
     public static double outFromBackdrop = 10;
 
-    public static int outtakeEncoderTicksUp = 1500;
+    public static int outtakeEncoderTicksUp = 2000;
     public static int outtakeEncoderTicksUp2 = 2500;
     public static int outtakeEncoderTicksDown = 0;
     public static double temporalMarkerTimeUp = 5;
@@ -422,8 +422,8 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     telemetry.update();
-                    manip.setIntakePower(-1);
-                    sleep(1500);
+                    manip.setIntakePower(0.1);
+                    sleep(500);
                     manip.setIntakePower(0);
 //                    if (myPosition == "left") {
 //                        drive.followTrajectorySequence(finishLeft);

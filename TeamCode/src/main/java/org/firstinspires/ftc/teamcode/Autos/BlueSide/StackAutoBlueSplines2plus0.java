@@ -420,6 +420,7 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
+                    manip.autoIntakeToggle(true);
                     if (BluePipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
@@ -434,8 +435,8 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     telemetry.update();
-                    manip.setIntakePower(-0.6);
-                    sleep(1000);
+                    manip.setIntakePower(0.1);
+                    sleep(500);
                     manip.setIntakePower(0);
 //                    if (myPosition == "left") {
 //                        drive.followTrajectorySequence(finishLeft);

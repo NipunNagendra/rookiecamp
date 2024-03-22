@@ -64,13 +64,13 @@ public class BackdropAutoRedSplines2plus2Door extends LinearOpMode {
     public static double spike3BackAmount = 3;
 
     //coordinates for backdrop positions
-    public static double backdropMiddleX = 50;
-    public static double backdropMiddleY = -35;
+    public static double backdropMiddleX = 56;
+    public static double backdropMiddleY = -37.3;
     public static double backdropMiddleAngle = Math.toRadians(180);
     public static double backdropBackAmount = 5;
 
-    public static double backdropLeftStrafe = 4;
-    public static double backdropRightStrafe = 4;
+    public static double backdropLeftStrafe = 6;
+    public static double backdropRightStrafe = 7;
 
     //coordinates for cycling
     public static double preDoorX = 24;

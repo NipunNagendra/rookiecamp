@@ -295,8 +295,8 @@ public class Manipulators {
 //    }
 
     public void autoIntakeToggle(boolean up) {
-        if (up){ intakeRightServo.setPosition(0.55);}
-        else{ intakeRightServo.setPosition(0.9);}
+        if (up){ intakeRightServo.setPosition(0.9);}
+        else{ intakeRightServo.setPosition(0.55);}
     }
 
     // sets power to control climber/hanging motors

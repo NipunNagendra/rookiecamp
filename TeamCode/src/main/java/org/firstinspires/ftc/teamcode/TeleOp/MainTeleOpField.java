@@ -119,19 +119,11 @@ public class MainTeleOpField extends OpMode {
         }
 
         if (move.isPressed("gm1dpd",gamepad1.dpad_down)){
-            manip.intakeRightServo.setPosition(intakePosAutoStack);
+            manip.autoIntakeToggle(false);
         }
 
         if (move.isPressed("gm1dpu",gamepad1.dpad_up)){
-            manip.intakeRightServo.setPosition(intakePosFullyUp);
-        }
-
-        if (move.isPressed("gm1dpl",gamepad1.dpad_left)){
-            manip.intakeRightServo.setPosition(intakePosFullyDown);
-        }
-
-        if (move.isPressed("gm1dpr",gamepad1.dpad_right)){
-            manip.intakeRightServo.setPosition(intakePosTeleOpUp);
+            manip.autoIntakeToggle(true);
         }
 
 
