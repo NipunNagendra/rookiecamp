@@ -3,14 +3,13 @@ package org.firstinspires.ftc.teamcode.Autos.BlueSide;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.libs.Manipulators;
-import org.firstinspires.ftc.teamcode.testing.BluePipeline;
+import org.firstinspires.ftc.teamcode.testing.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -18,10 +17,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
-@Autonomous(name = "BackdropAutoBlue", group = "Autonomous")
-public class BackdropAutoBlue extends LinearOpMode {
+@Autonomous(name = "BackdropAutoBlueOld", group = "Autonomous")
+public class BackdropAutoBlueOld extends LinearOpMode {
 
-    Manipulators manip;
     enum State{
         IDLE,
         SCORE_PURPLE,
@@ -31,165 +29,170 @@ public class BackdropAutoBlue extends LinearOpMode {
     }
 
     /* TODO: ENTER COORDINATES FOR ALL POSITIONS
-     *   CHANGE ALL VARIABLES TO PUBLIC STATIC
-     *   REFACTOR ALL VARIABLES TO MORE DESCRIPTIVE NAMES
-     */
+    *   CHANGE ALL VARIABLES TO PUBLIC STATIC
+    *   REFACTOR ALL VARIABLES TO MORE DESCRIPTIVE NAMES
+    */
 
 
+    //This is code for BackdropAutoBlue
     //coordinates for starting position (0, 0, 0)
-    public static double startPoseX = 14.65845302224215;
+    public static double startPoseX = 11.35845302224215;
     public static double startPoseY = 65.13672263931143;
-    public static double startPoseAngle = Math.toRadians(270);
+    public static double startPoseAngle = Math.toRadians(90);
 
     Pose2d startPose = new Pose2d(startPoseX, startPoseY, startPoseAngle);
 
     Pose2d posEstimate;
 
-    // TODO: TUNE ALL POSITIONS
-
-    //coordinates for left spike position
-    public static double spike1X = 28.74633638294297;
-    public static double spike1Y = 29.9247700133697;
-    public static double spike1Angle = Math.toRadians(180);
-
-    //coordinates for middle spike position
-    public static double spike2X = 20;
-    public static double spike2Y = 25.08633;
-    public static double spike2Angle = Math.toRadians(180);
+    public static double moveBackwards3 = 31;
+    public static double moveBackwardsTowardBackDrop = 34;
+    public static double turn3 = 90;
 
     //coordinates for right spike position
-    public static double spike3X = 6.74633638294297;
-    public static double spike3Y = 28.8247700133697;
+    public static double spike3X = 11.35845302224215;
+    public static double spike3Y = 30.44644728121096;
     public static double spike3Angle = Math.toRadians(180);
 
-    public static double backdropMiddleX = 47;
-    public static double backdropMiddleY = 35;
+    //coordinates for left spike position
+    public static double spike1X = 11.35845302224215;
+    public static double spike1Y = 34.44644728121096;
+    public static double spike1Angle = Math.toRadians(0);
+
+    //coordinates for middle spike position
+    public static double spike2X =  11.35845302224215;
+    public static double spike2Y = 34.44644728121096;
+    public static double spike2Angle = Math.toRadians(270);
+
+    public static double backdropMiddleX = 45;
+    public static double backdropMiddleY = 34;
     public static double backdropMiddleAngle = Math.toRadians(180);
 
-    static double backdropLeftX = 47;
-    public static double backdropLeftY = 41;
+    public static double backdropLeftX = 44;
+    public static double backdropLeftY = 44;
     public static double backdropLeftAngle = Math.toRadians(180);
 
-    public static double backdropRightX = 47;
-    public static double backdropRightY = 28;
+    public static double backdropRightX = 45;
+    public static double backdropRightY = 29;
     public static double backdropRightAngle = Math.toRadians(180);
+    public static double preTrussX = -38.15845302224215;
+    public static double trussX = 15;
+    public static double trussY = -55.93672263931143;
+    public static double trussAngle = Math.toRadians(180);
+
+    public static double strafeForPark = 20;
+    public static double backdropRightStrafe = 8;
+
+    public static double casenum=1;
 
 
-    public static double preParkXCorner = 46.5, preParkYCorner = 62;
-    public static double goingIntoPark = 10;
+    public static String myPosition;
 
-    public static double preParkXCenter = preParkXCorner, preParkYCenter = 11;
+    public static double strafeToTag = 8;
 
-    public static int outtakeEncoderTicksUp = 1500;
-    public static int outtakeEncoderTicksUp2 = 2500;
-    public static int outtakeEncoderTicksDown = 0;
-    public static double temporalMarkerTimeUp = 5;
-    public static double temporalMarkerTimeDown = 0.5;
+    public static double temporalMarkerTimeDOWN = 1.5;
+    public static double temporalMarkerTimeUP = 5;
+
 
     public static int outtakeEncoderTicks = 2000;
     public static int outtakeOG = 0;
 
-    public static double casenum=1;
+    // stores the result of Vision locally
 
-    public static BluePipeline.Location positionOfVisionPixel;
-
-    public static String myPosition;
-
+    public static RedPipeline.Location positionOfVisionPixel;
     public static double casePos;
-
     State currentState = State.IDLE;
-
-
     OpenCvWebcam camera;
-    public static double color = 1;
-
     @Override
     public void runOpMode() throws InterruptedException{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Manipulators manip = new Manipulators(hardwareMap);
-        BluePipeline vision =  new BluePipeline(telemetry);
-        manip.autoIntakeToggle(false);
+        RedPipeline vision =  new RedPipeline(telemetry);
 
         telemetry.addLine("Init Done");
-
         drive.setPoseEstimate(startPose);
-        //
-
         //still need to enter values for these
-        // these are the basic to spike part
         TrajectorySequence scorePurpleLeft = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(spike1X, spike1Y, spike1Angle))
+                .forward(3)
                 .build();
 
+        //still need to enter values for these
         TrajectorySequence scorePurpleMiddle = drive.trajectorySequenceBuilder(startPose)
+                .back(7)
                 .lineToLinearHeading(new Pose2d(spike2X, spike2Y, spike2Angle))
+                .forward(3)
                 .build();
 
+        //still need to enter values for these
         TrajectorySequence scorePurpleRight = drive.trajectorySequenceBuilder(startPose)
-                .back(  25)
+                .back(10)
+                // .turn(Math.toRadians(90))
                 .lineToLinearHeading(new Pose2d(spike3X, spike3Y, spike3Angle))
+                .forward(3)
                 .build();
 
         TrajectorySequence backDropLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
+                .back(5)
+                .strafeLeft(20)
                 .lineToLinearHeading(new Pose2d(backdropLeftX, backdropLeftY, backdropLeftAngle))
-                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                .addTemporalMarker(temporalMarkerTimeUP, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
                 .build();
 
         TrajectorySequence backDropMiddle = drive.trajectorySequenceBuilder(scorePurpleMiddle.end())
-                .back(5)
+                .back(7)
+                .turn(Math.toRadians(-90))
                 .lineToLinearHeading(new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle))
-                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                .addTemporalMarker(temporalMarkerTimeUP, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
                 .build();
 
         TrajectorySequence backDropRight = drive.trajectorySequenceBuilder(scorePurpleRight.end())
                 .lineToLinearHeading(new Pose2d(backdropRightX, backdropRightY, backdropRightAngle))
-                .addTemporalMarker(temporalMarkerTimeUp, () -> {
+                .addTemporalMarker(temporalMarkerTimeUP, () -> {
                     manip.moveOuttakeLift(outtakeEncoderTicks);
                 })
                 .build();
 
-        TrajectorySequence parkLeftCorner = drive.trajectorySequenceBuilder(backDropLeft.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+        TrajectorySequence parkLeft = drive.trajectorySequenceBuilder(backDropLeft.end())
+                .forward(5)
+                .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
+                    manip.moveOuttakeLift(outtakeOG);
                 })
-                .forward(3)
-                .splineToConstantHeading(new Vector2d(preParkXCorner, preParkYCorner), Math.toRadians(0))
+                .strafeRight(15)
                 .turn(Math.toRadians(90))
-                .strafeLeft(10)
+                .strafeLeft(15)
                 .build();
 
-        TrajectorySequence parkMiddleCorner = drive.trajectorySequenceBuilder(backDropMiddle.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+        TrajectorySequence parkMiddle = drive.trajectorySequenceBuilder(backDropMiddle.end())
+                .forward(5)
+                .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
+                    manip.moveOuttakeLift(outtakeOG);
                 })
-                .forward(3)
-                .splineToConstantHeading(new Vector2d(preParkXCorner, preParkYCorner), Math.toRadians(0))
+                .strafeRight(24)
                 .turn(Math.toRadians(90))
-                .strafeLeft(10)
+                .strafeLeft(15)
                 .build();
 
-        TrajectorySequence parkRightCorner = drive.trajectorySequenceBuilder(backDropRight.end())
-                .addTemporalMarker(temporalMarkerTimeDown, () -> {
-                    manip.moveOuttakeLift(outtakeEncoderTicksDown);
+        TrajectorySequence parkRight = drive.trajectorySequenceBuilder(backDropRight.end())
+                .forward(5)
+                .addTemporalMarker(temporalMarkerTimeDOWN, () -> {
+                    manip.moveOuttakeLift(outtakeOG);
                 })
-                .forward(3)
-                .splineToConstantHeading(new Vector2d(preParkXCorner, preParkYCorner), Math.toRadians(0))
+                .strafeRight(30)
                 .turn(Math.toRadians(90))
-                .strafeLeft(10)
+                .strafeLeft(15)
                 .build();
-        
 
         telemetry.addLine("trajectories built!!!");
         telemetry.addData("cpos", vision.getLocation());
         telemetry.update();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "identifyier","teamcode");
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        BluePipeline detectRed = new BluePipeline(telemetry);
-        camera.setPipeline(detectRed);
+        RedPipeline detectBlue = new RedPipeline(telemetry);
+        camera.setPipeline(detectBlue);
 
         camera.setMillisecondsPermissionTimeout(5000);
 
@@ -223,15 +226,15 @@ public class BackdropAutoBlue extends LinearOpMode {
 
             switch(currentState){
                 case IDLE:
-                    currentState = BackdropAutoBlue.State.SCORE_PURPLE;
+                    currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
                     positionOfVisionPixel = vision.getLocation();
-                    if (BluePipeline.positionMain == "left") {
+                    if (RedPipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
                         drive.followTrajectorySequence(scorePurpleLeft);
-                    } else if (BluePipeline.positionMain == "middle") {
+                    } else if (RedPipeline.positionMain == "middle") {
                         myPosition="middle";
                         telemetry.addLine("going middle");
                         casePos=2;
@@ -247,34 +250,31 @@ public class BackdropAutoBlue extends LinearOpMode {
                     manip.setIntakePower(-1);
                     sleep(1600);
                     manip.setIntakePower(0);
-                    currentState = BackdropAutoBlue.State.SCORE_YELLOW;
+                    currentState = State.SCORE_YELLOW;
                     break;
 
                 case SCORE_YELLOW:
-                    if (BluePipeline.positionMain == "left") {
+                    if (RedPipeline.positionMain == "left") {
                         drive.followTrajectorySequence(backDropLeft);
-                    } else if (BluePipeline.positionMain == "middle") {
+                    } else if (RedPipeline.positionMain == "middle") {
                         drive.followTrajectorySequence(backDropMiddle);
                     } else {
                         drive.followTrajectorySequence(backDropRight);
                     }
-                    manip.gateOpen();
+                    manip.gateToggle();
                     sleep(500);
-                    manip.moveOuttakeLift(outtakeEncoderTicksUp2);
-                    manip.gateClose();
-                    sleep(1500);
-                    currentState = BackdropAutoBlue.State.PARK;
+                    currentState = State.PARK;
                     break;
 
                 case PARK:
-                    if (BluePipeline.positionMain == "left") {
-                        drive.followTrajectorySequence(parkLeftCorner);
-                    } else if (BluePipeline.positionMain == "middle") {
-                        drive.followTrajectorySequence(parkMiddleCorner);
+                    if (RedPipeline.positionMain == "left") {
+                        drive.followTrajectorySequence(parkLeft);
+                    } else if (RedPipeline.positionMain == "middle") {
+                        drive.followTrajectorySequence(parkMiddle);
                     } else {
-                        drive.followTrajectorySequence(parkRightCorner);
+                        drive.followTrajectorySequence(parkRight);
                     }
-                    currentState = BackdropAutoBlue.State.STOP;
+                    currentState = State.STOP;
                     break;
 
                 case STOP:

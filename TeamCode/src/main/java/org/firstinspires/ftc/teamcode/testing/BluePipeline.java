@@ -58,7 +58,7 @@ public class BluePipeline extends OpenCvPipeline {
             new Point(100, 40),
             new Point(160, 100));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.3;
+    static double PERCENT_COLOR_THRESHOLD = 0.25;
     public BluePipeline(Telemetry t) { telemetry = t; }
 
     @Override

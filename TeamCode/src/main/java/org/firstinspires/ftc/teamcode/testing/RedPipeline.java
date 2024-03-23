@@ -58,7 +58,7 @@ public class RedPipeline extends OpenCvPipeline {
             new Point(180, 40),
             new Point(240, 100));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.3;
+    static double PERCENT_COLOR_THRESHOLD = 0.25;
     public RedPipeline(Telemetry t) { telemetry = t; }
 
     @Override
