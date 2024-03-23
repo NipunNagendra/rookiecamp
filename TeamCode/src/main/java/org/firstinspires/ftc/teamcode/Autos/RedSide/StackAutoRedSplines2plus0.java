@@ -54,20 +54,20 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 
     //coordinates for left spike position
     public static double spike1X = -39.64633638294297;
-    public static double spike1Y = -32.1247700133697;
+    public static double spike1Y = -34;
     public static double spike1Angle = Math.toRadians(180);
     public static double spike1Strafe = 10;
     public static double spike1BackAmount = 3;
     public static double spike1StackOffset = 5;
 
     //coordinates for middle spike position
-    public static double spike2X =  -37.812297556497846;
-    public static double spike2Y = -32.023006373520104;
+    public static double spike2X =  -38.812297556497846;
+    public static double spike2Y = -40;
     public static double spike2Angle = Math.toRadians(90);
 
     //coordinates for right spike position
     public static double spike3X = -32.76642694740993;
-    public static double spike3Y = -34.04644728121096;
+    public static double spike3Y = -31;
     public static double spike3Angle = Math.toRadians(0);
 
 //    public static double moveBackwards3 = 31;
@@ -98,7 +98,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
     public static double preParkY = -62;
 
     public static double moveBackwards3 = 29;
-    public static double moveForward3 = 10;
+    public static double moveForward3 = 5;
     public static double turn3 = 90;
     public static double dangerPathX = -15;
 
@@ -149,7 +149,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 
 
         telemetry.addLine("Init Done");
-        manip.autoIntakeToggle(false);
+        manip.autoIntakeToggle(true);
         drive.setPoseEstimate(startPose);
         //
 
@@ -169,6 +169,8 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                 .turn(Math.toRadians(turn3))
                 .forward(moveForward3)
                 .build();
+
+        TrajectorySequence finishSpike = drive.trajectorySequenceBuilder(scorePurpleLeft.end()).back(5).build();
 
         // post-spike, moving towards prev truss
 //        TrajectorySequence finishLeft = drive.trajectorySequenceBuilder(scorePurpleLeft.end())
@@ -407,7 +409,7 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                     currentState = State.SCORE_PURPLE;
 
                 case SCORE_PURPLE:
-                    manip.autoIntakeToggle(false);
+                    manip.autoIntakeToggle(true);
                     if (RedPipeline.positionMain == "left") {
                         myPosition="left";
                         telemetry.addLine("going left");
@@ -422,8 +424,8 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     telemetry.update();
-                    manip.setIntakePower(0.1);
-                    sleep(500);
+                    manip.setIntakePower(0.4);
+                    sleep(1500);
                     manip.setIntakePower(0);
 //                    if (myPosition == "left") {
 //                        drive.followTrajectorySequence(finishLeft);
@@ -432,8 +434,8 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 //                    } else {
 //                        drive.followTrajectorySequence(finishRight);
 //                    }
-
-                    currentState = State.UNDER_DOOR_OR_TRUSS;
+                    drive.followTrajectorySequence(finishSpike);
+                    currentState = State.STOP;
 
 //                case INTAKE_STACK:
 //                    if (myPosition == "left") {
@@ -452,44 +454,44 @@ public class StackAutoRedSplines2plus0 extends LinearOpMode {
 ////                    }
 //                    currentState = State.UNDER_DOOR_OR_TRUSS;
 
-                case UNDER_DOOR_OR_TRUSS:
-                    if (myPosition == "left") {
-                        drive.followTrajectorySequence(goToBackdropLeft);
-                    } else if (myPosition == "middle") {
-                        drive.followTrajectorySequence(goToBackdropMiddle);
-                    } else {
-                        drive.followTrajectorySequence(goToBackdropRight);
-                    }
-
-                    currentState = State.SCORE_YELLOW;
-
-                case SCORE_YELLOW:
+//                case UNDER_DOOR_OR_TRUSS:
 //                    if (myPosition == "left") {
-//                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, backdropMiddleAngle);
-//                        drive.followTrajectorySequence(strafeToBackdropPosLeft);
-//                    } else if (myPosition == "right") {
-//                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe, backdropMiddleAngle);
-//                        drive.followTrajectorySequence(strafeToBackdropPosRight);
+//                        drive.followTrajectorySequence(goToBackdropLeft);
+//                    } else if (myPosition == "middle") {
+//                        drive.followTrajectorySequence(goToBackdropMiddle);
 //                    } else {
-//                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
+//                        drive.followTrajectorySequence(goToBackdropRight);
 //                    }
-                    manip.gateOpen();
-                    sleep(500);
-                    manip.moveOuttakeLift(outtakeEncoderTicksUp2);
-                    manip.gateClose();
-                    sleep(1500);
-                    currentState = State.PARK;
-
-                case PARK:
-                    if (myPosition == "left") {
-                        drive.followTrajectorySequence(parkLeft);
-                    } else if (myPosition == "right") {
-                        drive.followTrajectorySequence(parkRight);
-                    } else {
-                        drive.followTrajectorySequence(parkMiddle);
-                    }
-                    currentState = State.STOP;
-
+//
+//                    currentState = State.SCORE_YELLOW;
+//
+//                case SCORE_YELLOW:
+////                    if (myPosition == "left") {
+////                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, backdropMiddleAngle);
+////                        drive.followTrajectorySequence(strafeToBackdropPosLeft);
+////                    } else if (myPosition == "right") {
+////                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe, backdropMiddleAngle);
+////                        drive.followTrajectorySequence(strafeToBackdropPosRight);
+////                    } else {
+////                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
+////                    }
+//                    manip.gateOpen();
+//                    sleep(500);
+//                    manip.moveOuttakeLift(outtakeEncoderTicksUp2);
+//                    manip.gateClose();
+//                    sleep(1500);
+//                    currentState = State.PARK;
+//
+//                case PARK:
+//                    if (myPosition == "left") {
+//                        drive.followTrajectorySequence(parkLeft);
+//                    } else if (myPosition == "right") {
+//                        drive.followTrajectorySequence(parkRight);
+//                    } else {
+//                        drive.followTrajectorySequence(parkMiddle);
+//                    }
+//                    currentState = State.STOP;
+//
                 case STOP:
                     break;
             }

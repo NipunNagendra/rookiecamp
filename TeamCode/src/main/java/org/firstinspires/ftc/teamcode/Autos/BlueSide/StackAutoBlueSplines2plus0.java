@@ -61,11 +61,11 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
 
     //coordinates for middle spike position
     public static double spike2X =  -37.812297556497846;
-    public static double spike2Y = 32.023006373520104;
+    public static double spike2Y = 35;
     public static double spike2Angle = Math.toRadians(270);
 
     //coordinates for right spike position
-    public static double spike3X = -32.76642694740993;
+    public static double spike3X = -29;
     public static double spike3Y = 34.04644728121096;
     public static double spike3Angle = Math.toRadians(0);
 
@@ -99,7 +99,7 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
     public static double preParkY = 62;
 
     public static double moveBackwards3 = 29;
-    public static double moveForward3 = 10;
+    public static double moveForward3 = 5;
     public static double turn3 = -90;
 
     public static double dangerPathX = -15;
@@ -257,8 +257,8 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
                     manip.moveOuttakeLift(outtakeEncoderTicksUp);
                 })
                 .setReversed(true)
-                .back(14)
-                .lineToLinearHeading(new Pose2d(preTrussX, trussY, trussAngle))
+                .back(18)
+                .lineToLinearHeading(new Pose2d(preTrussX - 2, trussY, trussAngle))
                 .lineTo(new Vector2d(trussX, trussY),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -435,7 +435,7 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
                         drive.followTrajectorySequence(scorePurpleRight);
                     }
                     telemetry.update();
-                    manip.setIntakePower(0.1);
+                    manip.setIntakePower(0.4);
                     sleep(500);
                     manip.setIntakePower(0);
 //                    if (myPosition == "left") {
@@ -446,7 +446,7 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
 //                        drive.followTrajectorySequence(finishRight);
 //                    }
 
-                    currentState = State.UNDER_DOOR_OR_TRUSS;
+                    currentState = State.STOP;
 
 //                case INTAKE_STACK:
 //                    if (myPosition == "left") {
@@ -465,41 +465,41 @@ public class StackAutoBlueSplines2plus0 extends LinearOpMode {
 ////                    }
 //                    currentState = State.UNDER_DOOR_OR_TRUSS;
 
-                case UNDER_DOOR_OR_TRUSS:
-                    if (myPosition == "left") {
-                        drive.followTrajectorySequence(goToBackdropLeft);
-                    } else if (myPosition == "middle") {
-                        drive.followTrajectorySequence(goToBackdropMiddle);
-                    } else {
-                        drive.followTrajectorySequence(goToBackdropRight);
-                    }
-
-                    currentState = State.SCORE_YELLOW;
-
-                case SCORE_YELLOW:
+//                case UNDER_DOOR_OR_TRUSS:
 //                    if (myPosition == "left") {
-//                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, backdropMiddleAngle);
-//                        drive.followTrajectorySequence(strafeToBackdropPosLeft);
-//                    } else if (myPosition == "right") {
-//                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe, backdropMiddleAngle);
-//                        drive.followTrajectorySequence(strafeToBackdropPosRight);
+//                        drive.followTrajectorySequence(goToBackdropLeft);
+//                    } else if (myPosition == "middle") {
+//                        drive.followTrajectorySequence(goToBackdropMiddle);
 //                    } else {
-//                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
+//                        drive.followTrajectorySequence(goToBackdropRight);
 //                    }
-                    sleep(500);
-                    manip.gateToggle();
-                    sleep(800);
-                    currentState = State.PARK;
-
-                case PARK:
-                    if (myPosition == "left") {
-                        drive.followTrajectorySequence(parkLeft);
-                    } else if (myPosition == "right") {
-                        drive.followTrajectorySequence(parkRight);
-                    } else {
-                        drive.followTrajectorySequence(parkMiddle);
-                    }
-                    currentState = State.STOP;
+//
+//                    currentState = State.SCORE_YELLOW;
+//
+//                case SCORE_YELLOW:
+////                    if (myPosition == "left") {
+////                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY + backdropLeftStrafe, backdropMiddleAngle);
+////                        drive.followTrajectorySequence(strafeToBackdropPosLeft);
+////                    } else if (myPosition == "right") {
+////                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY - backdropRightStrafe, backdropMiddleAngle);
+////                        drive.followTrajectorySequence(strafeToBackdropPosRight);
+////                    } else {
+////                        posEstimate = new Pose2d(backdropMiddleX, backdropMiddleY, backdropMiddleAngle);
+////                    }
+//                    sleep(500);
+//                    manip.gateToggle();
+//                    sleep(800);
+//                    currentState = State.PARK;
+//
+//                case PARK:
+//                    if (myPosition == "left") {
+//                        drive.followTrajectorySequence(parkLeft);
+//                    } else if (myPosition == "right") {
+//                        drive.followTrajectorySequence(parkRight);
+//                    } else {
+//                        drive.followTrajectorySequence(parkMiddle);
+//                    }
+//                    currentState = State.STOP;
 
                 case STOP:
                     break;
