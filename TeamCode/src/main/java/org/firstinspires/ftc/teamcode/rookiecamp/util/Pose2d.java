@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rookiecamp;
+package org.firstinspires.ftc.teamcode.rookiecamp.util;
 
 public class Pose2d {
     public double x;
