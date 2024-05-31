@@ -15,7 +15,7 @@ public class distancePIDTuner extends LinearOpMode {
     Drive robotDrive;
     Pose position = new Pose(0, 0, 0);
     double leftPower = 0, rightPower = 0;
-    double timeout = 5000;
+    double timeout = 15000;
     boolean loopIsActive = true;
     double threshold = 2, angleThreshold = 2;
     public static double kPd = 0.1, kId = 0.1, kDd = 0.1;
@@ -24,12 +24,13 @@ public class distancePIDTuner extends LinearOpMode {
     @Override
     public void runOpMode() {
         robotDrive = new Drive(hardwareMap, 0, 0, 0);
+        robotDrive.imu.resetYaw();
         waitForStart();
         PID distanceController = new PID(kPd, kId, kDd);
         PID angleController = new PID(kPa, 0, kDa);
         ElapsedTime timer = new ElapsedTime();
 //----------------------------------------------------------------------
-        double targetX = 50;
+        double targetX = 0;
         double targetY = 50;
         double targetAngle = 0;
 
@@ -63,6 +64,12 @@ public class distancePIDTuner extends LinearOpMode {
             leftPower = Range.clip(f + t, -1.0, 1.0);
             rightPower = Range.clip(f - t, -1.0, 1.0);
             robotDrive.setRelativePower(leftPower, rightPower);
+
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("h", poseEstimate.getHeading());
+            telemetry.update();
+            robotDrive.update();
         }
     }
 
