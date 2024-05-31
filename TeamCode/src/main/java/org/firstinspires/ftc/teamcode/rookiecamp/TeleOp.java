@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.rookiecamp.util.Drive;
-
-public class teleop extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleop", group = "rookiecamp")
+public class TeleOp extends OpMode {
     Drive robotDrive;
     double drive;
     double turn;
@@ -13,7 +13,7 @@ public class teleop extends OpMode {
 
     @Override
     public void init() {
-        robotDrive = new Drive(hardwareMap);
+        robotDrive = new Drive(hardwareMap, 0, 0, 0);
     }
 
     @Override
@@ -25,6 +25,9 @@ public class teleop extends OpMode {
         rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
         robotDrive.setRelativePower(leftPower, rightPower);
+
+        telemetry.
+        robotDrive.update();
     }
 
 }
