@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.rookiecamp.util.Drive;
+import org.firstinspires.ftc.teamcode.rookiecamp.util.Pose;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleop", group = "rookiecamp")
 public class TeleOp extends OpMode {
     Drive robotDrive;
@@ -26,7 +28,11 @@ public class TeleOp extends OpMode {
 
         robotDrive.setRelativePower(leftPower, rightPower);
 
-        telemetry.
+        Pose poseEstimate = robotDrive.getPose();
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("h", poseEstimate.getHeading());
+        telemetry.update();
         robotDrive.update();
     }
 

@@ -68,7 +68,10 @@ public class Drive {
         return y;
     }
 
-    public Pose
+    public Pose getPose() {
+        update();
+        return new Pose(x, y, h);
+    }
 
 }
 
