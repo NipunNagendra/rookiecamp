@@ -30,7 +30,7 @@ public class PID {
 
         i += kI * (error * (currentTime - previousTime));
 
-        Range.clip(i, min_i, max_i);
+        i = Range.clip(i, min_i, max_i);
 
         d = kD * (error - previousError) / (currentTime - previousTime);
 

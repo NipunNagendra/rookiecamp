@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rookiecamp.util;
+package org.firstinspires.ftc.teamcode.rookiecamp.subsystems;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.rookiecamp.util.Pose;
 
 public class Drive {
     DcMotor leftMotor;

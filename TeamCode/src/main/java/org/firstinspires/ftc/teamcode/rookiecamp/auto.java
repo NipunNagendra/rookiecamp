@@ -6,14 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.rookiecamp.util.Drive;
+import org.firstinspires.ftc.teamcode.rookiecamp.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.rookiecamp.subsystems.Manipulators;
 import org.firstinspires.ftc.teamcode.rookiecamp.util.PID;
 import org.firstinspires.ftc.teamcode.rookiecamp.util.Pose;
 
-@Autonomous(name = "anglePIDTuner", group = "RookieCamp")
+@Autonomous(name = "distancePIDTuner", group = "RookieCamp")
 @Config
-public class anglePIDTuner extends LinearOpMode {
+public class auto extends LinearOpMode {
     Drive robotDrive;
+    Manipulators robotManipulators;
     Pose position = new Pose(0, 0, 0);
     double leftPower = 0, rightPower = 0;
     double timeout = 5000;
@@ -25,14 +27,15 @@ public class anglePIDTuner extends LinearOpMode {
     @Override
     public void runOpMode() {
         robotDrive = new Drive(hardwareMap, 0, 0, 0);
+        robotManipulators = new Manipulators(hardwareMap);
         waitForStart();
         PID distanceController = new PID(kPd, kId, kDd);
         PID angleController = new PID(kPa, 0, kDa);
         ElapsedTime timer = new ElapsedTime();
 //----------------------------------------------------------------------
-        double targetX = 0;
-        double targetY = 0;
-        double targetAngle = Math.PI;
+        double targetX = 50;
+        double targetY = 50;
+        double targetAngle = 0;
 
         while (loopIsActive && timer.milliseconds() <= timeout) {
             Pose poseEstimate = robotDrive.getPose();
@@ -65,6 +68,49 @@ public class anglePIDTuner extends LinearOpMode {
             rightPower = Range.clip(f - t, -1.0, 1.0);
             robotDrive.setRelativePower(leftPower, rightPower);
         }
+
+        robotManipulators.setFlywheelPower(1);
+        sleep(1000);
+        robotManipulators.setFlywheelPower(0);
+
+        targetX = 50;
+        targetY = 50;
+        targetAngle = 0;
+        distanceController = new PID(kPd, kId, kDd);
+        angleController = new PID(kPa, 0, kDa);
+        timer = new ElapsedTime();
+        while (loopIsActive && timer.milliseconds() <= timeout) {
+            Pose poseEstimate = robotDrive.getPose();
+            double robotX = poseEstimate.getX();
+            double robotY = poseEstimate.getY();
+            double robotTheta = poseEstimate.getHeading();
+
+            double xError = targetX - robotX;
+            double yError = targetY - robotY;
+            double theta = Math.atan2(yError,xError);
+            double distance = Math.hypot(xError, yError);
+            double f, t;
+
+
+            if (distance < threshold) {
+                f = 0;
+                t = angleController.calculate(targetAngle, robotTheta);
+                double angleError = targetAngle - robotTheta;
+                if(Math.abs(angleError) < angleThreshold){
+                    loopIsActive = false;
+                }
+            } else {
+                f = distanceController.calculate(0, distance);
+                t = angleController.calculate(theta, robotTheta);
+            }
+            f *= Math.cos(Range.clip(angleController.getError(), -Math.PI/2, Math.PI/2));
+
+
+            leftPower = Range.clip(f + t, -1.0, 1.0);
+            rightPower = Range.clip(f - t, -1.0, 1.0);
+            robotDrive.setRelativePower(leftPower, rightPower);
+        }
+
     }
 
 }
