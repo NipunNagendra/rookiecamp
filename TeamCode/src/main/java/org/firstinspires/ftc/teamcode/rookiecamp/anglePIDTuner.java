@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.rookiecamp.util.Drive;
 import org.firstinspires.ftc.teamcode.rookiecamp.util.PID;
 import org.firstinspires.ftc.teamcode.rookiecamp.util.Pose;
 
-@Autonomous(name = "distancePIDTuner", group = "RookieCamp")
+@Autonomous(name = "anglePIDTuner", group = "RookieCamp")
 @Config
 public class anglePIDTuner extends LinearOpMode {
     Drive robotDrive;
